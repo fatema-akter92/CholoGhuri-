@@ -97,3 +97,53 @@ def calculate_route(start_name: str, destination: Place):
             "estimated_time": _format_duration(road_km / 46.0),
             "estimated_fare_bdt": f"৳{int(max(450, road_km * 3.2))} – ৳{int(max(900, road_km * 5.2))}",
             "notes": "Comfortable inter-district highway travel with online seat booking.",
+        })
+        if destination.division in ("Sylhet", "Chattogram", "Rajshahi", "Khulna", "Rangpur"):
+            transport_options.append({
+                "mode": "Bangladesh Railway Intercity Train",
+                "estimated_time": _format_duration(road_km / 52.0),
+                "estimated_fare_bdt": f"৳{int(max(300, road_km * 1.9))} – ৳{int(max(700, road_km * 3.8))}",
+                "notes": "Scenic & reliable; book Shovan Chair or Snigdha via Rail Sheba.",
+            })
+        if road_km > 220 and destination.district in ("Cox's Bazar", "Sylhet", "Chattogram", "Jashore", "Dinajpur"):
+            transport_options.append({
+                "mode": "Domestic Flight + Local Transfer",
+                "estimated_time": "1h 15m flight + local transfer",
+                "estimated_fare_bdt": "৳4,500 – ৳8,500",
+                "notes": "Operated daily from Dhaka (DAC) by Biman, US-Bangla, and Novoair.",
+            })
+        if "Saint Martin" in destination.name:
+            transport_options.append({
+                "mode": "Teknaf / Cox's Bazar Tourist Ship",
+                "estimated_time": "2h 30m sea crossing (seasonal)",
+                "estimated_fare_bdt": "৳1,000 – ৳2,500",
+                "notes": "Operates primarily Nov–Mar subject to coastal weather & conservation caps.",
+            })
+
+    # Nearby hotels, restaurants & safety facilities
+    hotels = []
+    for h in Hotel.objects.all():
+        dist = haversine_km(d_lat, d_lon, h.latitude, h.longitude)
+        if dist <= 65 or h.place_id == destination.id or h.city.lower() == destination.district.lower():
+            hotels.append({
+                "id": h.id,
+                "name": h.name,
+                "city": h.city,
+                "tier": h.tier,
+                "price_per_night_bdt": h.price_per_night_bdt,
+                "rating": h.rating,
+                "distance_km": dist,
+                "latitude": h.latitude,
+                "longitude": h.longitude,
+            })
+    hotels.sort(key=lambda x: x["distance_km"])
+
+    restaurants = []
+    for r in Restaurant.objects.all():
+        dist = haversine_km(d_lat, d_lon, r.latitude, r.longitude)
+        if dist <= 65 or r.place_id == destination.id or r.city.lower() == destination.district.lower():
+            restaurants.append({
+                "id": r.id,
+                "name": r.name,
+                "city": r.city,
+                "cuisine_type": r.cuisine_type,
