@@ -98,3 +98,53 @@
                     class="btn btn-offwhite btn-sm"
                     onclick="addHotelToCompare('{{ h.name|escapejs }}', '{{ h.city|escapejs }}', '{{ h.price_per_night_bdt }}', '{{ h.rating }}', '{{ h.facilities|join:', '|escapejs }}', '{{ h.contact_phone|escapejs }}')"
                   >
+                    Compare
+                  </button>
+                  <a href="/hotels/{{ h.slug }}/" class="btn btn-outline btn-sm">View</a>
+                  <a href="/hotels/{{ h.slug }}/#book" class="btn btn-cyan btn-sm">Book Online</a>
+                </div>
+              </div>
+              <div style="margin-top:8px; font-size:11.5px; text-align:right;">
+                <a href="{{ h.booking_url }}" target="_blank" rel="noopener" style="color:var(--cyan-700); font-weight:600; text-decoration:underline;">
+                  Official / Live Partner Website &nearr;
+                </a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <!-- Food & Dietary Filters -->
+      <div class="card card-static" style="background:var(--bg-cream); margin-bottom:20px;">
+        <div class="card-body">
+          <form method="get">
+            <input type="hidden" name="tab" value="food" />
+            <div class="grid-4" style="gap:12px; align-items:end; margin-bottom:12px;">
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">City or Specialty</label>
+                <input class="input" type="text" name="city" value="{{ filters.city }}" placeholder="Old Dhaka, Mezban, Shatkora..." />
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Division</label>
+                <select class="select" name="division">
+                  <option value="">All Divisions</option>
+                  {% for d in divisions %}
+                    <option value="{{ d }}" {% if filters.division == d %}selected{% endif %}>{{ d }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Price Range</label>
+                <select class="select" name="price_range">
+                  <option value="">All Prices</option>
+                  <option value="budget" {% if filters.price_range == "budget" %}selected{% endif %}>Budget (৳150–৳400)</option>
+                  <option value="moderate" {% if filters.price_range == "moderate" %}selected{% endif %}>Moderate (৳400–৳1,000)</option>
+                  <option value="fine" {% if filters.price_range == "fine" %}selected{% endif %}>Fine Dining (৳1,000+)</option>
+                </select>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-cyan" style="flex:1;" type="submit">Find Food</button>
+                <a href="/hotels-food/?tab=food" class="btn btn-offwhite">Reset</a>
+              </div>
+            </div>
