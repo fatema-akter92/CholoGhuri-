@@ -168,3 +168,60 @@
                     <div style="font-size:12px; color:#b91c1c; font-weight:700; margin:3px 0;">{{ s.get_facility_type_display }} &bull; {{ s.distance_km }} km away</div>
                     <div style="font-size:13px; font-weight:700;">&#128222; {{ s.phone }}</div>
                   </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews & Community Tips -->
+        <div class="card card-static" id="reviews">
+          <div class="card-body">
+            <h3>Traveler Reviews &amp; Ratings</h3>
+            <form method="post" style="background:var(--bg-cream); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:20px;">
+              {% csrf_token %}
+              <input type="hidden" name="form_action" value="review" />
+              <div style="font-weight:700; font-size:14px; margin-bottom:10px;">Share Your Review</div>
+              <div class="grid-3" style="gap:10px; margin-bottom:10px;">
+                <select class="select" name="rating">
+                  <option value="5">5 &#9733; — Outstanding</option>
+                  <option value="4">4 &#9733; — Very Good</option>
+                  <option value="3">3 &#9733; — Good</option>
+                  <option value="2">2 &#9733; — Fair</option>
+                  <option value="1">1 &#9733; — Needs Care</option>
+                </select>
+                <select class="select" name="visit_type">
+                  <option value="friends">Friends Group</option>
+                  <option value="family">Family</option>
+                  <option value="couple">Couple</option>
+                  <option value="solo">Solo Traveler</option>
+                </select>
+                <input class="input" type="text" name="title" placeholder="Headline..." required />
+              </div>
+              <textarea class="textarea" name="comment" rows="2" placeholder="Describe best time, entry cost, transport tips..." required style="margin-bottom:10px;"></textarea>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <input class="input" style="flex:1;" type="url" name="photo_url" placeholder="Optional photo URL..." />
+                <button class="btn btn-cyan btn-sm" type="submit">Post Review</button>
+              </div>
+            </form>
+
+            {% for rev in reviews %}
+              <div style="border-bottom:1px solid var(--border); padding:14px 0;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                  <div>
+                    <strong>{{ rev.title }}</strong>
+                    <span class="badge badge-cyan" style="margin-left:6px;">{{ rev.visit_type|title }}</span>
+                  </div>
+                  <span style="color:#d97706; font-weight:800;">{{ rev.rating }} &#9733;</span>
+                </div>
+                <p style="font-size:14px; color:var(--text-muted); margin:6px 0;">{{ rev.comment }}</p>
+                {% if rev.photo_url %}
+                  <img src="{{ rev.photo_url }}" alt="Traveler photo" style="max-height:150px; border-radius:8px; margin:6px 0;" />
+                {% endif %}
+                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-soft);">
+                  <span>By {{ rev.user.first_name|default:rev.user.username }} &bull; {{ rev.created_at|date:"M d, Y" }}</span>
+                  <button type="button" onclick="reportReview({{ rev.id }}, this)" style="background:none; border:none; color:var(--text-soft); cursor:pointer; text-decoration:underline;">Report Review</button>
+                </div>
+              </div>
+            {% empty %}
+              <p style="color:var(--text-soft);">Be the first traveler to share a review for {{ place.name }}!</p>
