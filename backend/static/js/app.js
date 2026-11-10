@@ -162,3 +162,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const res = await apiFetch("/api/ai/chat/", {
+          method: "POST",
+          body: JSON.stringify({ prompt: q }),
+        });
+        thinking.remove();
+        appendFloatingMsg(res.reply, false, res);
+      } catch (err) {
+        thinking.textContent = `Could not reach AI assistant: ${err.message}`;
+      }
+    });
+
+    document.querySelectorAll("[data-ai-quick]").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        aiInput.value = chip.getAttribute("data-ai-quick");
+        aiForm.dispatchEvent(new Event("submit"));
+      });
+    });
+  }
+});
+
+/* Helper: Native Pronunciation (Server MP3 Audio first so Bengali never falls back to Hindi, with Web Speech fallback) */
+let activeTtsAudio = null;
+function speakPhrase(text, langCode = "bn-BD") {
+  if (!text) return;
+  const shortLang = (langCode || "bn").split("-")[0].toLowerCase();
+  try {
+    if (activeTtsAudio) {
+      activeTtsAudio.pause();
+      activeTtsAudio = null;
+    }
+    const ttsUrl = `/api/translator/tts/?lang=${encodeURIComponent(shortLang)}&text=${encodeURIComponent(text)}`;
+    const audio = new Audio(ttsUrl);
+    activeTtsAudio = audio;
+    audio.play().catch(() => {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = langCode;
+        utter.rate = 0.92;
+        window.speechSynthesis.speak(utter);
+      }
+    });
+  } catch {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = langCode;
+      utter.rate = 0.92;
+      window.speechSynthesis.speak(utter);
+    }
+  }
+}
+
+/* Helper: Open Show Local Modal */
+function openShowLocalModal(nativeText, phoneticText, englishText) {
+  const modal = document.getElementById("showLocalModal");
