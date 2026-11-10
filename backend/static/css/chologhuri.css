@@ -267,3 +267,71 @@ img {
 .brand-logo {
   display: flex;
   align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--cyan-500), var(--cyan-700));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(8, 145, 178, 0.28);
+}
+
+.brand-name {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--cyan-900);
+  line-height: 1.1;
+}
+
+.brand-name span {
+  color: var(--cyan-600);
+}
+
+.brand-sub {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan-700);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-links a {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  padding: 8px 11px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  background: var(--cyan-50);
+  color: var(--cyan-700);
+}
+
+.nav-ai-pill {
+  background: var(--cyan-50) !important;
+  border: 1px solid var(--cyan-200);
+  color: var(--cyan-800) !important;
+  border-radius: 999px !important;
+  padding: 7px 14px !important;
+}
+
+.nav-ai-pill:hover,
+.nav-ai-pill.active {
