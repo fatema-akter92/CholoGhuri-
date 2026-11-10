@@ -329,3 +329,69 @@
       }
     ]
   },
+  "paharpur": {
+    "files": [
+      "/media/places/paharpur.jpg",
+      "/media/places/paharpur-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "paharpur.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Somapura_Mahavihara",
+        "title": "Somapura Mahavihara",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x906"
+      },
+      {
+        "file": "paharpur-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Aerial_view_of_Somapura_Mahavihara.jpg",
+        "title": "File:Aerial view of Somapura Mahavihara.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x862"
+      }
+    ]
+  },
+  "shat-gambuj-mosque": {
+    "files": [
+      "/media/places/shat-gambuj-mosque.jpg",
+      "/media/places/shat-gambuj-mosque-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "shat-gambuj-mosque.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Sixty_Dome_Mosque",
+        "title": "Sixty Dome Mosque",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x743"
+      },
+      {
+        "file": "shat-gambuj-mosque-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Shat_Gombuj_Mosque_0016.JPG",
+        "title": "File:Shat Gombuj Mosque 0016.JPG",
+        "license": "CC BY 3.0",
+        "dimensions": "1280x960"
+      }
+    ]
+  },
+  "sonargaon": {
+    "files": [
+      "/media/places/sonargaon.jpg",
+      "/media/places/sonargaon-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "sonargaon.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Panam_Nagar",
+        "title": "Panam Nagar",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      },
+      {
+        "file": "sonargaon-2.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Sonargaon",
+        "title": "Sonargaon",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      }
+    ]
+  },
