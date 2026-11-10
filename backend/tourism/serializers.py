@@ -212,3 +212,57 @@ class SafetyFacilitySerializer(serializers.ModelSerializer):
             "city",
             "division",
             "place",
+            "place_name",
+            "address",
+            "phone",
+            "emergency_24h",
+            "latitude",
+            "longitude",
+            "verified_notes",
+        ]
+
+
+class LocalGuideSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LocalGuide
+        fields = "__all__"
+
+
+class TripExpenseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TripExpense
+        fields = ["id", "trip", "category", "title", "amount_bdt", "day_number", "spent_at"]
+        read_only_fields = ["trip", "spent_at"]
+
+
+class TripPlanSerializer(serializers.ModelSerializer):
+    expenses = TripExpenseSerializer(many=True, read_only=True)
+    actual_spent_bdt = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TripPlan
+        fields = [
+            "id",
+            "user",
+            "share_code",
+            "title",
+            "start_city",
+            "duration_days",
+            "duration_label",
+            "budget_bdt",
+            "budget_tier",
+            "traveler_type",
+            "interests",
+            "itinerary_json",
+            "estimated_breakdown_json",
+            "weather_notes",
+            "expenses",
+            "actual_spent_bdt",
+            "created_at",
+        ]
+        read_only_fields = ["user", "share_code", "created_at"]
+
+    def get_actual_spent_bdt(self, obj):
+        return sum(e.amount_bdt for e in obj.expenses.all())
+
+
