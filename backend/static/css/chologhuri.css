@@ -200,3 +200,70 @@ img {
 .lang-select-wrap select {
   border: none;
   background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyan-900);
+  cursor: pointer;
+  outline: none;
+}
+
+.wishlist-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyan-800);
+  background: var(--cyan-50);
+  border: 1px solid var(--cyan-200);
+  padding: 5px 11px;
+  border-radius: 999px;
+  transition: all 0.2s;
+}
+
+.wishlist-pill:hover {
+  background: var(--cyan-100);
+}
+
+.auth-nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--cyan-600);
+  padding: 6px 13px;
+  border-radius: 999px;
+  transition: background 0.2s;
+}
+
+.auth-nav-pill:hover {
+  background: var(--cyan-700);
+}
+
+.wishlist-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 999px;
+  background: var(--cyan-600);
+  color: #fff;
+}
+
+.main-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 68px;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
