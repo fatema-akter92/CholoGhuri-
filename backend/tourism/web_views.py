@@ -113,3 +113,60 @@ def destinations_view(request):
     nlp_query = (request.GET.get("nlp") or request.GET.get("q") or "").strip()
 
     if selected_cat:
+        qs = qs.filter(category__slug=selected_cat)
+    if selected_div:
+        qs = qs.filter(division__iexact=selected_div)
+    if selected_tier:
+        qs = qs.filter(budget_tier=selected_tier)
+    if indoor_only in ("1", "true", "on"):
+        qs = qs.filter(is_indoor_friendly=True)
+
+    explanation = ""
+    nlp_intent = None
+    if nlp_query:
+        nlp_intent, explanation, matched_list = search_places_nlp(nlp_query, queryset=qs)
+        if selected_interest:
+            matched_list = [
+                p for p in matched_list if selected_interest.lower() in [i.lower() for i in (p.interests or [])]
+            ]
+        SearchLog.objects.create(
+            query=nlp_query[:255],
+            parsed_intent=nlp_intent,
+            results_count=len(matched_list),
+            is_failure=(len(matched_list) == 0),
+        )
+        places = matched_list
+    else:
+        places = list(qs)
+        if selected_interest:
+            places = [
+                p for p in places if selected_interest.lower() in [i.lower() for i in (p.interests or [])]
+            ]
+
+    return render(
+        request,
+        "destinations.html",
+        {
+            "places": places,
+            "categories": categories,
+            "divisions": divisions,
+            "selected_cat": selected_cat,
+            "selected_div": selected_div,
+            "selected_tier": selected_tier,
+            "selected_interest": selected_interest,
+            "indoor_only": indoor_only,
+            "nlp_query": nlp_query,
+            "explanation": explanation,
+            "nlp_intent": nlp_intent,
+            "interests_list": ["sea", "nature", "wildlife", "historical", "spiritual", "food", "adventure", "family", "photography"],
+        },
+    )
+
+
+def place_detail_view(request, slug):
+    place = get_object_or_404(
+        Place.objects.select_related("category").annotate(
+            review_count=Count("reviews", filter=Q(reviews__is_approved=True))
+        ),
+        slug=slug,
+    )
