@@ -623,3 +623,60 @@ class WishlistToggleView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        place_id = request.data.get("place_id")
+        place = get_object_or_404(Place, pk=place_id)
+        item = WishlistItem.objects.filter(user=request.user, place=place).first()
+        if item:
+            item.delete()
+            return Response({"wishlisted": False, "place_id": place.id})
+        WishlistItem.objects.create(user=request.user, place=place)
+        return Response({"wishlisted": True, "place_id": place.id}, status=201)
+
+
+class LocalGuideListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        qs = LocalGuide.objects.filter(verification_status="verified")
+        city = request.query_params.get("city")
+        if city:
+            qs = qs.filter(city__icontains=city)
+        return Response(LocalGuideSerializer(qs, many=True).data)
+
+    def post(self, request):
+        serializer = LocalGuideSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(verification_status="pending")
+        return Response(serializer.data, status=201)
+
+
+class FeedbackCorrectionView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        if request.user and request.user.is_authenticated:
+            qs = FeedbackCorrection.objects.filter(user=request.user)
+            return Response(FeedbackCorrectionSerializer(qs, many=True).data)
+        return Response([])
+
+    def post(self, request):
+        serializer = FeedbackCorrectionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user if request.user.is_authenticated else None)
+        return Response(serializer.data, status=201)
+
+
+# ============================================================
+# ADMIN & ANALYTICS VIEWS (Modules 16 & 18)
+# ============================================================
+
+
+class AdminAnalyticsView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        most_viewed = list(
+            Place.objects.order_by("-view_count")
+            .values("id", "name", "slug", "district", "view_count", "avg_rating")[:8]
+        )
+        most_saved = list(
