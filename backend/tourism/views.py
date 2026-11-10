@@ -680,3 +680,60 @@ class AdminAnalyticsView(APIView):
             .values("id", "name", "slug", "district", "view_count", "avg_rating")[:8]
         )
         most_saved = list(
+            Place.objects.annotate(save_count=Count("wishlisted_by"))
+            .order_by("-save_count", "-view_count")
+            .values("id", "name", "slug", "district", "save_count")[:8]
+        )
+        popular_searches = list(
+            SearchLog.objects.filter(is_failure=False)
+            .values("query")
+            .annotate(count=Count("id"))
+            .order_by("-count")[:8]
+        )
+        failed_searches = list(
+            SearchLog.objects.filter(is_failure=True)
+            .values("query")
+            .annotate(count=Count("id"))
+            .order_by("-count")[:8]
+        )
+
+        ai_total = AIQueryLog.objects.count()
+        ai_avg_latency = AIQueryLog.objects.aggregate(avg=Avg("latency_ms"))["avg"] or 0
+        ai_total_tokens = AIQueryLog.objects.aggregate(total=Sum("tokens_used"))["total"] or 0
+        ai_total_cost = AIQueryLog.objects.aggregate(total=Sum("estimated_cost_usd"))["total"] or 0.0
+        ai_positive = AIQueryLog.objects.filter(helpful_vote=1).count()
+        ai_negative = AIQueryLog.objects.filter(helpful_vote=-1).count()
+        recent_ai_logs = AIQueryLogSerializer(AIQueryLog.objects.all()[:10], many=True).data
+
+        trip_budgets = list(
+            TripPlan.objects.values("budget_tier")
+            .annotate(count=Count("id"), avg_budget=Avg("budget_bdt"))
+            .order_by("-count")
+        )
+        trip_durations = list(
+            TripPlan.objects.values("duration_label")
+            .annotate(count=Count("id"))
+            .order_by("-count")[:6]
+        )
+
+        stale_cutoff = date.today() - timedelta(days=90)
+        stale_places = list(
+            Place.objects.filter(Q(last_verified_date__isnull=True) | Q(last_verified_date__lt=stale_cutoff))
+            .values("id", "name", "district", "last_verified_date")[:10]
+        )
+        broken_hotels = list(
+            Hotel.objects.exclude(link_status="active").values("id", "name", "city", "link_status", "booking_url")
+        )
+
+        return Response({
+            "overview": {
+                "total_places": Place.objects.count(),
+                "total_hotels": Hotel.objects.count(),
+                "total_restaurants": Restaurant.objects.count(),
+                "total_reviews": Review.objects.count(),
+                "reported_reviews": Review.objects.filter(is_reported=True).count(),
+                "pending_guides": LocalGuide.objects.filter(verification_status="pending").count(),
+                "open_corrections": FeedbackCorrection.objects.filter(status="open").count(),
+                "total_trips_planned": TripPlan.objects.count(),
+            },
+            "most_viewed_places": most_viewed,
