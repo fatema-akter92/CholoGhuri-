@@ -262,3 +262,70 @@
         "dimensions": "1280x897"
       }
     ]
+  },
+  "lalbagh-fort": {
+    "files": [
+      "/media/places/lalbagh-fort.jpg",
+      "/media/places/lalbagh-fort-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "lalbagh-fort.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Lalbagh_Fort",
+        "title": "Lalbagh Fort",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x777"
+      },
+      {
+        "file": "lalbagh-fort-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Dhaka_Lalbagh_Fort_5.JPG",
+        "title": "File:Dhaka Lalbagh Fort 5.JPG",
+        "license": "Public domain",
+        "dimensions": "1280x960"
+      }
+    ]
+  },
+  "ahsan-manzil": {
+    "files": [
+      "/media/places/ahsan-manzil.jpg",
+      "/media/places/ahsan-manzil-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "ahsan-manzil.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Ahsan_Manzil",
+        "title": "Ahsan Manzil",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x935"
+      },
+      {
+        "file": "ahsan-manzil-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Ahsan_Manzil-Front_View.jpg",
+        "title": "File:Ahsan Manzil-Front View.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x855"
+      }
+    ]
+  },
+  "mahasthangarh": {
+    "files": [
+      "/media/places/mahasthangarh.jpg",
+      "/media/places/mahasthangarh-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "mahasthangarh.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Mahasthangarh",
+        "title": "Mahasthangarh",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x1050"
+      },
+      {
+        "file": "mahasthangarh-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mahasthangarh,_Bogra_Bangladesh.jpg",
+        "title": "File:Mahasthangarh, Bogra Bangladesh.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x770"
+      }
+    ]
+  },
