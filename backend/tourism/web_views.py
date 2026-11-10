@@ -458,3 +458,60 @@ def hotels_food_view(request):
 
 
 def assistant_view(request):
+    initial_q = request.GET.get("q", "")
+    return render(request, "assistant.html", {"initial_q": initial_q})
+
+
+def translator_view(request):
+    selected_lang = (request.GET.get("lang") or "bn").strip().lower()
+    lang_map = {l["code"]: l for l in SUPPORTED_LANGUAGES}
+    if selected_lang not in lang_map:
+        selected_lang = "bn"
+    active_lang = lang_map[selected_lang]
+
+    selected_cat = request.GET.get("category", "All")
+    categories = sorted(list({p["category"] for p in TRAVEL_PHRASES}))
+    raw_phrases = (
+        TRAVEL_PHRASES
+        if selected_cat == "All"
+        else [p for p in TRAVEL_PHRASES if p["category"] == selected_cat]
+    )
+
+    display_phrases = []
+    for p in raw_phrases:
+        target_text = p.get(selected_lang, p["bn"])
+        display_phrases.append({
+            "id": p["id"],
+            "category": p["category"],
+            "en": p["en"],
+            "bn": p["bn"],
+            "phonetic_bn": p["phonetic_bn"],
+            "display_text": target_text,
+            "speech_code": active_lang["speech_code"],
+            "lang_name": active_lang["name"],
+            "show_phonetic": selected_lang == "bn",
+        })
+
+    return render(
+        request,
+        "translator.html",
+        {
+            "languages": SUPPORTED_LANGUAGES,
+            "active_lang": active_lang,
+            "categories": categories,
+            "phrases": display_phrases,
+            "selected_lang": selected_lang,
+            "selected_cat": selected_cat,
+        },
+    )
+
+
+def safety_view(request):
+    if request.method == "POST":
+        LocalGuide.objects.create(
+            full_name=(request.POST.get("full_name") or "").strip()[:140],
+            city=(request.POST.get("city") or "").strip()[:80],
+            division=request.POST.get("division", "Dhaka"),
+            languages=[x.strip() for x in (request.POST.get("languages") or "English, Bengali").split(",") if x.strip()],
+            specialties=[x.strip() for x in (request.POST.get("specialties") or "Sightseeing").split(",") if x.strip()],
+            daily_rate_bdt=int(request.POST.get("daily_rate_bdt") or 2000),
