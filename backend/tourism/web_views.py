@@ -55,3 +55,61 @@ def home_view(request):
 
     return render(
         request,
+        "home.html",
+        {
+            "hero_places": hero_places,
+            "categories": categories,
+            "featured_places": featured_places,
+            "culinary_places": culinary_places,
+            "famous_foods": home_food_picks,
+            "food_sections": FOOD_SECTIONS,
+            "total_foods_count": len(FAMOUS_FOODS),
+            "all_places_light": all_places_light,
+        },
+    )
+
+
+def foods_view(request):
+    selected_section = request.GET.get("section", "all")
+    selected_place = request.GET.get("place", "").strip()
+
+    region_options = sorted(list({f["famous_place"] for f in FAMOUS_FOODS}))
+    grouped_sections = []
+    for sec in FOOD_SECTIONS:
+        if selected_section != "all" and sec["key"] != selected_section:
+            continue
+        items = [f for f in FAMOUS_FOODS if f["section"] == sec["key"]]
+        if selected_place:
+            items = [f for f in items if selected_place.lower() in f["famous_place"].lower() or selected_place.lower() in f["region"].lower()]
+        if items:
+            grouped_sections.append({"meta": sec, "items": items})
+
+    return render(
+        request,
+        "foods.html",
+        {
+            "sections": FOOD_SECTIONS,
+            "grouped_sections": grouped_sections,
+            "selected_section": selected_section,
+            "selected_place": selected_place,
+            "region_options": region_options,
+            "total_count": len(FAMOUS_FOODS),
+        },
+    )
+
+
+def destinations_view(request):
+    qs = Place.objects.select_related("category").annotate(
+        review_count=Count("reviews", filter=Q(reviews__is_approved=True))
+    )
+    categories = Category.objects.annotate(place_count=Count("places")).order_by("display_order")
+    divisions = sorted(list(Place.objects.values_list("division", flat=True).distinct()))
+
+    selected_cat = request.GET.get("category", "")
+    selected_div = request.GET.get("division", "")
+    selected_tier = request.GET.get("budget_tier", "")
+    selected_interest = request.GET.get("interest", "")
+    indoor_only = request.GET.get("indoor", "")
+    nlp_query = (request.GET.get("nlp") or request.GET.get("q") or "").strip()
+
+    if selected_cat:
