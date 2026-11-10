@@ -527,3 +527,69 @@
       }
     ]
   },
+  "chattogram-mezban": {
+    "files": [
+      "/media/places/chattogram-mezban.jpg",
+      "/media/places/chattogram-mezban-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "chattogram-mezban.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Mezban",
+        "title": "Mezban",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      },
+      {
+        "file": "chattogram-mezban-2.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Kala_Bhuna",
+        "title": "Kala Bhuna",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      }
+    ]
+  },
+  "sylhet-tea-food": {
+    "files": [
+      "/media/places/sylhet-tea-food.jpg",
+      "/media/places/sylhet-tea-food-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "sylhet-tea-food.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Seven-color_tea",
+        "title": "Seven-color tea",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x959"
+      },
+      {
+        "file": "sylhet-tea-food-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Seven_color_tea_cabin_at_Lawachara_national_park.jpeg",
+        "title": "File:Seven color tea cabin at Lawachara national park.jpeg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x720"
+      }
+    ]
+  },
+  "tanguar-haor": {
+    "files": [
+      "/media/places/tanguar-haor.jpg",
+      "/media/places/tanguar-haor-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "tanguar-haor.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Tanguar_Haor",
+        "title": "Tanguar Haor",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x937"
+      },
+      {
+        "file": "tanguar-haor-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Tanguar_haor,_Bangladesh_01.jpg",
+        "title": "File:Tanguar haor, Bangladesh 01.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x798"
+      }
+    ]
+  },
