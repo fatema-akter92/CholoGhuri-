@@ -159,3 +159,56 @@ class HotelSerializer(serializers.ModelSerializer):
             "contact_phone",
             "booking_url",
             "is_verified_business",
+            "link_status",
+        ]
+
+
+class RestaurantSerializer(serializers.ModelSerializer):
+    place_name = serializers.CharField(source="place.name", read_only=True, default="")
+
+    class Meta:
+        model = Restaurant
+        fields = [
+            "id",
+            "name",
+            "slug",
+            "place",
+            "place_name",
+            "city",
+            "division",
+            "address",
+            "latitude",
+            "longitude",
+            "cuisine_type",
+            "regional_specialty",
+            "price_range",
+            "avg_meal_bdt",
+            "rating",
+            "menu_highlights",
+            "opening_hours",
+            "contact_phone",
+            "image_url",
+            "is_halal_verified",
+            "is_vegetarian_friendly",
+            "is_nut_free_safe",
+            "is_dairy_free_safe",
+            "is_shellfish_free_safe",
+            "dietary_notes",
+            "is_verified_business",
+        ]
+
+
+class SafetyFacilitySerializer(serializers.ModelSerializer):
+    facility_label = serializers.CharField(source="get_facility_type_display", read_only=True)
+    place_name = serializers.CharField(source="place.name", read_only=True, default="")
+
+    class Meta:
+        model = SafetyFacility
+        fields = [
+            "id",
+            "name",
+            "facility_type",
+            "facility_label",
+            "city",
+            "division",
+            "place",
