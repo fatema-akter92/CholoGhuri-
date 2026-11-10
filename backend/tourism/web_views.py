@@ -745,3 +745,61 @@ def admin_portal_view(request):
                     "entry_fee_bdt": int(request.POST.get("entry_fee_bdt") or 0),
                     "entry_fee_foreigner_bdt": int(request.POST.get("entry_fee_foreigner_bdt") or 0),
                     "opening_hours": (request.POST.get("opening_hours") or "9:00 AM – 5:00 PM").strip(),
+                    "budget_tier": request.POST.get("budget_tier", "mid"),
+                    "seasonal_restrictions": (request.POST.get("seasonal_restrictions") or "").strip(),
+                    "info_source": (request.POST.get("info_source") or "Admin Field Verification").strip(),
+                    "last_verified_date": date.today(),
+                },
+            )
+            messages.success(request, f"Destination '{name}' saved & verified.")
+            return redirect("/admin-portal/?tab=content")
+
+        elif action == "delete_place":
+            Place.objects.filter(pk=int(request.POST.get("place_id"))).delete()
+            messages.info(request, "Destination removed.")
+            return redirect("/admin-portal/?tab=content")
+
+        elif action == "verify_place_now":
+            Place.objects.filter(pk=int(request.POST.get("place_id"))).update(last_verified_date=date.today())
+            messages.success(request, "Destination verification date refreshed to today.")
+            return redirect("/admin-portal/?tab=freshness")
+
+        elif action == "fix_hotel_link":
+            Hotel.objects.filter(pk=int(request.POST.get("hotel_id"))).update(
+                link_status="active", is_verified_business=True
+            )
+            messages.success(request, "Hotel booking link marked active & verified.")
+            return redirect("/admin-portal/?tab=freshness")
+
+        elif action == "guide_status":
+            LocalGuide.objects.filter(pk=int(request.POST.get("guide_id"))).update(
+                verification_status=request.POST.get("status", "verified")
+            )
+            messages.success(request, "Guide verification status updated.")
+            return redirect("/admin-portal/?tab=moderation")
+
+        elif action == "moderate_review":
+            rev = get_object_or_404(Review, pk=int(request.POST.get("review_id")))
+            decision = request.POST.get("decision")
+            if decision == "approve":
+                rev.is_reported = False
+                rev.is_approved = True
+                rev.save()
+            elif decision == "hide":
+                rev.is_approved = False
+                rev.save()
+            elif decision == "delete":
+                rev.delete()
+            messages.success(request, "Review moderation action applied.")
+            return redirect("/admin-portal/?tab=moderation")
+
+        elif action == "resolve_feedback":
+            fb = get_object_or_404(FeedbackCorrection, pk=int(request.POST.get("feedback_id")))
+            fb.status = request.POST.get("status", "resolved")
+            fb.admin_note = (request.POST.get("admin_note") or "Updated by Admin").strip()
+            fb.save()
+            messages.success(request, "Correction request updated.")
+            return redirect("/admin-portal/?tab=moderation")
+
+    most_viewed = list(Place.objects.order_by("-view_count")[:8])
+    max_views = max([p.view_count for p in most_viewed] or [1])
