@@ -1262,3 +1262,63 @@ class Command(BaseCommand):
                     "address": addr,
                     "latitude": lat,
                     "longitude": lon,
+                    "cuisine_type": cuisine,
+                    "regional_specialty": spec,
+                    "price_range": prange,
+                    "avg_meal_bdt": meal,
+                    "rating": rating,
+                    "menu_highlights": menu,
+                    "opening_hours": hrs,
+                    "contact_phone": phone,
+                    "image_url": img,
+                    "is_halal_verified": halal,
+                    "is_vegetarian_friendly": veg,
+                    "is_nut_free_safe": nut_f,
+                    "is_dairy_free_safe": dairy_f,
+                    "is_shellfish_free_safe": shell_f,
+                    "dietary_notes": dnotes,
+                    "is_verified_business": True,
+                },
+            )
+
+        # 6. Safety & Emergency Facilities (Hospitals, Pharmacies, Tourist Police, Coast Guard)
+        safety_data = [
+            ("Dhaka Medical College Hospital (DMCH)", "hospital", "Dhaka", "Dhaka", "lalbagh-fort", "Secretariat Road, Bakshibazar, Dhaka", "+880-2-55165088", True, 23.7258, 90.3976, "Major 24/7 tertiary emergency hospital 800m from Lalbagh Fort."),
+            ("Square Hospital Dhaka", "hospital", "Dhaka", "Dhaka", "lalbagh-fort", "18/F Bir Uttam Qazi Nuruzzaman Sarani, Panthapath", "+880-10616", True, 23.7529, 90.3816, "International-standard private emergency & trauma center (Hotline 10616)."),
+            ("Lazz Pharma 24h Kalabagan", "pharmacy", "Dhaka", "Dhaka", "lalbagh-fort", "Mirpur Road, Kalabagan, Dhaka", "+880-1711-009988", True, 23.7484, 90.3802, "Verified 24/7 authentic pharmacy chain."),
+            ("Tourist Police Dhaka Region Desk", "tourist_police", "Dhaka", "Dhaka", "ahsan-manzil", "Police Plaza / Old Dhaka Patrol Unit", "01320-222222", True, 23.7130, 90.4070, "24/7 English-speaking Tourist Police helpline."),
+            ("Cox's Bazar Tourist Police Headquarters", "tourist_police", "Cox's Bazar", "Chattogram", "coxs-bazar", "Laboni Beach Point, Cox's Bazar", "01320-160000", True, 21.4295, 91.9748, "Beach patrol, lost-and-found, and emergency beach rescue desk."),
+            ("Cox's Bazar 250-Bed District Sadar Hospital", "hospital", "Cox's Bazar", "Chattogram", "coxs-bazar", "Hospital Road, Cox's Bazar", "+880-341-64066", True, 21.4418, 91.9786, "Main government emergency hospital near Kolatoli & town center."),
+            ("Bangladesh Coast Guard Station Saint Martin", "coast_guard", "Cox's Bazar", "Chattogram", "saint-martins-island", "Jetty Road, Saint Martin's Island", "16111", True, 20.6311, 92.3238, "Maritime safety, jetty clearance & emergency evacuation."),
+            ("Sylhet MAG Osmani Medical College Hospital", "hospital", "Sylhet", "Sylhet", "jaflong", "Medical Road, Kajolshah, Sylhet", "+880-821-713667", True, 24.9012, 91.8528, "Primary 24/7 referral hospital for Sylhet division."),
+            ("Sylhet Tourist Police Unit", "tourist_police", "Sylhet", "Sylhet", "jaflong", "Jaflong & Sylhet Zonal Patrol", "01320-146000", True, 24.9001, 91.8710, "Covers Jaflong, Ratargul & Sreemangal tourist circuits."),
+            ("Khulna Medical College Hospital", "hospital", "Khulna", "Khulna", "sundarbans", "Boyra Main Road, Khulna", "+880-41-760350", True, 22.8286, 89.5382, "24/7 emergency hospital serving Sundarbans & Bagerhat."),
+            ("Bagerhat Tourist Police Booth", "tourist_police", "Bagerhat", "Khulna", "shat-gambuj-mosque", "Shat Gambuj Mosque Complex Gate, Bagerhat", "01320-142000", True, 22.6740, 89.7422, "On-site heritage assistance & security."),
+            ("Bandarban Sadar Hospital", "hospital", "Bandarban", "Chattogram", "bandarban", "Hospital Para, Bandarban Town", "+880-361-62411", True, 22.1966, 92.2225, "Primary medical & trauma center for Bandarban Hills."),
+            ("Rangamati General Hospital", "hospital", "Rangamati", "Chattogram", "rangamati", "Reserve Bazar Road, Rangamati", "+880-351-62233", True, 22.6481, 92.1852, "24/7 district medical support near Kaptai Lake."),
+            ("Kuakata 20-Bed Hospital & Tourist Police", "tourist_police", "Patuakhali", "Barishal", "kuakata", "Kuakata Zero Point Beach Road", "01320-154000", True, 21.8178, 90.1211, "Coastal patrol & immediate medical first-aid support."),
+        ]
+
+        for s_name, ftype, city, div, p_slug, addr, phone, e24, lat, lon, notes in safety_data:
+            SafetyFacility.objects.update_or_create(
+                name=s_name,
+                defaults={
+                    "facility_type": ftype,
+                    "city": city,
+                    "division": div,
+                    "place": places.get(p_slug),
+                    "address": addr,
+                    "phone": phone,
+                    "emergency_24h": e24,
+                    "latitude": lat,
+                    "longitude": lon,
+                    "verified_notes": notes,
+                },
+            )
+
+        # 7. Local Guides (Some verified, some pending for Admin Verification queue!)
+        guides_data = [
+            ("Tariqul Islam", "Old Dhaka", "Dhaka", ["English", "Bengali", "Hindi"], ["Mughal Heritage", "Food Trails", "Photography"], 2200, "+880-1712-901122", "BTB-DHK-2025-104", "verified", "Licensed Old Dhaka walking storyteller with 8 years guiding international travelers."),
+            ("Aung Shwe Marma", "Bandarban", "Chattogram", ["English", "Bengali", "Marma"], ["Boga Lake Trek", "Nafakhum", "Hill Culture"], 2500, "+880-1823-445511", "CHT-BND-2025-078", "verified", "Certified Bandarban mountain expedition & Ruma/Thanchi community guide."),
+            ("Kamrul Hasan", "Khulna / Sundarbans", "Khulna", ["English", "Bengali"], ["Mangrove Ecology", "Birding", "Bagerhat UNESCO"], 2800, "+880-1718-332244", "FD-KHL-2026-019", "verified", "Naturalist and Sundarbans eco-cruise coordinator."),
+            ("Nusrat Jahan", "Sylhet / Sreemangal", "Sylhet", ["English", "Bengali", "Japanese"], ["Tea Estates", "Lawachara Gibbons", "Tanguar Haor"], 2600, "+880-1744-556677", "BTB-SYL-2026-009", "pending", "Bilingual Sylhet heritage & eco-tour specialist awaiting final NID verification."),
