@@ -198,3 +198,53 @@
 const comparedHotels = [];
 
 function renderCompare() {
+  const bar = document.getElementById("compareBar");
+  const grid = document.getElementById("compareGrid");
+  if (!bar || !grid) return;
+  if (comparedHotels.length === 0) {
+    bar.style.display = "none";
+    return;
+  }
+  bar.style.display = "block";
+  grid.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>City</th>
+          <th>Nightly Rate</th>
+          <th>Rating</th>
+          <th>Facilities</th>
+          <th>Contact</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${comparedHotels.map((h) => `
+          <tr>
+            <td><strong>${h.name}</strong></td>
+            <td>${h.city}</td>
+            <td><strong style="color:var(--cyan-700);">৳${h.price}</strong></td>
+            <td>&#9733; ${h.rating}</td>
+            <td>${h.facilities}</td>
+            <td>${h.phone}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function addHotelToCompare(name, city, price, rating, facilities, phone) {
+  if (comparedHotels.some((h) => h.name === name)) return;
+  if (comparedHotels.length >= 3) comparedHotels.shift();
+  comparedHotels.push({ name, city, price, rating, facilities, phone });
+  renderCompare();
+  document.getElementById("compareBar")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function clearCompare() {
+  comparedHotels.length = 0;
+  renderCompare();
+}
+</script>
+{% endblock %}
