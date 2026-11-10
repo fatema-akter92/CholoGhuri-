@@ -182,3 +182,49 @@
 
   <!-- Footer -->
   <footer class="site-footer no-print">
+    <div class="container">
+      <div class="grid-4" style="gap:28px; margin-bottom:30px;">
+        <div>
+          <h4 style="font-size:19px;">Cholo<span style="color:var(--cyan-400);">Ghuri</span></h4>
+          <p style="font-size:13.5px; color:#a5f3fc; line-height:1.6;">
+            Discover Bangladesh. Travel Smarter. Explore Beyond the Ordinary. Verified destinations, AI route &amp; budget planning, live weather backups, and 24/7 traveler safety.
+          </p>
+        </div>
+        <div>
+          <h4>Explore Bangladesh</h4>
+          <a href="/destinations/">All 30+ Destinations</a>
+          <a href="/destinations/?category=sea-beaches">Sea Beaches</a>
+          <a href="/destinations/?category=hills-nature">Hills &amp; Nature</a>
+          <a href="/destinations/?category=historical-places">Historical Places</a>
+          <a href="/destinations/?category=hidden-gems">Hidden Gems &amp; Haors</a>
+        </div>
+        <div>
+          <h4>Smart Travel Tools</h4>
+          <a href="/planner/">Smart Trip &amp; Budget Planner</a>
+          <a href="/map/">Interactive Map &amp; Routes</a>
+          <a href="/hotels-food/">Hotels &amp; Halal/Allergy Food</a>
+          <a href="/translator/">Multilingual Translator</a>
+          <a href="/assistant/">AI Travel Assistant</a>
+        </div>
+        <div>
+          <h4>Trust &amp; Emergency</h4>
+          <a href="/safety/">Emergency 999 &amp; Tourist Police</a>
+          <a href="/safety/#guides">Verified Local Guides</a>
+          <a href="/dashboard/?tab=feedback">Submit Correction Request</a>
+          {% if request.user.is_staff %}
+            <a href="/admin-portal/">Admin &amp; Analytics Portal</a>
+          {% endif %}
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(165, 243, 252, 0.2); padding-top:18px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; font-size:12.5px; color:#67e8f9;">
+        <span>&copy; 2026 CholoGhuri — Smart Bangladesh Tourism Platform. Developed by Fatema.</span>
+        <span>All destination photography sourced &amp; verified locally from Wikimedia Commons.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'vendor/leaflet/leaflet.js' %}"></script>
+  <script src="{% static 'js/app.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>
