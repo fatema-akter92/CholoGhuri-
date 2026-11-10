@@ -170,3 +170,47 @@
       </div>
 
       <div class="card card-static" style="background:var(--bg-cream);">
+        <div class="card-body">
+          <h4 style="margin-bottom:8px;">Apply as Verified Local Guide</h4>
+          <form method="post">
+            {% csrf_token %}
+            <input class="input" type="text" name="full_name" placeholder="Full Name" required style="margin-bottom:8px;" />
+            <div class="grid-2" style="gap:8px; margin-bottom:8px;">
+              <input class="input" type="text" name="city" placeholder="City (e.g. Sylhet)" required />
+              <input class="input" type="text" name="division" placeholder="Division" value="Dhaka" required />
+            </div>
+            <input class="input" type="text" name="languages" placeholder="Languages (English, Bengali)" style="margin-bottom:8px;" />
+            <input class="input" type="text" name="specialties" placeholder="Specialties (Heritage, Hills)" style="margin-bottom:8px;" />
+            <div class="grid-2" style="gap:8px; margin-bottom:8px;">
+              <input class="input" type="number" name="daily_rate_bdt" placeholder="Rate ৳/day" value="2200" />
+              <input class="input" type="text" name="phone" placeholder="Phone Number" required />
+            </div>
+            <input class="input" type="text" name="license_ref" placeholder="BTB / Guide License ID" style="margin-bottom:8px;" />
+            <textarea class="textarea" name="bio" rows="2" placeholder="Short guiding experience..." style="margin-bottom:10px;"></textarea>
+            <button class="btn btn-cyan btn-sm" style="width:100%;" type="submit">Submit for Verification</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (!window.L) return;
+  const map = initGoogleBaseMap("safetyMap", [23.685, 90.3563], 7, true);
+  const items = [
+    {% for f in facilities %}
+      { name: "{{ f.name|escapejs }}", type: "{{ f.get_facility_type_display|escapejs }}", phone: "{{ f.phone|escapejs }}", lat: {{ f.latitude }}, lon: {{ f.longitude }} },
+    {% endfor %}
+  ];
+  items.forEach((f) => {
+    L.circleMarker([f.lat, f.lon], { radius: 7, color: "#fff", weight: 2, fillColor: "#dc2626", fillOpacity: 0.9 })
+      .bindPopup(`<strong>${f.name}</strong><br/>${f.type}<br/>Tel: <strong>${f.phone}</strong>`)
+      .addTo(map);
+  });
+});
+</script>
+{% endblock %}
