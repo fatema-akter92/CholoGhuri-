@@ -86,3 +86,48 @@ def parse_natural_language_query(raw_query: str):
         intent["budget_tier"] = "luxury"
 
     if any(w in lower for w in ("rain", "rainy", "monsoon", "indoor", "wet")):
+        intent["indoor_only"] = True
+
+    # Location hints
+    for key, mapped_districts in CITY_SYNONYMS.items():
+        if re.search(rf"\b{re.escape(key)}\b", lower):
+            for d in mapped_districts:
+                if d not in intent["locations"]:
+                    intent["locations"].append(d)
+
+    # Interests
+    for interest, words in INTEREST_KEYWORDS.items():
+        if any(re.search(rf"\b{re.escape(w)}\b", lower) for w in words):
+            intent["interests"].append(interest)
+
+    # Remaining meaningful keywords
+    stop_words = {
+        "i", "have", "only", "in", "at", "for", "with", "my", "is", "the", "a", "an", "and",
+        "or", "to", "of", "on", "near", "best", "places", "place", "visit", "want", "travel",
+        "bangladesh", "trip", "tour", "hours", "hour", "hrs", "days", "day", "budget", "taka", "bdt",
+        "love", "like", "show", "me", "find", "good", "top", "around",
+    }
+    tokens = [t for t in re.findall(r"[a-z0-9']+", lower) if t not in stop_words and len(t) > 2]
+    intent["keywords"] = tokens[:8]
+    return intent
+
+
+def search_places_nlp(raw_query: str, queryset=None):
+    qs = queryset if queryset is not None else Place.objects.select_related("category").all()
+    intent = parse_natural_language_query(raw_query)
+
+    if not raw_query.strip():
+        return intent, "Showing all verified destinations across Bangladesh.", qs
+
+    filtered = qs
+    notes = []
+
+    if intent["locations"]:
+        loc_q = Q()
+        for loc in intent["locations"]:
+            loc_q |= (
+                Q(division__icontains=loc)
+                | Q(district__icontains=loc)
+                | Q(address__icontains=loc)
+            )
+        loc_matches = filtered.filter(loc_q)
