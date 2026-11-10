@@ -217,3 +217,58 @@ function speakPhrase(text, langCode = "bn-BD") {
 /* Helper: Open Show Local Modal */
 function openShowLocalModal(nativeText, phoneticText, englishText) {
   const modal = document.getElementById("showLocalModal");
+  if (!modal) return;
+  document.getElementById("showLocalNative").textContent = nativeText || "";
+  document.getElementById("showLocalPhonetic").textContent = phoneticText ? `Pronounce: ${phoneticText}` : "";
+  document.getElementById("showLocalEnglish").textContent = englishText || "";
+  modal.classList.add("open");
+}
+
+function closeShowLocalModal() {
+  document.getElementById("showLocalModal")?.classList.remove("open");
+}
+
+/* Helper: Google Maps Powered Interactive Map (avoids OSM Access Denied) */
+function initGoogleBaseMap(elementId, center = [23.685, 90.3563], zoom = 7, showLayerControl = true) {
+  if (!window.L) return null;
+  const map = L.map(elementId).setView(center, zoom);
+
+  const googleRoad = L.tileLayer("https://mt{s}.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}", {
+    subdomains: ["0", "1", "2", "3"],
+    maxZoom: 20,
+    attribution: "&copy; Google Maps",
+  });
+
+  const googleHybrid = L.tileLayer("https://mt{s}.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}", {
+    subdomains: ["0", "1", "2", "3"],
+    maxZoom: 20,
+    attribution: "&copy; Google Satellite",
+  });
+
+  const googleTerrain = L.tileLayer("https://mt{s}.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}", {
+    subdomains: ["0", "1", "2", "3"],
+    maxZoom: 20,
+    attribution: "&copy; Google Terrain",
+  });
+
+  const cartoLight = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+    subdomains: "abcd",
+    maxZoom: 19,
+    attribution: "&copy; CARTO",
+  });
+
+  googleRoad.addTo(map);
+  if (showLayerControl) {
+    L.control.layers(
+      {
+        "Google Maps (Road)": googleRoad,
+        "Google Satellite": googleHybrid,
+        "Google Terrain": googleTerrain,
+        "Clean Map (Carto)": cartoLight,
+      },
+      null,
+      { position: "topright" }
+    ).addTo(map);
+  }
+  return map;
+}
