@@ -285,3 +285,61 @@ def planner_view(request):
                 "5_days": 5.0,
                 "7_days": 7.0,
             }
+            duration_days = duration_map.get(duration_label, 5.0)
+            budget_bdt = int(request.POST.get("budget_bdt") or 30000)
+            budget_tier = request.POST.get("budget_tier", "mid")
+            traveler_type = request.POST.get("traveler_type", "solo")
+            interests = request.POST.getlist("interests") or ["nature", "sea", "historical", "food"]
+            weather_aware = request.POST.get("weather_aware") == "on"
+
+            generated_plan = build_smart_itinerary(
+                start_city=start_city,
+                duration_days=duration_days,
+                duration_label=duration_label.replace("_", " "),
+                budget_bdt=budget_bdt,
+                budget_tier=budget_tier,
+                traveler_type=traveler_type,
+                interests=interests,
+                weather_aware=weather_aware,
+            )
+
+            if request.POST.get("save_trip") == "1":
+                saved = TripPlan.objects.create(
+                    user=request.user if request.user.is_authenticated else None,
+                    title=generated_plan["title"],
+                    start_city=start_city,
+                    duration_days=duration_days,
+                    duration_label=generated_plan["duration_label"],
+                    budget_bdt=budget_bdt,
+                    budget_tier=budget_tier,
+                    traveler_type=traveler_type,
+                    interests=interests,
+                    itinerary_json=generated_plan["itinerary"],
+                    estimated_breakdown_json=generated_plan["estimated_breakdown"],
+                    weather_notes=generated_plan["weather_notes"],
+                )
+                messages.success(request, f"Trip saved! Share Code: {saved.share_code}")
+                return redirect(f"/trips/shared/{saved.share_code}/")
+
+        elif action == "add_expense" and request.user.is_authenticated:
+            trip_id = int(request.POST.get("trip_id"))
+            trip = get_object_or_404(TripPlan, pk=trip_id, user=request.user)
+            TripExpense.objects.create(
+                trip=trip,
+                category=request.POST.get("category", "food"),
+                title=(request.POST.get("title") or "Expense").strip()[:160],
+                amount_bdt=int(request.POST.get("amount_bdt") or 0),
+                day_number=int(request.POST.get("day_number") or 1),
+            )
+            messages.success(request, "Actual expense added to tracker.")
+            return redirect("/planner/#saved-trips")
+
+        elif action == "delete_expense" and request.user.is_authenticated:
+            exp_id = int(request.POST.get("expense_id"))
+            TripExpense.objects.filter(pk=exp_id, trip__user=request.user).delete()
+            messages.info(request, "Expense removed.")
+            return redirect("/planner/#saved-trips")
+
+    # Pre-populate a helpful default preview when first visiting planner
+    if not generated_plan:
+        generated_plan = build_smart_itinerary(
