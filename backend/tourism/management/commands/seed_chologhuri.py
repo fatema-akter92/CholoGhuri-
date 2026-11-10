@@ -1382,3 +1382,64 @@ class Command(BaseCommand):
                 start_city="Dhaka",
                 duration_days=5.0,
                 duration_label="5 days",
+                budget_bdt=30000,
+                budget_tier="mid",
+                traveler_type="solo",
+                interests=["nature", "sea", "historical", "food"],
+                itinerary_json=sample_plan["itinerary"],
+                estimated_breakdown_json=sample_plan["estimated_breakdown"],
+                weather_notes=sample_plan["weather_notes"],
+            )
+            TripExpense.objects.create(trip=tp, category="transport", title="Dhaka -> Cox's Bazar AC Coach", amount_bdt=2000, day_number=1)
+            TripExpense.objects.create(trip=tp, category="hotel", title="Hotel Kollol (2 nights)", amount_bdt=8400, day_number=1)
+            TripExpense.objects.create(trip=tp, category="food", title="Poushee Seafood & Old Dhaka Biryani", amount_bdt=1450, day_number=2)
+            TripExpense.objects.create(trip=tp, category="entry_fee", title="Lalbagh Fort & Museum Tickets", amount_bdt=430, day_number=4)
+
+        if not FeedbackCorrection.objects.exists():
+            FeedbackCorrection.objects.create(
+                user=traveler_user,
+                place=places["saint-martins-island"],
+                subject="Seasonal Teknaf Ferry Schedule Confirmation",
+                message="Please highlight that ship boarding at Damia Jetty closes promptly at 9:15 AM during peak season.",
+                correction_type="hours",
+                status="open",
+            )
+            FeedbackCorrection.objects.create(
+                user=traveler_user,
+                place=places["lalbagh-fort"],
+                subject="Foreigner entry ticket fee confirmation",
+                message="Confirmed foreign ticket counter accepts BDT cash cleanly.",
+                correction_type="entry_fee",
+                status="resolved",
+                admin_note="Verified and updated on destination card.",
+            )
+
+        if not SearchLog.objects.exists():
+            for q_txt, cnt, fail in [
+                ("I have only 6 hours in Dhaka", 5, False),
+                ("5 days budget 30000 nature sea historical food", 14, False),
+                ("rainy day near Sylhet", 4, False),
+                ("Sajek Valley clouds", 1, False),
+                ("ski resort bangladesh", 0, True),
+            ]:
+                SearchLog.objects.create(query=q_txt, results_count=cnt, is_failure=fail)
+
+        if not AIQueryLog.objects.exists():
+            AIQueryLog.objects.create(
+                user=traveler_user,
+                prompt="I will travel Bangladesh for 5 days, my budget is 30,000 BDT. I love nature, sea, historical places and local food.",
+                response_preview="Recommended 5-day route covering Cox's Bazar, Sreemangal, Lalbagh Fort & Old Dhaka Food Trail within ৳30,000 BDT.",
+                provider="chologhuri-engine",
+                latency_ms=42,
+                tokens_used=240,
+                estimated_cost_usd=0.0,
+                helpful_vote=1,
+            )
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Seeded CholoGhuri successfully: {Category.objects.count()} categories, "
+                f"{Place.objects.count()} places, {Hotel.objects.count()} hotels, "
+                f"{Restaurant.objects.count()} restaurants, {SafetyFacility.objects.count()} safety facilities."
+            )
+        )
