@@ -98,3 +98,53 @@ class Hotel(models.Model):
         ("broken", "Broken / Unreachable"),
     ]
 
+    name = models.CharField(max_length=180)
+    slug = models.SlugField(max_length=180, unique=True)
+    place = models.ForeignKey(Place, on_delete=models.SET_NULL, null=True, blank=True, related_name="hotels")
+    city = models.CharField(max_length=80)
+    division = models.CharField(max_length=80)
+    address = models.CharField(max_length=255)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    tier = models.CharField(max_length=15, choices=TIER_CHOICES, default="mid")
+    price_per_night_bdt = models.PositiveIntegerField(default=3500)
+    rating = models.FloatField(default=4.4)
+    facilities = models.JSONField(default=list, blank=True)
+    description = models.TextField(blank=True)
+    image_url = models.CharField(max_length=500, blank=True)
+    contact_phone = models.CharField(max_length=50, blank=True)
+    booking_url = models.URLField(blank=True)
+    is_verified_business = models.BooleanField(default=True)
+    link_status = models.CharField(max_length=20, choices=LINK_STATUS_CHOICES, default="active")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-rating", "price_per_night_bdt"]
+
+    def __str__(self):
+        return f"{self.name} — {self.city}"
+
+
+class Restaurant(models.Model):
+    PRICE_CHOICES = [
+        ("budget", "Budget (৳150–৳400)"),
+        ("moderate", "Moderate (৳400–৳1,000)"),
+        ("fine", "Fine Dining (৳1,000+)"),
+    ]
+
+    name = models.CharField(max_length=180)
+    slug = models.SlugField(max_length=180, unique=True)
+    place = models.ForeignKey(Place, on_delete=models.SET_NULL, null=True, blank=True, related_name="restaurants")
+    city = models.CharField(max_length=80)
+    division = models.CharField(max_length=80)
+    address = models.CharField(max_length=255)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    cuisine_type = models.CharField(max_length=120)
+    regional_specialty = models.CharField(max_length=140, blank=True)
+    price_range = models.CharField(max_length=20, choices=PRICE_CHOICES, default="moderate")
+    avg_meal_bdt = models.PositiveIntegerField(default=450)
+    rating = models.FloatField(default=4.5)
+    menu_highlights = models.JSONField(default=list, blank=True)
