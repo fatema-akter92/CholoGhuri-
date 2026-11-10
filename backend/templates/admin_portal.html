@@ -107,3 +107,58 @@
           {% for td in trip_durations %}
             <span class="badge badge-cyan" style="margin:2px;">{{ td.duration_label }} ({{ td.count }})</span>
           {% endfor %}
+        </div></div>
+      </div>
+
+      <!-- AI Usage, Quality, Latency & Cost Monitoring -->
+      <div class="card card-static">
+        <div class="card-body">
+          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <h3 style="margin:0;">AI Assistant Usage, Quality, Latency &amp; Cost Monitoring</h3>
+            <div style="display:flex; gap:10px;">
+              <span class="badge badge-emerald">&#128077; Helpful: {{ ai_stats.helpful }}</span>
+              <span class="badge badge-rose">&#128078; Unhelpful: {{ ai_stats.unhelpful }}</span>
+              <span class="badge badge-cyan">Tokens: {{ ai_stats.total_tokens }} &bull; Est. Cost: ${{ ai_stats.total_cost }}</span>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Prompt</th><th>Provider</th><th>Latency</th><th>Tokens</th><th>Cost ($)</th><th>Quality</th></tr>
+              </thead>
+              <tbody>
+                {% for log in ai_logs %}
+                  <tr>
+                    <td>{{ log.prompt|truncatechars:70 }}</td>
+                    <td><span class="badge badge-cyan">{{ log.provider }}</span></td>
+                    <td>{{ log.latency_ms }} ms</td>
+                    <td>{{ log.tokens_used }}</td>
+                    <td>${{ log.estimated_cost_usd }}</td>
+                    <td>{% if log.helpful_vote == 1 %}&#128077;{% elif log.helpful_vote == -1 %}&#128078;{% else %}—{% endif %}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    {% elif tab == "content" %}
+      <div class="grid-3" style="gap:20px; align-items:start;">
+        <div class="card card-static" style="background:var(--bg-cream);">
+          <div class="card-body">
+            <h3>Add / Update Tourist Destination</h3>
+            <form method="post">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="add_place" />
+              <input class="input" type="text" name="name" placeholder="Destination Name" required style="margin-bottom:8px;" />
+              <input class="input" type="text" name="tagline" placeholder="One-line tagline" required style="margin-bottom:8px;" />
+              <select class="select" name="category_id" style="margin-bottom:8px;">
+                {% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+              </select>
+              <div class="grid-2" style="gap:8px; margin-bottom:8px;">
+                <input class="input" type="text" name="division" placeholder="Division" value="Dhaka" required />
+                <input class="input" type="text" name="district" placeholder="District" value="Dhaka" required />
+              </div>
+              <div class="grid-2" style="gap:8px; margin-bottom:8px;">
+                <input class="input" type="number" step="0.0001" name="latitude" placeholder="Latitude" value="23.8103" required />
