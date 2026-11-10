@@ -51,3 +51,57 @@ class ReviewSerializer(serializers.ModelSerializer):
     def get_user_full_name(self, obj):
         full = f"{obj.user.first_name} {obj.user.last_name}".strip()
         return full or obj.user.username
+
+
+class PlaceListSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source="category.name", read_only=True)
+    category_slug = serializers.CharField(source="category.slug", read_only=True)
+    review_count = serializers.IntegerField(read_only=True, default=0)
+    is_wishlisted = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Place
+        fields = [
+            "id",
+            "name",
+            "slug",
+            "tagline",
+            "category",
+            "category_name",
+            "category_slug",
+            "division",
+            "district",
+            "latitude",
+            "longitude",
+            "image_url",
+            "entry_fee_bdt",
+            "entry_fee_foreigner_bdt",
+            "opening_hours",
+            "recommended_duration_hours",
+            "budget_tier",
+            "estimated_daily_cost_bdt",
+            "best_time_to_visit",
+            "is_indoor_friendly",
+            "interests",
+            "quick_tags",
+            "is_featured_hero",
+            "hero_headline",
+            "hero_subtitle",
+            "view_count",
+            "avg_rating",
+            "review_count",
+            "is_wishlisted",
+            "last_verified_date",
+        ]
+
+    def get_is_wishlisted(self, obj):
+        wishlist_ids = self.context.get("wishlist_place_ids")
+        if wishlist_ids is not None:
+            return obj.id in wishlist_ids
+        return False
+
+
+class PlaceDetailSerializer(PlaceListSerializer):
+    reviews = serializers.SerializerMethodField()
+
+    class Meta(PlaceListSerializer.Meta):
