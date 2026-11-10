@@ -225,3 +225,60 @@ def fetch_commons_candidates(queries):
         try:
             r = requests.get(api, params=params, headers=HEADERS, timeout=15)
             if r.status_code == 200:
+                pages = r.json().get("query", {}).get("pages", {})
+                # Sort by width/quality preference (landscape photos first)
+                sorted_pages = sorted(pages.values(), key=lambda p: p.get("index", 999))
+                for p in sorted_pages:
+                    info = (p.get("imageinfo") or [{}])[0]
+                    mime = info.get("mime", "")
+                    if mime not in ("image/jpeg", "image/png", "image/webp"):
+                        continue
+                    w = info.get("width", 0)
+                    h = info.get("height", 0)
+                    if w < 600 or h < 350:
+                        continue
+                    thumb = info.get("thumburl") or info.get("url")
+                    if not is_good_photo_url(thumb):
+                        continue
+                    meta = info.get("extmetadata", {})
+                    artist = (meta.get("Artist", {}) or {}).get("value", "Wikimedia Commons contributor")
+                    license_name = (meta.get("LicenseShortName", {}) or {}).get("value", "CC")
+                    candidates.append({
+                        "url": thumb,
+                        "source_page": info.get("descriptionurl", "https://commons.wikimedia.org"),
+                        "title": p.get("title", q),
+                        "artist": artist,
+                        "license": license_name,
+                        "is_landscape": w >= h,
+                    })
+        except Exception:
+            pass
+    # Prefer landscape photos first
+    candidates.sort(key=lambda c: (not c.get("is_landscape", True)))
+    return candidates
+
+
+def download_and_save(url: str, dest_path: Path):
+    # If Wikipedia originalimage is super high-res (e.g. >3000px), resize cleanly to max 1400px wide JPG
+    r = requests.get(url, headers=HEADERS, timeout=25)
+    r.raise_for_status()
+    img = Image.open(BytesIO(r.content))
+    img.verify()
+    img = Image.open(BytesIO(r.content)).convert("RGB")
+    w, h = img.size
+    if w < 500 or h < 300:
+        raise ValueError(f"Image too small: {w}x{h}")
+    if w > 1400:
+        ratio = 1400 / float(w)
+        img = img.resize((1400, int(h * ratio)), Image.Resampling.LANCZOS)
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    img.save(dest_path, format="JPEG", quality=85, optimize=True)
+    return img.size
+
+
+def main():
+    MEDIA_PLACES_DIR.mkdir(parents=True, exist_ok=True)
+    manifest = {}
+    if MANIFEST_PATH.exists():
+        try:
+            manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
