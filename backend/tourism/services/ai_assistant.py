@@ -86,3 +86,47 @@ def generate_ai_response(prompt: str, user=None):
     )
     is_food_query = any(
         w in lower for w in ("food", "eat", "biryani", "mezban", "halal", "vegetarian", "allergy", "restaurant")
+    )
+
+    _, _, matched_places = search_places_nlp(clean_prompt)
+    top_places = matched_places[:4] if matched_places else list(Place.objects.all()[:4])
+
+    plan_payload = None
+    if is_trip_request:
+        days = intent["duration_days"] or (0.5 if intent["duration_hours"] and intent["duration_hours"] <= 6 else 3)
+        budget = intent["budget_bdt"] or (8000 if days <= 1 else days * 5500)
+        tier = intent["budget_tier"] or ("low" if (budget / max(1, days)) < 3200 else "luxury" if (budget / max(1, days)) > 9500 else "mid")
+        label = "half day" if days < 1 else f"{int(days)} days"
+        plan_payload = build_smart_itinerary(
+            start_city=intent["locations"][0] if intent["locations"] else "Dhaka",
+            duration_days=days,
+            duration_label=label,
+            budget_bdt=budget,
+            budget_tier=tier,
+            interests=intent["interests"] or ["nature", "historical", "food"],
+            weather_aware=True,
+        )
+
+    # Build grounded deterministic response
+    lines = []
+    if plan_payload:
+        bd = plan_payload["estimated_breakdown"]
+        lines.append(
+            f"Here is a personalized **{plan_payload['duration_label']} Bangladesh smart itinerary** "
+            f"tailored to your **৳{plan_payload['budget_bdt']:,} BDT** budget ({plan_payload['budget_tier']} tier):"
+        )
+        for day in plan_payload["itinerary"]:
+            lines.append(
+                f"• **{day['title']}** — Stay: {day['hotel']['name'] if day['hotel'] else 'Day trip'} | "
+                f"Food: {day['restaurant']['name'] if day['restaurant'] else 'Local dining'} "
+                f"(Est. ৳{day['estimated_day_cost_bdt']:,})"
+            )
+        lines.append(
+            f"\n**Estimated Total:** ৳{bd['total_bdt']:,} "
+            f"(Transport ৳{bd['transport_bdt']:,} • Hotels ৳{bd['hotel_bdt']:,} • "
+            f"Food ৳{bd['food_bdt']:,} • Entry Fees ৳{bd['entry_fees_bdt']:,})."
+        )
+        lines.append(
+            "\n*Weather & Backup Note:* If heavy rain affects outdoor spots, indoor heritage sites like "
+            "Ahsan Manzil, Star Mosque, or regional culinary trails are included as instant swaps."
+        )
