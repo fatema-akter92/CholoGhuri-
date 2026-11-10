@@ -48,3 +48,53 @@
                 <option value="WiFi" {% if filters.facility == "WiFi" %}selected{% endif %}>Free WiFi</option>
               </select>
             </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-cyan" style="flex:1;" type="submit">Filter</button>
+              <a href="/hotels-food/?tab=hotels" class="btn btn-offwhite">Reset</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Comparison Tray -->
+      <div id="compareBar" class="card card-static" style="display:none; border:2px solid var(--cyan-500); background:var(--cyan-50); margin-bottom:22px;">
+        <div class="card-body">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <strong style="color:var(--cyan-900);">Hotel Side-by-Side Comparison (up to 3)</strong>
+            <button type="button" onclick="clearCompare()" class="btn btn-offwhite btn-sm">Clear Comparison</button>
+          </div>
+          <div id="compareGrid" class="table-wrap"></div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        {% for h in hotels %}
+          <article class="card">
+            <div class="place-thumb-wrap" style="height:190px;">
+              <a href="/hotels/{{ h.slug }}/">
+                <img src="{{ h.image_url }}" alt="{{ h.name }}" loading="lazy" />
+              </a>
+              <span class="place-cat-tag">{{ h.get_tier_display }}</span>
+            </div>
+            <div class="card-body">
+              <div class="place-meta-row">
+                <span>&#128205; {{ h.city }}, {{ h.division }}</span>
+                <span style="color:#d97706; font-weight:800;">&#9733; {{ h.rating }}</span>
+              </div>
+              <h3 class="place-title">
+                <a href="/hotels/{{ h.slug }}/">{{ h.name }}</a>
+              </h3>
+              <p style="font-size:13px; color:var(--text-muted); margin:0 0 10px;">{{ h.address }}</p>
+              <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px;">
+                {% for fac in h.facilities|slice:":4" %}
+                  <span class="badge badge-cyan">{{ fac }}</span>
+                {% endfor %}
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-top:1px solid var(--border); padding-top:10px;">
+                <strong style="font-size:16px; color:var(--cyan-700);">৳{{ h.price_per_night_bdt }} <small style="font-weight:500; color:var(--text-soft);">/night</small></strong>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                  <button
+                    type="button"
+                    class="btn btn-offwhite btn-sm"
+                    onclick="addHotelToCompare('{{ h.name|escapejs }}', '{{ h.city|escapejs }}', '{{ h.price_per_night_bdt }}', '{{ h.rating }}', '{{ h.facilities|join:', '|escapejs }}', '{{ h.contact_phone|escapejs }}')"
+                  >
