@@ -96,3 +96,52 @@
               <div>
                 <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Mobile / WhatsApp Number</label>
                 <input class="input" type="text" name="guest_phone" placeholder="+880-1XXX-XXXXXX" required />
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Email (for confirmation)</label>
+                <input class="input" type="email" name="guest_email" value="{% if request.user.is_authenticated %}{{ request.user.email }}{% endif %}" />
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Room Category</label>
+                <select id="roomTypeSel" class="select" name="room_type">
+                  <option value="Standard / Deluxe Room" data-mult="1.0">Standard / Deluxe (৳{{ hotel.price_per_night_bdt }}/night)</option>
+                  <option value="Premium View Suite" data-mult="1.35">Premium View Suite (1.35x rate)</option>
+                  <option value="Family Cottage / Suite" data-mult="1.6">Family Cottage / Suite (1.6x rate)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Check-In Date</label>
+                <input id="checkInDate" class="input" type="date" name="check_in" value="{{ default_checkin }}" required />
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Check-Out Date</label>
+                <input id="checkOutDate" class="input" type="date" name="check_out" value="{{ default_checkout }}" required />
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Rooms</label>
+                <input id="roomsCount" class="input" type="number" name="rooms" min="1" max="10" value="1" required />
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Guests</label>
+                <input class="input" type="number" name="guests" min="1" max="20" value="2" required />
+              </div>
+            </div>
+
+            <div style="margin-bottom:14px;">
+              <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Special Requests (Halal breakfast, early check-in, airport pick-up)</label>
+              <textarea class="textarea" name="special_requests" rows="2" placeholder="Optional notes for hotel front desk..."></textarea>
+            </div>
+
+            <div style="background:var(--cyan-50); border:1px solid var(--cyan-200); border-radius:12px; padding:14px; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px;">
+              <div>
+                <div style="font-size:12px; font-weight:700; color:var(--cyan-800);">ESTIMATED ONLINE STAY TOTAL</div>
+                <strong id="liveBookingTotal" style="font-size:24px; color:var(--cyan-900);">৳{{ hotel.price_per_night_bdt }}</strong>
+                <span id="liveNightsLabel" style="font-size:12.5px; color:var(--text-muted); margin-left:6px;">(1 night, pay at property or online link)</span>
+              </div>
+              <button type="submit" class="btn btn-cyan">Confirm Online Reservation &rarr;</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Google Map Location -->
