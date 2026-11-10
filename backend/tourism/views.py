@@ -168,3 +168,60 @@ class PlaceDetailView(APIView):
             dist = haversine_km(place.latitude, place.longitude, s.latitude, s.longitude)
             if s.place_id == place.id or dist <= 70 or s.division == place.division:
                 d = SafetyFacilitySerializer(s).data
+                d["distance_km"] = dist
+                nearby_safety.append(d)
+        nearby_safety.sort(key=lambda x: x["distance_km"])
+
+        detail_data["nearby_hotels"] = nearby_hotels[:6]
+        detail_data["nearby_restaurants"] = nearby_restaurants[:6]
+        detail_data["nearby_safety"] = nearby_safety[:6]
+        return Response(detail_data)
+
+
+class PlaceWeatherView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        place = get_object_or_404(Place.objects.select_related("category"), slug=slug)
+        return Response(get_destination_weather(place))
+
+
+class PlaceReviewView(APIView):
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsAuthenticated()]
+        return [AllowAny()]
+
+    def get(self, request, slug):
+        place = get_object_or_404(Place, slug=slug)
+        reviews = place.reviews.filter(is_approved=True).select_related("user")
+        return Response(ReviewSerializer(reviews, many=True).data)
+
+    def post(self, request, slug):
+        place = get_object_or_404(Place, slug=slug)
+        rating = int(request.data.get("rating", 5))
+        rating = max(1, min(5, rating))
+        review = Review.objects.create(
+            place=place,
+            user=request.user,
+            rating=rating,
+            title=(request.data.get("title") or "Great Experience").strip()[:160],
+            comment=(request.data.get("comment") or "").strip(),
+            photo_url=(request.data.get("photo_url") or "").strip(),
+            visit_type=request.data.get("visit_type", "friends"),
+        )
+        avg = place.reviews.filter(is_approved=True).aggregate(avg=Avg("rating"))["avg"]
+        if avg:
+            place.avg_rating = round(float(avg), 2)
+            place.save(update_fields=["avg_rating"])
+        return Response(ReviewSerializer(review).data, status=status.HTTP_201_CREATED)
+
+
+class ReportReviewView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, pk):
+        review = get_object_or_404(Review, pk=pk)
+        review.is_reported = True
+        review.report_reason = (request.data.get("reason") or "Flagged by community traveler")[:255]
+        review.save(update_fields=["is_reported", "report_reason"])
