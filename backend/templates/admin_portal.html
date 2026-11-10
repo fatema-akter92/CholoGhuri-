@@ -52,3 +52,58 @@
                 <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:4px;">
                   <span>{{ p.name }} ({{ p.district }})</span>
                   <span style="color:var(--cyan-700);">{{ p.view_count }} views</span>
+                </div>
+                <div class="bar-track"><div class="bar-fill" style="width:{% widthratio p.view_count max_views 100 %}%;"></div></div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Most Saved Places -->
+        <div class="card card-static">
+          <div class="card-body">
+            <h3>Most-Saved Wishlist Places</h3>
+            {% for p in most_saved %}
+              <div style="margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:4px;">
+                  <span>{{ p.name }}</span>
+                  <span style="color:var(--cyan-700);">{{ p.save_count }} saves</span>
+                </div>
+                <div class="bar-track"><div class="bar-fill" style="width:{% if max_saves %}{% widthratio p.save_count max_saves 100 %}{% else %}0{% endif %}%;"></div></div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3" style="gap:20px; margin-bottom:24px;">
+        <!-- Popular & Failed Searches -->
+        <div class="card card-static"><div class="card-body">
+          <h3>Popular Searches</h3>
+          {% for s in popular_searches %}
+            <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid #eef6f8;">
+              <span>"{{ s.query }}"</span><span class="badge badge-cyan">{{ s.count }}x</span>
+            </div>
+          {% endfor %}
+        </div></div>
+
+        <div class="card card-static"><div class="card-body">
+          <h3>Search Failures (0 Results)</h3>
+          {% for s in failed_searches %}
+            <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid #eef6f8;">
+              <span style="color:#991b1b;">"{{ s.query }}"</span><span class="badge badge-rose">{{ s.count }}x</span>
+            </div>
+          {% empty %}<p style="color:var(--text-soft);">No failed searches recorded.</p>{% endfor %}
+        </div></div>
+
+        <div class="card card-static"><div class="card-body">
+          <h3>Popular Trip Budgets &amp; Durations</h3>
+          {% for tb in trip_budgets %}
+            <div style="font-size:13px; margin-bottom:6px;">
+              <strong>{{ tb.budget_tier|title }} Tier:</strong> {{ tb.count }} trips (Avg ৳{{ tb.avg_bdt|floatformat:0 }})
+            </div>
+          {% endfor %}
+          <hr style="border:none; border-top:1px solid var(--border); margin:10px 0;" />
+          {% for td in trip_durations %}
+            <span class="badge badge-cyan" style="margin:2px;">{{ td.duration_label }} ({{ td.count }})</span>
+          {% endfor %}
