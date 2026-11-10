@@ -96,3 +96,52 @@
                 <strong style="color:var(--cyan-700);">৳{{ b.total_bdt }}</strong>
               </div>
               <h3 style="font-size:18px; margin-bottom:6px;"><a href="/hotels/{{ b.hotel.slug }}/">{{ b.hotel.name }}</a></h3>
+              <p style="font-size:13px; color:var(--text-muted); margin:0 0 6px;">{{ b.room_type }} ({{ b.rooms }} room, {{ b.guests }} guests)</p>
+              <div style="font-size:12.5px; color:var(--text-soft);">Check-in: <strong>{{ b.check_in }}</strong> &bull; Check-out: <strong>{{ b.check_out }}</strong></div>
+            </div>
+          </div>
+        {% empty %}
+          <p style="color:var(--text-muted);">No hotel reservations yet. Visit Hotels &amp; Dining to book your stay online!</p>
+        {% endfor %}
+      </div>
+
+    {% elif tab == "profile" %}
+      <div class="card card-static" style="max-width:720px;">
+        <div class="card-body">
+          <h3>Traveler Preferences &amp; Emergency Contact</h3>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_profile" />
+            <div class="grid-2" style="gap:12px; margin-bottom:12px;">
+              <div><label style="font-size:12px; font-weight:700;">First Name</label><input class="input" type="text" name="first_name" value="{{ request.user.first_name }}" /></div>
+              <div><label style="font-size:12px; font-weight:700;">Last Name</label><input class="input" type="text" name="last_name" value="{{ request.user.last_name }}" /></div>
+              <div><label style="font-size:12px; font-weight:700;">Email</label><input class="input" type="email" name="email" value="{{ request.user.email }}" /></div>
+              <div><label style="font-size:12px; font-weight:700;">Nationality</label><input class="input" type="text" name="nationality" value="{{ profile.nationality }}" /></div>
+              <div><label style="font-size:12px; font-weight:700;">Phone</label><input class="input" type="text" name="phone" value="{{ profile.phone }}" /></div>
+              <div>
+                <label style="font-size:12px; font-weight:700;">Preferred Budget Tier</label>
+                <select class="select" name="preferred_budget_tier">
+                  <option value="low" {% if profile.preferred_budget_tier == "low" %}selected{% endif %}>Budget</option>
+                  <option value="mid" {% if profile.preferred_budget_tier == "mid" %}selected{% endif %}>Mid-Range</option>
+                  <option value="luxury" {% if profile.preferred_budget_tier == "luxury" %}selected{% endif %}>Luxury</option>
+                </select>
+              </div>
+              <div><label style="font-size:12px; font-weight:700;">Emergency Contact Name</label><input class="input" type="text" name="emergency_contact_name" value="{{ profile.emergency_contact_name }}" /></div>
+              <div><label style="font-size:12px; font-weight:700;">Emergency Contact Phone</label><input class="input" type="text" name="emergency_contact_phone" value="{{ profile.emergency_contact_phone }}" /></div>
+            </div>
+            <div style="margin-bottom:16px; font-size:13px;">
+              <strong style="display:block; margin-bottom:6px;">Dietary Preferences:</strong>
+              <label style="margin-right:12px;"><input type="checkbox" name="dietary_preferences" value="halal" {% if "halal" in profile.dietary_preferences %}checked{% endif %} /> Halal</label>
+              <label style="margin-right:12px;"><input type="checkbox" name="dietary_preferences" value="vegetarian" {% if "vegetarian" in profile.dietary_preferences %}checked{% endif %} /> Vegetarian</label>
+              <label style="margin-right:12px;"><input type="checkbox" name="dietary_preferences" value="nut-free" {% if "nut-free" in profile.dietary_preferences %}checked{% endif %} /> Nut-Free</label>
+              <label><input type="checkbox" name="dietary_preferences" value="dairy-free" {% if "dairy-free" in profile.dietary_preferences %}checked{% endif %} /> Dairy-Free</label>
+            </div>
+            <button class="btn btn-cyan" type="submit">Save Profile</button>
+          </form>
+        </div>
+      </div>
+
+    {% else %}
+      <div class="grid-2" style="gap:20px; align-items:start;">
+        <div class="card card-static">
+          <div class="card-body">
