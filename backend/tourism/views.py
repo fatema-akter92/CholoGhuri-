@@ -282,3 +282,60 @@ class RestaurantListView(APIView):
         halal = request.query_params.get("halal")
         vegetarian = request.query_params.get("vegetarian")
         nut_free = request.query_params.get("nut_free")
+        dairy_free = request.query_params.get("dairy_free")
+        shellfish_free = request.query_params.get("shellfish_free")
+        q = (request.query_params.get("q") or "").strip()
+
+        if city:
+            qs = qs.filter(city__icontains=city)
+        if division:
+            qs = qs.filter(division__iexact=division)
+        if price_range:
+            qs = qs.filter(price_range=price_range)
+        if cuisine:
+            qs = qs.filter(Q(cuisine_type__icontains=cuisine) | Q(regional_specialty__icontains=cuisine))
+        if halal in ("1", "true", "True"):
+            qs = qs.filter(is_halal_verified=True)
+        if vegetarian in ("1", "true", "True"):
+            qs = qs.filter(is_vegetarian_friendly=True)
+        if nut_free in ("1", "true", "True"):
+            qs = qs.filter(is_nut_free_safe=True)
+        if dairy_free in ("1", "true", "True"):
+            qs = qs.filter(is_dairy_free_safe=True)
+        if shellfish_free in ("1", "true", "True"):
+            qs = qs.filter(is_shellfish_free_safe=True)
+        if q:
+            qs = qs.filter(
+                Q(name__icontains=q)
+                | Q(city__icontains=q)
+                | Q(cuisine_type__icontains=q)
+                | Q(regional_specialty__icontains=q)
+            )
+
+        return Response(RestaurantSerializer(qs, many=True).data)
+
+
+class SafetySupportView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        qs = SafetyFacility.objects.select_related("place").all()
+        division = request.query_params.get("division")
+        facility_type = request.query_params.get("type")
+        q = (request.query_params.get("q") or "").strip()
+        if division:
+            qs = qs.filter(division__iexact=division)
+        if facility_type:
+            qs = qs.filter(facility_type=facility_type)
+        if q:
+            qs = qs.filter(Q(name__icontains=q) | Q(city__icontains=q) | Q(address__icontains=q))
+
+        helplines = [
+            {"name": "National Emergency Service (Police / Ambulance / Fire)", "number": "999", "hours": "24/7 Toll-Free"},
+            {"name": "Bangladesh Tourist Police Hotline", "number": "01320-222222", "hours": "24/7 Dedicated Tourist Desk"},
+            {"name": "Bangladesh Coast Guard (Coastal / Island Rescue)", "number": "16111", "hours": "24/7 Maritime Emergency"},
+            {"name": "Health Helpline (Shastho Batayon)", "number": "16263", "hours": "24/7 Medical Advice"},
+        ]
+
+        advisories = [
+            {
