@@ -54,3 +54,60 @@ def _wishlist_ids_for(request):
 
 
 class CategoryListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        cats = Category.objects.annotate(place_count=Count("places")).order_by("display_order", "name")
+        return Response(CategorySerializer(cats, many=True).data)
+
+
+class PlaceListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        qs = Place.objects.select_related("category").annotate(
+            review_count=Count("reviews", filter=Q(reviews__is_approved=True))
+        )
+
+        category = request.query_params.get("category")
+        division = request.query_params.get("division")
+        budget_tier = request.query_params.get("budget_tier")
+        interest = request.query_params.get("interest")
+        max_fee = request.query_params.get("max_fee")
+        featured = request.query_params.get("featured_hero")
+        indoor = request.query_params.get("indoor")
+        nlp_query = (request.query_params.get("nlp") or request.query_params.get("q") or "").strip()
+
+        if category:
+            qs = qs.filter(category__slug=category)
+        if division:
+            qs = qs.filter(division__iexact=division)
+        if budget_tier:
+            qs = qs.filter(budget_tier=budget_tier)
+        if max_fee is not None and str(max_fee).isdigit():
+            qs = qs.filter(entry_fee_bdt__lte=int(max_fee))
+        if featured in ("1", "true", "True"):
+            qs = qs.filter(is_featured_hero=True)
+        if indoor in ("1", "true", "True"):
+            qs = qs.filter(is_indoor_friendly=True)
+
+        intent_info = None
+        explanation = ""
+        if nlp_query:
+            intent_info, explanation, matched_list = search_places_nlp(nlp_query, queryset=qs)
+            if interest:
+                matched_list = [
+                    p for p in matched_list if interest.lower() in [i.lower() for i in (p.interests or [])]
+                ]
+            SearchLog.objects.create(
+                query=nlp_query[:255],
+                parsed_intent=intent_info,
+                results_count=len(matched_list),
+                is_failure=(len(matched_list) == 0),
+            )
+            places = matched_list
+        else:
+            places = list(qs)
+            if interest:
+                places = [
+                    p for p in places if interest.lower() in [i.lower() for i in (p.interests or [])]
