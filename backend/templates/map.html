@@ -201,3 +201,54 @@ document.addEventListener("DOMContentLoaded", async () => {
       const gEmbedFrame = document.getElementById("googleEmbedFrame");
       if (gMapsLink) {
         gMapsLink.href = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(gOrigin)}&destination=${encodeURIComponent(gDest)}&travelmode=driving`;
+      }
+      if (gEmbedFrame) {
+        gEmbedFrame.src = `https://maps.google.com/maps?saddr=${encodeURIComponent(gOrigin)}&daddr=${encodeURIComponent(gDest)}&output=embed`;
+      }
+
+      const optsHtml = (routeData.transport_options || []).map((t) => `
+        <div style="background:var(--bg-cream); border:1px solid var(--border); border-radius:8px; padding:9px; margin-bottom:8px;">
+          <div style="font-weight:700; color:var(--cyan-900); font-size:13px;">${t.mode}</div>
+          <div style="font-size:12px; color:var(--cyan-700); font-weight:700;">${t.estimated_time} &bull; ${t.estimated_fare_bdt}</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">${t.notes}</div>
+        </div>
+      `).join("");
+
+      resBox.innerHTML = `
+        <div class="card-body">
+          <span class="badge badge-cyan" style="margin-bottom:8px;">${routeData.routing_source}</span>
+          <h3 style="font-size:17px; margin-bottom:4px;">${routeData.start.name} &rarr; ${routeData.destination.name}</h3>
+          <div style="display:flex; gap:14px; margin:10px 0 14px;">
+            <div><div style="font-size:11px; color:var(--text-soft); font-weight:700;">ROAD DISTANCE</div><strong style="font-size:20px; color:var(--cyan-700);">${routeData.road_distance_km} km</strong></div>
+            <div><div style="font-size:11px; color:var(--text-soft); font-weight:700;">DRIVE EST.</div><strong style="font-size:20px; color:var(--cyan-900);">${routeData.estimated_drive_time}</strong></div>
+          </div>
+          <div style="font-weight:700; font-size:12.5px; margin-bottom:8px;">Transport Options &amp; Fares:</div>
+          ${optsHtml}
+          <a href="/destinations/${routeData.destination.slug}/" class="btn btn-outline btn-sm" style="width:100%;">Open Destination Guide &rarr;</a>
+        </div>
+      `;
+
+      nearGrid.innerHTML = `
+        <div class="card card-static"><div class="card-body">
+          <h4 style="font-size:14px; margin-bottom:8px;">&#127976; Nearby Hotels</h4>
+          ${(routeData.nearby_hotels || []).slice(0, 3).map((h) => `<div style="font-size:12.5px; margin-bottom:6px;"><strong>${h.name}</strong><br/><span style="color:var(--text-soft);">${h.distance_km} km &bull; ৳${h.price_per_night_bdt}/night</span></div>`).join("") || '<span style="font-size:12px;">Check Hotels tab</span>'}
+        </div></div>
+        <div class="card card-static"><div class="card-body">
+          <h4 style="font-size:14px; margin-bottom:8px;">&#127869; Nearby Food</h4>
+          ${(routeData.nearby_restaurants || []).slice(0, 3).map((r) => `<div style="font-size:12.5px; margin-bottom:6px;"><strong>${r.name}</strong><br/><span style="color:var(--text-soft);">${r.distance_km} km &bull; ~৳${r.avg_meal_bdt}</span></div>`).join("") || '<span style="font-size:12px;">Check Food Explorer</span>'}
+        </div></div>
+        <div class="card card-static" style="border-color:#fecaca;"><div class="card-body">
+          <h4 style="font-size:14px; color:#991b1b; margin-bottom:8px;">&#127973; Nearby Hospitals &amp; Police</h4>
+          ${(routeData.nearby_safety || []).slice(0, 3).map((s) => `<div style="font-size:12.5px; margin-bottom:6px;"><strong>${s.name}</strong><br/><span style="color:#b91c1c;">${s.distance_km} km &bull; ${s.phone}</span></div>`).join("")}
+        </div></div>
+      `;
+    } catch (err) {
+      resBox.innerHTML = `<div class="card-body" style="color:var(--rose);">Error planning route: ${err.message}</div>`;
+    }
+  }
+
+  document.getElementById("planRouteBtn")?.addEventListener("click", computeRoute);
+  computeRoute();
+});
+</script>
+{% endblock %}
