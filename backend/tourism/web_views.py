@@ -343,3 +343,60 @@ def planner_view(request):
     # Pre-populate a helpful default preview when first visiting planner
     if not generated_plan:
         generated_plan = build_smart_itinerary(
+            start_city="Dhaka",
+            duration_days=5.0,
+            duration_label="5 days",
+            budget_bdt=30000,
+            budget_tier="mid",
+            traveler_type="solo",
+            interests=["nature", "sea", "historical", "food"],
+            weather_aware=True,
+        )
+
+    return render(
+        request,
+        "planner.html",
+        {
+            "hubs": hubs,
+            "highlight_slug": highlight_slug,
+            "generated_plan": generated_plan,
+            "user_trips": user_trips,
+        },
+    )
+
+
+def trip_shared_view(request, share_code):
+    trip = get_object_or_404(TripPlan.objects.prefetch_related("expenses"), share_code=share_code)
+    actual_total = sum(e.amount_bdt for e in trip.expenses.all())
+    est_total = trip.estimated_breakdown_json.get("total_bdt", trip.budget_bdt)
+    return render(
+        request,
+        "trip_shared.html",
+        {
+            "trip": trip,
+            "actual_total": actual_total,
+            "est_total": est_total,
+        },
+    )
+
+
+def hotels_food_view(request):
+    tab = request.GET.get("tab", "hotels")
+    city_q = (request.GET.get("city") or "").strip()
+    division_q = request.GET.get("division", "")
+    tier_q = request.GET.get("tier", "")
+    max_price = request.GET.get("max_price", "")
+    facility_q = request.GET.get("facility", "")
+
+    hotels = Hotel.objects.select_related("place").all()
+    if city_q:
+        hotels = hotels.filter(Q(city__icontains=city_q) | Q(name__icontains=city_q))
+    if division_q:
+        hotels = hotels.filter(division__iexact=division_q)
+    if tier_q:
+        hotels = hotels.filter(tier=tier_q)
+    if max_price.isdigit():
+        hotels = hotels.filter(price_per_night_bdt__lte=int(max_price))
+    hotels_list = list(hotels)
+    if facility_q:
+        hotels_list = [h for h in hotels_list if any(facility_q.lower() in f.lower() for f in (h.facilities or []))]
