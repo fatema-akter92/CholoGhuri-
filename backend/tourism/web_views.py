@@ -630,3 +630,61 @@ def dashboard_view(request):
                 user=request.user,
                 place_id=int(p_id) if p_id else None,
                 subject=(request.POST.get("subject") or "Feedback").strip()[:180],
+                message=(request.POST.get("message") or "").strip(),
+                correction_type=request.POST.get("correction_type", "general"),
+            )
+            messages.success(request, "Feedback & correction request submitted.")
+            return redirect("/dashboard/?tab=feedback")
+        elif action == "remove_wishlist":
+            WishlistItem.objects.filter(user=request.user, place_id=request.POST.get("place_id")).delete()
+            messages.info(request, "Removed from saved wishlist.")
+            return redirect("/dashboard/?tab=wishlist")
+
+    wishlist_items = WishlistItem.objects.filter(user=request.user).select_related("place", "place__category")
+    trips = TripPlan.objects.filter(user=request.user).prefetch_related("expenses")
+    hotel_bookings = HotelBooking.objects.filter(user=request.user).select_related("hotel")
+    reviews = Review.objects.filter(user=request.user).select_related("place")
+    feedbacks = FeedbackCorrection.objects.filter(user=request.user).select_related("place")
+    all_places = Place.objects.order_by("name")
+    tab = request.GET.get("tab", "wishlist")
+
+    return render(
+        request,
+        "dashboard.html",
+        {
+            "profile": profile,
+            "wishlist_items": wishlist_items,
+            "trips": trips,
+            "hotel_bookings": hotel_bookings,
+            "reviews": reviews,
+            "feedbacks": feedbacks,
+            "all_places": all_places,
+            "tab": tab,
+        },
+    )
+
+
+def hotel_detail_view(request, slug):
+    hotel = get_object_or_404(Hotel.objects.select_related("place"), slug=slug)
+    today = date.today()
+    default_checkin = (today + timedelta(days=3)).isoformat()
+    default_checkout = (today + timedelta(days=4)).isoformat()
+    latest_booking = None
+
+    if request.method == "POST":
+        guest_name = (request.POST.get("guest_name") or "").strip()[:140]
+        guest_phone = (request.POST.get("guest_phone") or "").strip()[:40]
+        guest_email = (request.POST.get("guest_email") or "").strip()
+        room_type = (request.POST.get("room_type") or "Standard / Deluxe Room")[:80]
+        rooms = max(1, int(request.POST.get("rooms") or 1))
+        guests = max(1, int(request.POST.get("guests") or 2))
+        special_requests = (request.POST.get("special_requests") or "").strip()
+
+        try:
+            ci = date.fromisoformat(request.POST.get("check_in") or default_checkin)
+            co = date.fromisoformat(request.POST.get("check_out") or default_checkout)
+        except ValueError:
+            ci = today + timedelta(days=3)
+            co = today + timedelta(days=4)
+        nights = max(1, (co - ci).days)
+        mult = 1.6 if "Family" in room_type else 1.35 if "Suite" in room_type else 1.0
