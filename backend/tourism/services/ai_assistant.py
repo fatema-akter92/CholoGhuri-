@@ -174,3 +174,48 @@ def generate_ai_response(prompt: str, user=None):
     context_summary = "\n".join(
         [
             f"- {p.name} ({p.district}, {p.category.name}): fee {p.entry_fee_bdt} BDT, daily cost ~{p.estimated_daily_cost_bdt} BDT, best {p.best_time_to_visit}."
+            for p in top_places
+        ]
+    )
+    llm_reply, provider, tokens_used, cost_usd = _call_optional_llm(clean_prompt, context_summary)
+    final_reply = llm_reply or fallback_reply
+
+    latency_ms = max(12, int((time.perf_counter() - t0) * 1000))
+    if provider == "chologhuri-engine":
+        tokens_used = max(60, len(final_reply.split()) * 2)
+
+    log_entry = AIQueryLog.objects.create(
+        user=user if (user and user.is_authenticated) else None,
+        prompt=clean_prompt[:800],
+        response_preview=final_reply[:500],
+        provider=provider,
+        latency_ms=latency_ms,
+        tokens_used=tokens_used,
+        estimated_cost_usd=cost_usd,
+    )
+
+    nearby_hotels = [
+        {"id": h.id, "name": h.name, "city": h.city, "price_per_night_bdt": h.price_per_night_bdt, "rating": h.rating}
+        for h in Hotel.objects.filter(division__in=[p.division for p in top_places])[:4]
+    ]
+
+    return {
+        "log_id": log_entry.id,
+        "reply": final_reply,
+        "provider": provider,
+        "latency_ms": latency_ms,
+        "recommended_places": [
+            {
+                "id": p.id,
+                "name": p.name,
+                "slug": p.slug,
+                "district": p.district,
+                "category": p.category.name,
+                "image_url": p.image_url,
+                "entry_fee_bdt": p.entry_fee_bdt,
+            }
+            for p in top_places
+        ],
+        "nearby_hotels": nearby_hotels,
+        "generated_itinerary": plan_payload,
+    }
