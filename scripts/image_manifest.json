@@ -196,3 +196,69 @@
         "dimensions": "1280x853"
       }
     ]
+  },
+  "ratargul": {
+    "files": [
+      "/media/places/ratargul.jpg",
+      "/media/places/ratargul-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "ratargul.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Ratargul_Swamp_Forest",
+        "title": "Ratargul Swamp Forest",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x937"
+      },
+      {
+        "file": "ratargul-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Ratargul_785_retouched.jpg",
+        "title": "File:Ratargul 785 retouched.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x887"
+      }
+    ]
+  },
+  "sundarbans": {
+    "files": [
+      "/media/places/sundarbans.jpg",
+      "/media/places/sundarbans-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "sundarbans.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Sundarbans",
+        "title": "Sundarbans",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      },
+      {
+        "file": "sundarbans-2.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Sundarbans_National_Park",
+        "title": "Sundarbans National Park",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      }
+    ]
+  },
+  "lawachara": {
+    "files": [
+      "/media/places/lawachara.jpg",
+      "/media/places/lawachara-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "lawachara.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Lawachara_National_Park",
+        "title": "Lawachara National Park",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      },
+      {
+        "file": "lawachara-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lawachara_Forest.jpg",
+        "title": "File:Lawachara Forest.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x897"
+      }
+    ]
