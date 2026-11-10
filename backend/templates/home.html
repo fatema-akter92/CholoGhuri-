@@ -274,3 +274,59 @@
         <div class="card card-static">
           <div class="card-body">
             <span class="badge badge-emerald" style="margin-bottom:10px;">Interactive Map &amp; Routes</span>
+            <h3 style="font-size:18px;">Distances, Buses, Trains &amp; Hotels</h3>
+            <p style="font-size:13.5px; color:var(--text-muted);">Plot routes from Dhaka or any city to every tourist spot with road distances, fares, and nearby medical care.</p>
+            <a href="/map/" class="btn btn-outline btn-sm">Launch Route Map &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+async function loadHomeWeather(slug) {
+  const box = document.getElementById("homeWeatherBox");
+  if (!box) return;
+  box.innerHTML = '<div style="color:var(--text-soft); font-size:13px;">Fetching weather forecast...</div>';
+  try {
+    const data = await apiFetch(`/api/places/${slug}/weather/`);
+    const alt = data.rainy_day_alternatives?.[0];
+    box.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px;">
+        <div>
+          <div style="font-weight:800; font-size:17px; color:var(--cyan-900);">${data.place.name}</div>
+          <div style="font-size:12px; color:var(--text-soft);">${data.source}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:24px; font-weight:800; color:var(--cyan-700);">${data.current.temperature_c}&deg;C</div>
+          <div style="font-size:12px; font-weight:700; color:var(--text-muted);">${data.current.condition}</div>
+        </div>
+      </div>
+      <div style="margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
+          <span>Outdoor Suitability</span>
+          <span style="color:var(--cyan-700);">${data.outdoor_suitability_score}% &bull; ${data.outdoor_verdict}</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${data.outdoor_suitability_score}%;"></div></div>
+      </div>
+      <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">${data.itinerary_update_suggestion}</div>
+      ${alt ? `<div style="font-size:12px;"><span class="badge badge-emerald">Rainy Backup:</span> <a href="/destinations/${alt.slug}/" style="font-weight:700; color:var(--cyan-700);">${alt.name} (${alt.district}) &rarr;</a></div>` : ''}
+    `;
+  } catch (err) {
+    box.innerHTML = `<div style="color:var(--rose); font-size:13px;">Weather unavailable right now.</div>`;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const sel = document.getElementById("homeWeatherSelect");
+  const btn = document.getElementById("homeWeatherBtn");
+  if (sel) {
+    loadHomeWeather(sel.value);
+    sel.addEventListener("change", () => loadHomeWeather(sel.value));
+    btn?.addEventListener("click", () => loadHomeWeather(sel.value));
+  }
+});
+</script>
+{% endblock %}
