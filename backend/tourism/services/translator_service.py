@@ -247,3 +247,53 @@ PHONETIC_WORD_MAP = {
     "water": "Pani",
     "food": "Khabar",
     "hotel": "Hotel",
+    "hospital": "Hashpatal",
+    "police": "Police",
+    "toilet": "Washroom / Toilet",
+    "how much": "Koto taka?",
+    "where": "Kothay?",
+    "airport": "Bimanbondor",
+    "train": "Relgari / Train",
+    "bus": "Bus",
+    "boat": "Nouka / Launch",
+    "beach": "Shomudro shoikot",
+    "delicious": "Khub moja / Shushadu",
+}
+
+
+def translate_text(text: str, source_lang: str = "en", target_lang: str = "bn"):
+    clean = (text or "").strip()
+    if not clean:
+        return {"source_text": "", "translated_text": "", "phonetic": "", "provider": "phrasebook"}
+
+    lower = clean.lower()
+
+    # 1. Exact phrase match in curated phrasebook (avoid noisy substring matches)
+    for p in TRAVEL_PHRASES:
+        src_val = p.get(source_lang, p["en"]).lower().strip()
+        if lower == src_val:
+            return {
+                "source_text": clean,
+                "source_lang": source_lang,
+                "target_lang": target_lang,
+                "translated_text": p.get(target_lang, p["bn"]),
+                "phonetic": p["phonetic_bn"] if target_lang == "bn" else "",
+                "provider": "CholoGhuri Verified Travel Phrasebook",
+            }
+
+    # 2. Try Google Translate GTX API (produces pure standard Bangladeshi Bengali & 7 languages)
+    translated = None
+    provider = "CholoGhuri Built-in Travel Dictionary"
+    if source_lang != target_lang:
+        try:
+            r = requests.get(
+                "https://translate.googleapis.com/translate_a/single",
+                params={"client": "gtx", "sl": source_lang, "tl": target_lang, "dt": "t", "q": clean},
+                headers={"User-Agent": "Mozilla/5.0"},
+                timeout=5,
+            )
+            if r.status_code == 200:
+                segments = r.json()[0] or []
+                candidate = "".join(seg[0] for seg in segments if seg and seg[0]).strip()
+                if candidate:
+                    translated = candidate
