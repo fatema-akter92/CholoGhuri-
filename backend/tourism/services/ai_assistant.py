@@ -42,3 +42,47 @@ def _call_optional_llm(prompt: str, context_summary: str):
             pass
 
     if openai_key:
+        try:
+            r = requests.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers={"Authorization": f"Bearer {openai_key}"},
+                json={
+                    "model": "gpt-4o-mini",
+                    "messages": [
+                        {"role": "system", "content": system_msg},
+                        {"role": "user", "content": prompt},
+                    ],
+                    "max_tokens": 550,
+                },
+                timeout=10,
+            )
+            if r.status_code == 200:
+                data = r.json()
+                text = data["choices"][0]["message"]["content"]
+                tokens = int(data.get("usage", {}).get("total_tokens", 380))
+                return text, "openai-gpt-4o-mini", tokens, round(tokens * 0.0000006, 6)
+        except Exception:
+            pass
+
+    return None, "chologhuri-engine", 0, 0.0
+
+
+def generate_ai_response(prompt: str, user=None):
+    t0 = time.perf_counter()
+    clean_prompt = (prompt or "").strip()
+    lower = clean_prompt.lower()
+    intent = parse_natural_language_query(clean_prompt)
+
+    is_trip_request = bool(
+        intent["duration_days"]
+        or intent["budget_bdt"]
+        or any(w in lower for w in ("itinerary", "plan", "schedule", "days", "day trip", "trip"))
+    )
+    is_weather_or_closed = any(
+        w in lower for w in ("rain", "weather", "closed", "monsoon", "alternative", "storm", "cyclone")
+    )
+    is_safety_query = any(
+        w in lower for w in ("safe", "safety", "emergency", "hospital", "police", "999", "scam", "permit")
+    )
+    is_food_query = any(
+        w in lower for w in ("food", "eat", "biryani", "mezban", "halal", "vegetarian", "allergy", "restaurant")
