@@ -44,3 +44,49 @@
               <option value="ar">Arabic (العربية)</option>
               <option value="ja">Japanese (日本語)</option>
               <option value="fr">French (Français)</option>
+              <option value="es">Spanish (Español)</option>
+            </select>
+          </div>
+
+          {% if request.user.is_authenticated %}
+            <a href="/dashboard/" class="auth-nav-pill">&#128100; {{ request.user.first_name|default:request.user.username }}</a>
+            <a href="/logout/" style="font-size:13px; font-weight:600; color:var(--text-soft);">Sign Out</a>
+          {% else %}
+            <a href="/auth/" class="auth-nav-pill">Sign In / Register</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation Row -->
+    <div class="container main-nav-inner">
+      <a href="/" class="brand-logo">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">Cholo<span>Ghuri</span></div>
+          <div class="brand-sub">Discover Bangladesh</div>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/destinations/" class="{% if request.path == '/destinations/' %}active{% endif %}">Destinations</a>
+        <a href="/foods/" class="{% if request.path == '/foods/' %}active{% endif %}">Famous Foods</a>
+        <a href="/hotels-food/" class="{% if request.path == '/hotels-food/' %}active{% endif %}">Hotels &amp; Dining</a>
+        <a href="/planner/" class="{% if request.path == '/planner/' %}active{% endif %}">Plan Trip</a>
+        <a href="/map/" class="{% if request.path == '/map/' %}active{% endif %}">Map</a>
+        <a href="/translator/" class="{% if request.path == '/translator/' %}active{% endif %}">Translator</a>
+        <a href="/safety/" class="{% if request.path == '/safety/' %}active{% endif %}">Safety</a>
+        <a href="/assistant/" class="nav-ai-pill {% if request.path == '/assistant/' %}active{% endif %}">&#10024; AI Guide</a>
+      </nav>
+
+      <form action="/destinations/" method="get" class="header-search">
+        <input type="text" name="nlp" value="{{ request.GET.nlp|default:'' }}" placeholder="Search or '6 hrs Dhaka'..." />
+        <button type="submit" aria-label="Search Bangladesh">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
