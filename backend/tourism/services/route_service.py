@@ -147,3 +147,53 @@ def calculate_route(start_name: str, destination: Place):
                 "name": r.name,
                 "city": r.city,
                 "cuisine_type": r.cuisine_type,
+                "avg_meal_bdt": r.avg_meal_bdt,
+                "rating": r.rating,
+                "is_halal_verified": r.is_halal_verified,
+                "is_vegetarian_friendly": r.is_vegetarian_friendly,
+                "distance_km": dist,
+                "latitude": r.latitude,
+                "longitude": r.longitude,
+            })
+    restaurants.sort(key=lambda x: x["distance_km"])
+
+    safety = []
+    for s in SafetyFacility.objects.all():
+        dist = haversine_km(d_lat, d_lon, s.latitude, s.longitude)
+        if dist <= 85 or s.place_id == destination.id or s.division == destination.division:
+            safety.append({
+                "id": s.id,
+                "name": s.name,
+                "facility_type": s.facility_type,
+                "facility_label": s.get_facility_type_display(),
+                "phone": s.phone,
+                "address": s.address,
+                "emergency_24h": s.emergency_24h,
+                "distance_km": dist,
+                "latitude": s.latitude,
+                "longitude": s.longitude,
+            })
+    safety.sort(key=lambda x: x["distance_km"])
+
+    return {
+        "start": {"name": start_name, "latitude": s_lat, "longitude": s_lon},
+        "destination": {
+            "id": destination.id,
+            "name": destination.name,
+            "slug": destination.slug,
+            "district": destination.district,
+            "division": destination.division,
+            "latitude": d_lat,
+            "longitude": d_lon,
+            "image_url": destination.image_url,
+        },
+        "straight_distance_km": straight_km,
+        "road_distance_km": road_km,
+        "estimated_drive_time": _format_duration(road_km / 45.0),
+        "routing_source": "OSRM Road Network" if osrm_used else "CholoGhuri Geodesic Highway Estimator",
+        "route_geometry": route_geometry,
+        "transport_options": transport_options,
+        "nearby_hotels": hotels[:5],
+        "nearby_restaurants": restaurants[:5],
+        "nearby_safety": safety[:6],
+    }
