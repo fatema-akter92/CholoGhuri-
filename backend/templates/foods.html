@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Famous Foods of Bangladesh — Section-by-Section Guide | CholoGhuri{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:32px;">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:20px;">
+      <div>
+        <span class="section-eyebrow">Bangladesh Culinary Guide &bull; 42 Authentic Dishes</span>
+        <h1 class="section-title">Famous Foods of Bangladesh</h1>
+        <p class="section-sub">Organized across 5 traditional sections — discover what makes each dish special, why tourists love it, BDT pricing, and the famous Bangladesh places where it tastes best.</p>
+      </div>
+      <a href="/hotels-food/?tab=food" class="btn btn-cyan btn-sm">Halal &amp; Allergy Restaurant Filter &rarr;</a>
+    </div>
+
+    <!-- Section Tabs + Tourist Place Filter -->
+    <div class="card card-static" style="background:var(--bg-cream); margin-bottom:28px;">
+      <div class="card-body">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+          <a href="/foods/{% if selected_place %}?place={{ selected_place|urlencode }}{% endif %}" class="chip {% if selected_section == 'all' %}active{% endif %}">All 5 Sections ({{ total_count }})</a>
+          {% for sec in sections %}
+            <a href="/foods/?section={{ sec.key }}{% if selected_place %}&place={{ selected_place|urlencode }}{% endif %}" class="chip {% if selected_section == sec.key %}active{% endif %}">
+              {{ sec.title }}
+            </a>
+          {% endfor %}
+        </div>
+
+        <form method="get" action="/foods/" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+          <input type="hidden" name="section" value="{{ selected_section }}" />
+          <label style="font-size:13px; font-weight:700; color:var(--cyan-900);">Pair with Famous Place / Region:</label>
+          <select class="select" name="place" style="max-width:260px;" onchange="this.form.submit()">
+            <option value="">All Regions &amp; Places</option>
+            {% for rp in region_options %}
+              <option value="{{ rp }}" {% if selected_place == rp %}selected{% endif %}>{{ rp }}</option>
+            {% endfor %}
+          </select>
+          {% if selected_place or selected_section != 'all' %}
+            <a href="/foods/" class="btn btn-offwhite btn-sm">Reset Filters</a>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+
+    <!-- Section-by-Section Display -->
+    {% for block in grouped_sections %}
+      <div id="section-{{ block.meta.key }}" style="margin-bottom:46px;">
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:12px; border-bottom:2px solid var(--cyan-200); padding-bottom:12px; margin-bottom:20px;">
+          <div>
+            <span class="badge badge-cyan" style="margin-bottom:6px;">{{ block.meta.badge }}</span>
+            <h2 style="margin:0 0 4px; font-size:24px;">{{ block.meta.title }}</h2>
+            <p style="margin:0; font-size:14px; color:var(--text-muted);">{{ block.meta.subtitle }}</p>
+          </div>
+          <span style="font-size:13px; font-weight:700; color:var(--cyan-700);">Showing {{ block.items|length }} dishes</span>
+        </div>
+
+        <div class="grid-3">
+          {% for f in block.items %}
+            <article class="card">
+              <div class="place-thumb-wrap" style="height:210px;">
+                <img src="{{ f.image_url }}" alt="{{ f.name }}" loading="lazy" />
+                <span class="place-cat-tag">{{ f.region }}</span>
+              </div>
+              <div class="card-body">
+                <div class="place-meta-row">
+                  <span style="font-weight:700; color:var(--cyan-800);">{{ f.spice }}</span>
+                  <strong style="color:var(--cyan-700);">{{ f.price_bdt }}</strong>
+                </div>
+                <h3 class="place-title" style="font-size:16.5px;">{{ f.name }}</h3>
+
+                <div style="background:var(--cyan-50); border-left:3px solid var(--cyan-600); padding:9px 11px; border-radius:6px; margin-bottom:10px;">
+                  <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--cyan-800); margin-bottom:2px;">Why Tourists Should Try It</div>
+                  <p style="font-size:13px; color:var(--text-main); margin:0;">{{ f.why_try }}</p>
+                </div>
+
+                <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">
+                  {% if f.halal %}<span class="badge badge-emerald">Halal</span>{% endif %}
+                  {% if f.veg %}<span class="badge badge-cyan">Veg Friendly</span>{% endif %}
+                  <a href="/destinations/{{ f.place_slug }}/" class="badge badge-amber" title="Explore paired tourist destination">
+                    &#128205; Best near: {{ f.famous_place }} &rarr;
+                  </a>
+                </div>
+
+                <div style="font-size:12px; color:var(--text-soft); border-top:1px solid var(--border); padding-top:8px;">
+                  <strong>Recommended Spots:</strong> {{ f.where_to_eat }}
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="card card-static" style="padding:36px; text-align:center;">
+        <h3>No dishes matched that region filter</h3>
+        <a href="/foods/" class="btn btn-cyan">Show All 5 Culinary Sections</a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
