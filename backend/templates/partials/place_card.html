@@ -1,0 +1,40 @@
+<article class="card">
+  <div class="place-thumb-wrap">
+    <a href="/destinations/{{ place.slug }}/">
+      <img src="{{ place.image_url }}" alt="{{ place.name }}" loading="lazy" />
+    </a>
+    <span class="place-cat-tag">{{ place.category.name }}</span>
+    <button
+      type="button"
+      class="wish-btn {% if place.id in user_wishlist_ids %}saved{% endif %}"
+      data-place-id="{{ place.id }}"
+      title="Save to Wishlist"
+      aria-label="Toggle Wishlist for {{ place.name }}"
+    >
+      {% if place.id in user_wishlist_ids %}&#9829;{% else %}&#9825;{% endif %}
+    </button>
+  </div>
+  <div class="card-body">
+    <div class="place-meta-row">
+      <span>&#128205; {{ place.district }}, {{ place.division }}</span>
+      <span style="color:#d97706; font-weight:700;">&#9733; {{ place.avg_rating|floatformat:1 }}</span>
+    </div>
+    <h3 class="place-title">
+      <a href="/destinations/{{ place.slug }}/">{{ place.name }}</a>
+    </h3>
+    <p class="place-desc">{{ place.tagline|default:place.description }}</p>
+    <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; padding-top:10px; border-top:1px solid #eef6f8;">
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <span class="badge badge-cyan">
+          {% if place.entry_fee_bdt == 0 %}Free Entry{% else %}৳{{ place.entry_fee_bdt }} Entry{% endif %}
+        </span>
+        {% if place.is_indoor_friendly %}
+          <span class="badge badge-emerald">Rain-Safe</span>
+        {% endif %}
+      </div>
+      <a href="/destinations/{{ place.slug }}/" style="font-size:13px; font-weight:700; color:var(--cyan-700);">
+        Details &rarr;
+      </a>
+    </div>
+  </div>
+</article>
