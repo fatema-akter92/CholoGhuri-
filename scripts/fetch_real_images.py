@@ -54,3 +54,60 @@ TARGETS = [
     },
     {
         "slug": "jaflong",
+        "wiki_titles": ["Jaflong"],
+        "commons_queries": ["Jaflong Sylhet", "Jaflong river Bangladesh"],
+    },
+    {
+        "slug": "sreemangal",
+        "wiki_titles": ["Sreemangal Upazila"],
+        "commons_queries": ["Sreemangal tea garden", "Sylhet tea garden Bangladesh"],
+    },
+    {
+        "slug": "ratargul",
+        "wiki_titles": ["Ratargul Swamp Forest"],
+        "commons_queries": ["Ratargul Swamp Forest", "Ratargul Sylhet"],
+    },
+    {
+        "slug": "sundarbans",
+        "wiki_titles": ["Sundarbans", "Sundarbans National Park"],
+        "commons_queries": ["Sundarbans Bangladesh", "Sundarbans mangrove Bangladesh"],
+    },
+    {
+        "slug": "lawachara",
+        "wiki_titles": ["Lawachara National Park"],
+        "commons_queries": ["Lawachara National Park", "Lawachara forest"],
+    },
+    {
+        "slug": "lalbagh-fort",
+        "wiki_titles": ["Lalbagh Fort"],
+        "commons_queries": ["Lalbagh Fort Dhaka"],
+    },
+    {
+        "slug": "ahsan-manzil",
+        "wiki_titles": ["Ahsan Manzil"],
+        "commons_queries": ["Ahsan Manzil Dhaka"],
+    },
+    {
+        "slug": "mahasthangarh",
+        "wiki_titles": ["Mahasthangarh"],
+        "commons_queries": ["Mahasthangarh Bogra", "Mahasthangarh Bangladesh"],
+    },
+    {
+        "slug": "paharpur",
+        "wiki_titles": ["Somapura Mahavihara"],
+        "commons_queries": ["Somapura Mahavihara Paharpur"],
+    },
+    {
+        "slug": "shat-gambuj-mosque",
+        "wiki_titles": ["Sixty Dome Mosque"],
+        "commons_queries": ["Sixty Dome Mosque Bagerhat", "Shat Gambuj Mosque"],
+    },
+    {
+        "slug": "sonargaon",
+        "wiki_titles": ["Panam Nagar", "Sonargaon"],
+        "commons_queries": ["Panam Nagar Sonargaon", "Sonargaon Folk Arts"],
+    },
+    {
+        "slug": "mainamati",
+        "wiki_titles": ["Shalban Vihara", "Mainamati"],
+        "commons_queries": ["Shalban Vihara", "Mainamati Comilla"],
