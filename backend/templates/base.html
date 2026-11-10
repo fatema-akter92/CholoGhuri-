@@ -90,3 +90,49 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </form>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">&#9776;</button>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div class="mobile-drawer" id="mobileDrawer">
+      <form action="/destinations/" method="get" style="display:flex; gap:8px; margin-bottom:12px;">
+        <input class="input" type="text" name="nlp" placeholder="Try: I have only 6 hours in Dhaka..." />
+        <button class="btn btn-cyan btn-sm" type="submit">Search</button>
+      </form>
+      <div class="grid-2" style="gap:8px;">
+        <a href="/destinations/" class="btn btn-offwhite btn-sm">Destinations</a>
+        <a href="/foods/" class="btn btn-offwhite btn-sm">Famous Foods</a>
+        <a href="/hotels-food/" class="btn btn-offwhite btn-sm">Hotels &amp; Dining</a>
+        <a href="/planner/" class="btn btn-offwhite btn-sm">Plan Trip</a>
+        <a href="/map/" class="btn btn-offwhite btn-sm">Interactive Map</a>
+        <a href="/translator/" class="btn btn-offwhite btn-sm">Translator</a>
+        <a href="/safety/" class="btn btn-offwhite btn-sm">Safety &amp; 999</a>
+        <a href="/assistant/" class="btn btn-cyan btn-sm" style="grid-column:span 2;">&#10024; AI Travel Assistant</a>
+      </div>
+    </div>
+  </header>
+
+  {% if messages %}
+    <div class="container" style="padding-top:16px;">
+      {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags|default:'info' }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Floating AI Chat Widget ("How can we help you?" — matching screenshot) -->
+  <div class="ai-fab-container no-print">
+    <div class="ai-drawer" id="aiDrawer">
+      <div class="ai-drawer-head">
+        <div>
+          <div style="font-weight:800; font-size:15px;">CholoGhuri AI Travel Assistant</div>
+          <div style="font-size:11px; opacity:0.9;">Bangladesh itineraries, weather swaps &amp; local tips</div>
+        </div>
