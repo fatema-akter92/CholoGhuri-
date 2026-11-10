@@ -64,3 +64,69 @@
         "dimensions": "1400x933"
       }
     ]
+  },
+  "patenga": {
+    "files": [
+      "/media/places/patenga.jpg",
+      "/media/places/patenga-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "patenga.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Patenga_Sea_Beach",
+        "title": "Patenga Sea Beach",
+        "license": "Wikimedia Commons",
+        "dimensions": "800x800"
+      },
+      {
+        "file": "patenga-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Patenga_Sea_Beach_Road_(01).jpg",
+        "title": "File:Patenga Sea Beach Road (01).jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x851"
+      }
+    ]
+  },
+  "sajek-valley": {
+    "files": [
+      "/media/places/sajek-valley.jpg",
+      "/media/places/sajek-valley-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "sajek-valley.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Sajek_Valley",
+        "title": "Sajek Valley",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x888"
+      },
+      {
+        "file": "sajek-valley-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Sunrise_at_Sajek_Valley.jpg",
+        "title": "File:Sunrise at Sajek Valley.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x960"
+      }
+    ]
+  },
+  "bandarban": {
+    "files": [
+      "/media/places/bandarban.jpg",
+      "/media/places/bandarban-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "bandarban.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Bandarban_District",
+        "title": "Bandarban District",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x932"
+      },
+      {
+        "file": "bandarban-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Nilgiri,_Bandarban,_Bangladesh.jpg",
+        "title": "File:Nilgiri, Bandarban, Bangladesh.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x720"
+      }
+    ]
