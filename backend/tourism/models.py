@@ -148,3 +148,54 @@ class Restaurant(models.Model):
     avg_meal_bdt = models.PositiveIntegerField(default=450)
     rating = models.FloatField(default=4.5)
     menu_highlights = models.JSONField(default=list, blank=True)
+    opening_hours = models.CharField(max_length=120, default="10:00 AM – 11:00 PM")
+    contact_phone = models.CharField(max_length=50, blank=True)
+    image_url = models.CharField(max_length=500, blank=True)
+
+    is_halal_verified = models.BooleanField(default=True)
+    is_vegetarian_friendly = models.BooleanField(default=False)
+    is_nut_free_safe = models.BooleanField(default=True)
+    is_dairy_free_safe = models.BooleanField(default=False)
+    is_shellfish_free_safe = models.BooleanField(default=True)
+    dietary_notes = models.CharField(max_length=255, blank=True)
+    is_verified_business = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["-rating", "avg_meal_bdt"]
+
+    def __str__(self):
+        return f"{self.name} ({self.city})"
+
+
+class SafetyFacility(models.Model):
+    FACILITY_TYPES = [
+        ("hospital", "Hospital / Medical Center"),
+        ("pharmacy", "24h / Verified Pharmacy"),
+        ("tourist_police", "Tourist Police Unit"),
+        ("police", "Local Police Station"),
+        ("coast_guard", "Coast Guard / Rescue"),
+    ]
+
+    name = models.CharField(max_length=180)
+    facility_type = models.CharField(max_length=30, choices=FACILITY_TYPES)
+    city = models.CharField(max_length=80)
+    division = models.CharField(max_length=80)
+    place = models.ForeignKey(Place, on_delete=models.SET_NULL, null=True, blank=True, related_name="safety_facilities")
+    address = models.CharField(max_length=255)
+    phone = models.CharField(max_length=60)
+    emergency_24h = models.BooleanField(default=True)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    verified_notes = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ["division", "city", "facility_type"]
+
+    def __str__(self):
+        return f"{self.name} ({self.get_facility_type_display()})"
+
+
+class LocalGuide(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "Pending Verification"),
+        ("verified", "Verified Guide"),
