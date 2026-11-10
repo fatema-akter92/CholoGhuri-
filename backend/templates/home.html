@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}CholoGhuri — Discover Bangladesh | Official Smart Tourism Guide{% endblock %}
+
+{% block content %}
+  <!-- Hero 3-Second Auto-Sliding Carousel -->
+  <section class="hero-wrapper" id="heroCarousel">
+    <div class="hero-stage">
+      <div class="hero-main">
+        {% for hp in hero_places %}
+          <div class="hero-slide {% if forloop.first %}active{% endif %}" data-img="{{ hp.image_url }}">
+            <img src="{{ hp.image_url }}" alt="{{ hp.name }}" />
+            <div class="hero-scrim"></div>
+            <div class="hero-content-wrap">
+              <div class="container">
+                <div class="hero-content">
+                  <div class="hero-loc-pill">
+                    &#128205; {{ hp.district }}, {{ hp.division }} Division &bull; {{ hp.category.name }}
+                  </div>
+                  <h1 class="hero-headline">{{ hp.hero_headline|default:hp.name }}</h1>
+                  <p class="hero-subtitle">{{ hp.hero_subtitle|default:hp.tagline }}</p>
+                  <div class="hero-actions">
+                    <a href="/destinations/{{ hp.slug }}/" class="btn btn-cyan btn-pill">
+                      Explore {{ hp.name }} &rarr;
+                    </a>
+                    <a href="/planner/?highlight={{ hp.slug }}" class="btn btn-offwhite btn-pill">
+                      Plan Trip Here
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+
+        <!-- Prev / Next Arrows -->
+        <button type="button" class="hero-arrow prev" id="heroPrevBtn" aria-label="Previous slide">&lsaquo;</button>
+        <button type="button" class="hero-arrow next" id="heroNextBtn" aria-label="Next slide">&rsaquo;</button>
+
+        <!-- Bottom-Center Pagination Dots -->
+        <div class="hero-dots">
+          {% for hp in hero_places %}
+            <button type="button" class="hero-dot {% if forloop.first %}active{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Natural-Language Smart Search Bar -->
+  <section class="nlp-banner">
+    <div class="container">
+      <div class="nlp-box">
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
+          <strong style="color:var(--cyan-900); font-size:15px;">&#10024; Smart Natural-Language Destination Finder</strong>
+          <span style="font-size:12px; color:var(--text-soft);">Search by hours, days, budget in BDT, weather, or interests</span>
