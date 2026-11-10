@@ -111,3 +111,60 @@ class PlaceListView(APIView):
             if interest:
                 places = [
                     p for p in places if interest.lower() in [i.lower() for i in (p.interests or [])]
+                ]
+
+        serializer = PlaceListSerializer(
+            places,
+            many=True,
+            context={"wishlist_place_ids": _wishlist_ids_for(request)},
+        )
+        return Response({
+            "count": len(serializer.data),
+            "nlp_intent": intent_info,
+            "explanation": explanation,
+            "results": serializer.data,
+        })
+
+
+class PlaceDetailView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        place = get_object_or_404(
+            Place.objects.select_related("category").annotate(
+                review_count=Count("reviews", filter=Q(reviews__is_approved=True))
+            ),
+            slug=slug,
+        )
+        Place.objects.filter(pk=place.pk).update(view_count=place.view_count + 1)
+        place.view_count += 1
+
+        detail_data = PlaceDetailSerializer(
+            place,
+            context={"wishlist_place_ids": _wishlist_ids_for(request)},
+        ).data
+
+        # Attach nearby hotels, restaurants, and safety facilities
+        nearby_hotels = []
+        for h in Hotel.objects.all():
+            dist = haversine_km(place.latitude, place.longitude, h.latitude, h.longitude)
+            if h.place_id == place.id or dist <= 55:
+                d = HotelSerializer(h).data
+                d["distance_km"] = dist
+                nearby_hotels.append(d)
+        nearby_hotels.sort(key=lambda x: x["distance_km"])
+
+        nearby_restaurants = []
+        for r in Restaurant.objects.all():
+            dist = haversine_km(place.latitude, place.longitude, r.latitude, r.longitude)
+            if r.place_id == place.id or dist <= 55:
+                d = RestaurantSerializer(r).data
+                d["distance_km"] = dist
+                nearby_restaurants.append(d)
+        nearby_restaurants.sort(key=lambda x: x["distance_km"])
+
+        nearby_safety = []
+        for s in SafetyFacility.objects.all():
+            dist = haversine_km(place.latitude, place.longitude, s.latitude, s.longitude)
+            if s.place_id == place.id or dist <= 70 or s.division == place.division:
+                d = SafetyFacilitySerializer(s).data
