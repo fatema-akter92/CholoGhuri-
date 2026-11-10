@@ -335,3 +335,70 @@ img {
 
 .nav-ai-pill:hover,
 .nav-ai-pill.active {
+  background: var(--cyan-600) !important;
+  color: #fff !important;
+  border-color: var(--cyan-600);
+}
+
+.header-search {
+  position: relative;
+  width: 205px;
+  flex-shrink: 0;
+}
+
+.header-search input {
+  width: 100%;
+  padding: 8px 36px 8px 12px;
+  font-size: 13px;
+  background: var(--bg-cream);
+  border: 1px solid var(--cyan-200);
+  border-radius: 8px;
+  color: var(--text-main);
+  outline: none;
+  transition: all 0.2s;
+}
+
+.header-search input:focus {
+  background: #ffffff;
+  border-color: var(--cyan-600);
+  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.14);
+}
+
+.header-search button {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--cyan-700);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.mobile-menu-btn {
+  display: none;
+  border: 1px solid var(--border);
+  background: var(--bg-cream);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: var(--cyan-900);
+}
+
+.mobile-drawer {
+  display: none;
+  background: var(--bg-cream);
+  border-top: 1px solid var(--border);
+  padding: 16px 20px;
+}
+
+.mobile-drawer.open {
+  display: block;
+}
+
+/* ==========================================================================
+   5-Second Auto-Sliding Hero Showcase (Japan Travel Guide Style)
+   ========================================================================== */
