@@ -105,3 +105,57 @@ class PlaceDetailSerializer(PlaceListSerializer):
     reviews = serializers.SerializerMethodField()
 
     class Meta(PlaceListSerializer.Meta):
+        fields = PlaceListSerializer.Meta.fields + [
+            "address",
+            "description",
+            "highlights",
+            "gallery_urls",
+            "image_attribution",
+            "seasonal_suitability",
+            "rainy_day_alternative_note",
+            "travel_tips",
+            "safety_tips",
+            "seasonal_restrictions",
+            "verified_advisory",
+            "info_source",
+            "reviews",
+            "created_at",
+            "updated_at",
+        ]
+
+    def get_reviews(self, obj):
+        qs = obj.reviews.filter(is_approved=True).select_related("user")[:20]
+        return ReviewSerializer(qs, many=True).data
+
+
+class PlaceWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Place
+        fields = "__all__"
+
+
+class HotelSerializer(serializers.ModelSerializer):
+    place_name = serializers.CharField(source="place.name", read_only=True, default="")
+
+    class Meta:
+        model = Hotel
+        fields = [
+            "id",
+            "name",
+            "slug",
+            "place",
+            "place_name",
+            "city",
+            "division",
+            "address",
+            "latitude",
+            "longitude",
+            "tier",
+            "price_per_night_bdt",
+            "rating",
+            "facilities",
+            "description",
+            "image_url",
+            "contact_phone",
+            "booking_url",
+            "is_verified_business",
