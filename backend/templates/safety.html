@@ -41,3 +41,46 @@
           <div style="font-size:28px; font-weight:800; color:#059669;">16263</div>
           <div style="font-size:12.5px; color:var(--text-muted);">24/7 Doctor Consultation (Shastho Batayon)</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Verified Regional Advisories + Share Trip -->
+    <div class="grid-3" style="gap:20px; margin-bottom:28px; align-items:start;">
+      <div class="card card-static" style="grid-column:span 2;">
+        <div class="card-body">
+          <h3>Verified Travel Advisories &amp; Regional Restrictions</h3>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:12px;">
+              <strong style="color:#92400e;">Saint Martin's Island &amp; Bay Ferries:</strong>
+              <span style="font-size:13.5px; color:#78350f;"> Ships run mainly November–March subject to BIWTA sea-state clearance &amp; conservation daily caps.</span>
+            </div>
+            <div style="background:var(--cyan-50); border:1px solid var(--cyan-200); border-radius:10px; padding:12px;">
+              <strong style="color:var(--cyan-900);">Chattogram Hill Tracts (Sajek, Bandarban, Rangamati):</strong>
+              <span style="font-size:13.5px; color:var(--cyan-900);"> Carry original NID/Passport at checkpoints. Foreign passport holders require advance DC/Home Ministry approval for restricted Bandarban frontiers.</span>
+            </div>
+            <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; padding:12px;">
+              <strong style="color:#065f46;">Sundarbans Mangrove Reserve:</strong>
+              <span style="font-size:13.5px; color:#064e3b;"> Forest Department entry permit and licensed forest guards are mandatory; closed June–August during wildlife breeding season.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Family/Friends Quick Trip Share -->
+      <div class="card card-static" style="background:var(--bg-cream);">
+        <div class="card-body">
+          <h3>Share Trip With Family</h3>
+          <p style="font-size:13px; color:var(--text-muted);">Send a live shareable itinerary link &amp; emergency contact summary to family or friends.</p>
+          {% if user_trips %}
+            {% for t in user_trips %}
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; background:#fff; border:1px solid var(--border); border-radius:8px; margin-bottom:8px;">
+                <span style="font-size:13px; font-weight:700;">{{ t.title|truncatechars:26 }}</span>
+                <a href="/trips/shared/{{ t.share_code }}/" class="btn btn-cyan btn-sm">Share</a>
+              </div>
+            {% endfor %}
+          {% else %}
+            <a href="/planner/" class="btn btn-cyan btn-sm" style="width:100%;">Create Shareable Trip Plan &rarr;</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
