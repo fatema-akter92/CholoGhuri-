@@ -737,3 +737,60 @@ class AdminAnalyticsView(APIView):
                 "total_trips_planned": TripPlan.objects.count(),
             },
             "most_viewed_places": most_viewed,
+            "most_saved_places": most_saved,
+            "popular_searches": popular_searches,
+            "failed_searches": failed_searches,
+            "ai_monitoring": {
+                "total_queries": ai_total,
+                "avg_latency_ms": round(float(ai_avg_latency), 1),
+                "total_tokens": ai_total_tokens,
+                "estimated_cost_usd": round(float(ai_total_cost), 5),
+                "helpful_votes": ai_positive,
+                "unhelpful_votes": ai_negative,
+                "recent_logs": recent_ai_logs,
+            },
+            "trip_analytics": {
+                "budgets": trip_budgets,
+                "durations": trip_durations,
+            },
+            "freshness_and_links": {
+                "overdue_verification_places": stale_places,
+                "flagged_hotel_links": broken_hotels,
+            },
+        })
+
+
+class AdminPlaceViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    queryset = Place.objects.select_related("category").all()
+    serializer_class = PlaceWriteSerializer
+
+
+class AdminHotelViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    queryset = Hotel.objects.all()
+    serializer_class = HotelSerializer
+
+
+class AdminRestaurantViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    queryset = Restaurant.objects.all()
+    serializer_class = RestaurantSerializer
+
+
+class AdminGuideViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    queryset = LocalGuide.objects.all().order_by("-created_at")
+    serializer_class = LocalGuideSerializer
+
+
+class AdminReviewModerationViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    queryset = Review.objects.select_related("place", "user").all()
+    serializer_class = ReviewSerializer
+
+
+class AdminFeedbackViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    queryset = FeedbackCorrection.objects.select_related("user", "place").all()
+    serializer_class = FeedbackCorrectionSerializer
