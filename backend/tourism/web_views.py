@@ -228,3 +228,60 @@ def place_detail_view(request, slug):
     nearby_safety = []
     for s in SafetyFacility.objects.all():
         dist = haversine_km(place.latitude, place.longitude, s.latitude, s.longitude)
+        if s.place_id == place.id or dist <= 75 or s.division == place.division:
+            s.distance_km = dist
+            nearby_safety.append(s)
+    nearby_safety.sort(key=lambda x: x.distance_km)
+
+    reviews = place.reviews.filter(is_approved=True).select_related("user")
+
+    return render(
+        request,
+        "place_detail.html",
+        {
+            "place": place,
+            "reviews": reviews,
+            "nearby_hotels": nearby_hotels[:6],
+            "nearby_restaurants": nearby_restaurants[:6],
+            "nearby_safety": nearby_safety[:6],
+        },
+    )
+
+
+def map_view(request):
+    places = list(Place.objects.select_related("category").all())
+    hubs = list(STARTING_HUBS.keys())
+    dest_slug = request.GET.get("dest", places[0].slug if places else "")
+    return render(
+        request,
+        "map.html",
+        {
+            "places": places,
+            "hubs": hubs,
+            "selected_dest": dest_slug,
+        },
+    )
+
+
+def planner_view(request):
+    highlight_slug = request.GET.get("highlight", "")
+    user_trips = (
+        list(TripPlan.objects.filter(user=request.user).prefetch_related("expenses"))
+        if request.user.is_authenticated
+        else []
+    )
+    hubs = list(STARTING_HUBS.keys())
+
+    generated_plan = None
+    if request.method == "POST":
+        action = request.POST.get("action", "generate")
+        if action == "generate":
+            start_city = request.POST.get("start_city", "Dhaka")
+            duration_label = request.POST.get("duration_label", "5 days")
+            duration_map = {
+                "half_day": 0.5,
+                "1_day": 1.0,
+                "3_days": 3.0,
+                "5_days": 5.0,
+                "7_days": 7.0,
+            }
