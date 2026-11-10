@@ -145,3 +145,53 @@
       </div>
 
       <!-- Google Map Location -->
+      <div class="card card-static">
+        <div class="card-body">
+          <h3 style="font-size:17px;">&#128506; Hotel Location on Google Maps</h3>
+          <div id="hotelMap" style="height:260px; border-radius:10px; overflow:hidden; margin-bottom:10px;"></div>
+          <div style="font-size:12px; color:var(--text-soft); margin-bottom:10px;">GPS: {{ hotel.latitude }}, {{ hotel.longitude }}</div>
+          <a href="https://www.google.com/maps/search/?api=1&query={{ hotel.latitude }},{{ hotel.longitude }}" target="_blank" rel="noopener" class="btn btn-offwhite btn-sm" style="width:100%;">
+            Open in Google Maps &nearr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const basePrice = {{ hotel.price_per_night_bdt }};
+  const ci = document.getElementById("checkInDate");
+  const co = document.getElementById("checkOutDate");
+  const rm = document.getElementById("roomsCount");
+  const rt = document.getElementById("roomTypeSel");
+  const out = document.getElementById("liveBookingTotal");
+  const lbl = document.getElementById("liveNightsLabel");
+
+  function recalc() {
+    const d1 = new Date(ci.value);
+    const d2 = new Date(co.value);
+    let nights = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+    if (isNaN(nights) || nights < 1) nights = 1;
+    const rooms = Math.max(1, parseInt(rm.value || "1", 10));
+    const mult = parseFloat(rt.options[rt.selectedIndex]?.getAttribute("data-mult") || "1.0");
+    const total = Math.round(basePrice * nights * rooms * mult);
+    out.textContent = `৳${total.toLocaleString()}`;
+    lbl.textContent = `(${nights} night${nights > 1 ? "s" : ""}, ${rooms} room${rooms > 1 ? "s" : ""})`;
+  }
+  [ci, co, rm, rt].forEach((el) => el?.addEventListener("change", recalc));
+  recalc();
+
+  if (window.L) {
+    const map = initGoogleBaseMap("hotelMap", [{{ hotel.latitude }}, {{ hotel.longitude }}], 13, false);
+    L.marker([{{ hotel.latitude }}, {{ hotel.longitude }}])
+      .addTo(map)
+      .bindPopup("<strong>{{ hotel.name|escapejs }}</strong><br/>{{ hotel.city|escapejs }}")
+      .openPopup();
+  }
+});
+</script>
+{% endblock %}
