@@ -299,3 +299,53 @@ class TripExpense(models.Model):
     CATEGORY_CHOICES = [
         ("transport", "Transport"),
         ("hotel", "Hotel & Stay"),
+        ("food", "Food & Dining"),
+        ("entry_fee", "Entry Fees & Permits"),
+        ("other", "Shopping & Misc"),
+    ]
+
+    trip = models.ForeignKey(TripPlan, on_delete=models.CASCADE, related_name="expenses")
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default="food")
+    title = models.CharField(max_length=160)
+    amount_bdt = models.PositiveIntegerField(default=0)
+    day_number = models.PositiveSmallIntegerField(default=1)
+    spent_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["day_number", "-spent_at"]
+
+
+class FeedbackCorrection(models.Model):
+    CORRECTION_TYPES = [
+        ("entry_fee", "Entry Fee Update"),
+        ("hours", "Opening Hours / Closed"),
+        ("safety", "Safety / Road Advisory"),
+        ("broken_link", "Broken Booking Link"),
+        ("general", "General Feedback"),
+    ]
+    STATUS_CHOICES = [
+        ("open", "Open"),
+        ("reviewed", "In Review"),
+        ("resolved", "Resolved"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="feedbacks")
+    place = models.ForeignKey(Place, on_delete=models.SET_NULL, null=True, blank=True, related_name="corrections")
+    subject = models.CharField(max_length=180)
+    message = models.TextField()
+    correction_type = models.CharField(max_length=25, choices=CORRECTION_TYPES, default="general")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="open")
+    admin_note = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class SearchLog(models.Model):
+    query = models.CharField(max_length=255)
+    parsed_intent = models.JSONField(default=dict, blank=True)
+    results_count = models.PositiveIntegerField(default=0)
+    is_failure = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
