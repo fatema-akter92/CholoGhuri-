@@ -155,3 +155,55 @@
               <div style="display:flex; flex-wrap:wrap; gap:14px; font-size:13px; color:var(--text-muted); border-top:1px solid var(--border); padding-top:10px;">
                 {% if day.hotel %}<span>&#127976; <strong>Stay:</strong> {{ day.hotel.name }} (৳{{ day.hotel.price_per_night_bdt }})</span>{% endif %}
                 {% if day.restaurant %}<span>&#127869; <strong>Eat:</strong> {{ day.restaurant.name }} (~৳{{ day.restaurant.avg_meal_bdt }})</span>{% endif %}
+                <span>&#9748; <strong>Rain Backup:</strong> {{ day.rainy_backup }}</span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Saved Trips & Estimated vs Actual Expense Tracker -->
+    <div id="saved-trips" style="margin-top:46px;">
+      <div class="section-header">
+        <div>
+          <span class="section-eyebrow">Live Budget Tracking</span>
+          <h2 class="section-title">Saved Trips &amp; Estimated vs. Actual Expense Tracker</h2>
+        </div>
+        {% if not request.user.is_authenticated %}
+          <a href="/auth/?next=/planner/" class="btn btn-cyan btn-sm">Sign In to Track Expenses</a>
+        {% endif %}
+      </div>
+
+      {% if user_trips %}
+        <div class="grid-2" style="gap:20px;">
+          {% for trip in user_trips %}
+            <div class="card card-static">
+              <div class="card-body">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;">
+                  <div>
+                    <h3 style="margin-bottom:4px; font-size:18px;">{{ trip.title }}</h3>
+                    <span class="badge badge-cyan">{{ trip.duration_label }} &bull; Target ৳{{ trip.budget_bdt }}</span>
+                  </div>
+                  <a href="/trips/shared/{{ trip.share_code }}/" class="btn btn-offwhite btn-sm">Share ({{ trip.share_code }})</a>
+                </div>
+
+                {% with est=trip.estimated_breakdown_json.total_bdt|default:trip.budget_bdt %}
+                  <div style="font-size:13px; font-weight:700; margin-bottom:8px;">
+                    Estimated: ৳{{ est }} | Logged Actual Expenses:
+                    <span class="trip-actual-sum" data-trip="{{ trip.id }}" style="color:var(--cyan-700);">৳0</span>
+                  </div>
+                {% endwith %}
+
+                <!-- Expense list -->
+                <div style="max-height:170px; overflow-y:auto; margin-bottom:12px;">
+                  {% for exp in trip.expenses.all %}
+                    <div class="exp-row-{{ trip.id }}" data-amt="{{ exp.amount_bdt }}" style="display:flex; justify-content:space-between; align-items:center; font-size:13px; padding:6px 0; border-bottom:1px solid #eef6f8;">
+                      <span><span class="badge badge-cyan">{{ exp.category|title }}</span> Day {{ exp.day_number }}: {{ exp.title }}</span>
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <strong>৳{{ exp.amount_bdt }}</strong>
+                        <form method="post" style="display:inline;">
+                          {% csrf_token %}
+                          <input type="hidden" name="action" value="delete_expense" />
+                          <input type="hidden" name="expense_id" value="{{ exp.id }}" />
+                          <button type="submit" style="border:none; background:none; color:var(--rose); cursor:pointer;">&times;</button>
