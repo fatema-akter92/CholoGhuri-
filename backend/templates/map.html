@@ -99,3 +99,54 @@
 let mainLeafletMap = null;
 
 function switchMapView(mode) {
+  const mapEl = document.getElementById("bdMainMap");
+  const frameEl = document.getElementById("googleEmbedFrame");
+  const b1 = document.getElementById("btnInteractiveMap");
+  const b2 = document.getElementById("btnGoogleEmbed");
+  if (mode === "embed") {
+    mapEl.style.display = "none";
+    frameEl.style.display = "block";
+    b2.classList.replace("btn-offwhite", "btn-cyan");
+    b1.classList.replace("btn-cyan", "btn-offwhite");
+  } else {
+    frameEl.style.display = "none";
+    mapEl.style.display = "block";
+    b1.classList.replace("btn-offwhite", "btn-cyan");
+    b2.classList.replace("btn-cyan", "btn-offwhite");
+    setTimeout(() => mainLeafletMap?.invalidateSize(), 60);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const map = initGoogleBaseMap("bdMainMap", [23.685, 90.3563], 7, true);
+  mainLeafletMap = map;
+
+  const layers = {
+    places: L.layerGroup().addTo(map),
+    hotels: L.layerGroup().addTo(map),
+    restaurants: L.layerGroup(),
+    safety: L.layerGroup().addTo(map),
+    route: L.layerGroup().addTo(map),
+  };
+
+  function makeCircleIcon(color, size = 14) {
+    return L.divIcon({
+      className: "custom-pin",
+      html: `<div style="width:${size}px;height:${size}px;border-radius:999px;background:${color};border:2.5px solid #ffffff;box-shadow:0 2px 6px rgba(0,0,0,0.35);"></div>`,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
+    });
+  }
+
+  try {
+    const data = await apiFetch("/api/map/data/");
+    (data.places || []).forEach((p) => {
+      L.marker([p.latitude, p.longitude], { icon: makeCircleIcon("#0891b2", 16) })
+        .bindPopup(`<strong>${p.name}</strong><br/>${p.district} &bull; ${p.category_name}<br/><a href="/destinations/${p.slug}/" style="color:#0891b2;font-weight:700;">View Details &rarr;</a>`)
+        .addTo(layers.places);
+    });
+    (data.hotels || []).forEach((h) => {
+      L.marker([h.latitude, h.longitude], { icon: makeCircleIcon("#4f46e5", 13) })
+        .bindPopup(`<strong>&#127976; ${h.name}</strong><br/>${h.city} &bull; ৳${h.price_per_night_bdt}/night<br/>${h.contact_phone}`)
+        .addTo(layers.hotels);
+    });
