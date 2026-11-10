@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}CholoGhuri AI Travel Assistant{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:28px;">
+  <div class="container" style="max-width:1050px;">
+    <div class="section-header" style="margin-bottom:20px;">
+      <div>
+        <span class="section-eyebrow">Module 03 &bull; AI Travel Assistant</span>
+        <h1 class="section-title">Ask CholoGhuri Smart Bangladesh AI</h1>
+        <p class="section-sub">Plan multi-day BDT budgets, generate itineraries, get weather/closure backup suggestions, and find halal food or emergency contacts.</p>
+      </div>
+    </div>
+
+    <div class="grid-3" style="gap:20px; align-items:start;">
+      <!-- Prompts Sidebar -->
+      <div class="card card-static" style="background:var(--bg-cream);">
+        <div class="card-body">
+          <h3 style="font-size:16px; margin-bottom:10px;">Sample Scenarios</h3>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <button type="button" class="btn btn-offwhite btn-sm" style="text-align:left; justify-content:flex-start;" onclick="sendPagePrompt('I will travel Bangladesh for 5 days, my budget is 30,000 BDT. I love nature, sea, historical places and local food.')">
+              5 days • ৳30,000 • Nature, Sea, History &amp; Food
+            </button>
+            <button type="button" class="btn btn-offwhite btn-sm" style="text-align:left; justify-content:flex-start;" onclick="sendPagePrompt('I have only 6 hours in Dhaka. What historical and food spots can I cover?')">
+              Only 6 hours in Dhaka
+            </button>
+            <button type="button" class="btn btn-offwhite btn-sm" style="text-align:left; justify-content:flex-start;" onclick="sendPagePrompt('If it rains or Saint Martin ferries close, what alternative places should I visit?')">
+              Rain / Closure Alternatives
+            </button>
+            <button type="button" class="btn btn-offwhite btn-sm" style="text-align:left; justify-content:flex-start;" onclick="sendPagePrompt('Recommend verified halal & allergy-safe local restaurants in Old Dhaka and Sylhet.')">
+              Halal &amp; Allergy-Safe Food
+            </button>
+            <button type="button" class="btn btn-offwhite btn-sm" style="text-align:left; justify-content:flex-start;" onclick="sendPagePrompt('What emergency numbers, hospital info and hill-tract permits do foreign tourists need?')">
+              Safety, 999 &amp; Permits
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Thread -->
+      <div class="card card-static" style="grid-column:span 2; display:flex; flex-direction:column; min-height:520px;">
+        <div style="background:linear-gradient(135deg, var(--cyan-700), var(--cyan-600)); color:#fff; padding:14px 18px; display:flex; justify-content:space-between; align-items:center;">
+          <strong>CholoGhuri Grounded Smart Engine</strong>
+          <span style="font-size:12px; opacity:0.9;">Verified BD Database + Optional LLM</span>
+        </div>
+
+        <div id="aiPageMsgs" style="flex:1; padding:18px; overflow-y:auto; max-height:460px; background:var(--bg-offwhite); display:flex; flex-direction:column; gap:14px;">
+          <div class="msg-bubble msg-ai" style="max-width:92%;">Welcome! Tell me how many days you have, your budget in BDT, or any question about traveling in Bangladesh.</div>
+        </div>
+
+        <form id="aiPageForm" style="padding:14px; border-top:1px solid var(--border); display:flex; gap:10px; background:#fff;">
+          <input id="aiPageInput" class="input" type="text" value="{{ initial_q }}" placeholder="Ask e.g. 'Plan 5 days in Bangladesh with 30,000 BDT for nature & historical places'..." required />
+          <button class="btn btn-cyan" type="submit">Ask AI</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function sendPagePrompt(text) {
+  const input = document.getElementById("aiPageInput");
+  if (!input) return;
+  input.value = text;
+  document.getElementById("aiPageForm").dispatchEvent(new Event("submit"));
+}
+
+async function voteAI(logId, vote, btn) {
+  await apiFetch("/api/ai/feedback/", { method: "POST", body: JSON.stringify({ log_id: logId, vote }) });
+  btn.parentElement.innerHTML = `<span class="badge badge-emerald">Feedback recorded (${vote === 1 ? "Helpful" : "Noted"}) ✓</span>`;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("aiPageForm");
+  const input = document.getElementById("aiPageInput");
+  const box = document.getElementById("aiPageMsgs");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const q = input.value.trim();
+    if (!q) return;
+
+    const uDiv = document.createElement("div");
+    uDiv.className = "msg-bubble msg-user";
+    uDiv.textContent = q;
+    box.appendChild(uDiv);
+    input.value = "";
+
+    const loading = document.createElement("div");
+    loading.className = "msg-bubble msg-ai";
+    loading.textContent = "Analyzing Bangladesh routes, budgets & weather data...";
+    box.appendChild(loading);
+    box.scrollTop = box.scrollHeight;
+
+    try {
+      const res = await apiFetch("/api/ai/chat/", { method: "POST", body: JSON.stringify({ prompt: q }) });
+      loading.remove();
+
+      const aDiv = document.createElement("div");
+      aDiv.className = "msg-bubble msg-ai";
+      aDiv.style.maxWidth = "94%";
+      aDiv.innerHTML = `
+        <div style="white-space:pre-line;">${res.reply}</div>
+        ${res.recommended_places?.length ? `
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
+            ${res.recommended_places.map((p) => `<a href="/destinations/${p.slug}/" class="badge badge-cyan">${p.name} (${p.district}) &rarr;</a>`).join("")}
+          </div>
+        ` : ""}
+        <div style="margin-top:12px; padding-top:8px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--text-soft);">
+          <span>Engine: ${res.provider} &bull; ${res.latency_ms} ms</span>
+          <div style="display:flex; gap:6px;">
+            <button type="button" onclick="voteAI(${res.log_id}, 1, this)" class="chip">&#128077; Helpful</button>
+            <button type="button" onclick="voteAI(${res.log_id}, -1, this)" class="chip">&#128078;</button>
+          </div>
+        </div>
+      `;
+      box.appendChild(aDiv);
+      box.scrollTop = box.scrollHeight;
+    } catch (err) {
+      loading.textContent = `Error: ${err.message}`;
+    }
+  });
+});
+</script>
+{% endblock %}
