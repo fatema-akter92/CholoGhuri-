@@ -515,3 +515,61 @@ def safety_view(request):
             languages=[x.strip() for x in (request.POST.get("languages") or "English, Bengali").split(",") if x.strip()],
             specialties=[x.strip() for x in (request.POST.get("specialties") or "Sightseeing").split(",") if x.strip()],
             daily_rate_bdt=int(request.POST.get("daily_rate_bdt") or 2000),
+            phone=(request.POST.get("phone") or "").strip()[:50],
+            license_ref=(request.POST.get("license_ref") or "").strip()[:100],
+            bio=(request.POST.get("bio") or "").strip(),
+            verification_status="pending",
+        )
+        messages.success(request, "Your local guide verification application has been submitted for Admin review!")
+        return redirect("/safety/#guides")
+
+    division_q = request.GET.get("division", "")
+    ftype_q = request.GET.get("type", "")
+    facilities = SafetyFacility.objects.all()
+    if division_q:
+        facilities = facilities.filter(division__iexact=division_q)
+    if ftype_q:
+        facilities = facilities.filter(facility_type=ftype_q)
+
+    guides = LocalGuide.objects.filter(verification_status="verified")
+    emergency_phrases = [p for p in TRAVEL_PHRASES if p["category"] == "Emergency & Medical"]
+    divisions = sorted(list(Place.objects.values_list("division", flat=True).distinct()))
+    user_trips = TripPlan.objects.filter(user=request.user)[:5] if request.user.is_authenticated else []
+
+    return render(
+        request,
+        "safety.html",
+        {
+            "facilities": list(facilities),
+            "guides": list(guides),
+            "emergency_phrases": emergency_phrases,
+            "divisions": divisions,
+            "division_q": division_q,
+            "ftype_q": ftype_q,
+            "user_trips": user_trips,
+        },
+    )
+
+
+def auth_view(request):
+    next_url = request.GET.get("next") or request.POST.get("next") or "/dashboard/"
+    mode = request.GET.get("mode", "login")
+
+    if request.method == "POST":
+        action = request.POST.get("action", "login")
+        if action == "login":
+            identifier = (request.POST.get("username") or "").strip()
+            password = request.POST.get("password") or ""
+            uname = identifier
+            if "@" in identifier:
+                matched = User.objects.filter(email__iexact=identifier).first()
+                if matched:
+                    uname = matched.username
+            user = authenticate(request, username=uname, password=password)
+            if user:
+                TravelerProfile.objects.get_or_create(user=user)
+                login(request, user)
+                messages.success(request, f"Welcome back, {user.first_name or user.username}!")
+                return redirect("/admin-portal/" if user.is_staff and next_url == "/dashboard/" else next_url)
+            messages.error(request, "Invalid username/email or password.")
+            mode = "login"
