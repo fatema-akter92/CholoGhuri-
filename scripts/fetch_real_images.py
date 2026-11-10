@@ -111,3 +111,60 @@ TARGETS = [
         "slug": "mainamati",
         "wiki_titles": ["Shalban Vihara", "Mainamati"],
         "commons_queries": ["Shalban Vihara", "Mainamati Comilla"],
+    },
+    {
+        "slug": "star-mosque",
+        "wiki_titles": ["Star Mosque"],
+        "commons_queries": ["Star Mosque Dhaka", "Tara Masjid Dhaka"],
+    },
+    {
+        "slug": "dhakeshwari-temple",
+        "wiki_titles": ["Dhakeshwari Temple"],
+        "commons_queries": ["Dhakeshwari Temple Dhaka"],
+    },
+    {
+        "slug": "kantajew-temple",
+        "wiki_titles": ["Kantajew Temple"],
+        "commons_queries": ["Kantajew Temple Dinajpur"],
+    },
+    {
+        "slug": "buddha-dhatu-jadi",
+        "wiki_titles": ["Buddha Dhatu Jadi"],
+        "commons_queries": ["Buddha Dhatu Jadi Bandarban", "Golden Temple Bandarban"],
+    },
+    {
+        "slug": "old-dhaka-food",
+        "wiki_titles": ["Kacchi Biryani", "Dhakaiya cuisine", "Bangladeshi cuisine"],
+        "commons_queries": ["Kacchi Biryani Dhaka", "Haji Biryani Dhaka", "Bangladeshi biryani"],
+    },
+    {
+        "slug": "chattogram-mezban",
+        "wiki_titles": ["Mezban", "Kala bhuna", "Bangladeshi cuisine"],
+        "commons_queries": ["Kala bhuna", "Mezban Chittagong", "Bangladeshi curry"],
+    },
+    {
+        "slug": "sylhet-tea-food",
+        "wiki_titles": ["Seven Color Tea"],
+        "commons_queries": ["Seven Color Tea", "Seven layer tea Sreemangal"],
+    },
+    {
+        "slug": "tanguar-haor",
+        "wiki_titles": ["Tanguar Haor"],
+        "commons_queries": ["Tanguar Haor", "Tanguar Haor Sunamganj"],
+    },
+    {
+        "slug": "nikli-haor",
+        "wiki_titles": ["Nikli Upazila", "Mithamain Upazila"],
+        "commons_queries": ["Nikli Haor", "Haor Kishoreganj Bangladesh"],
+    },
+    {
+        "slug": "bhimruli-guava-market",
+        "wiki_titles": ["Bhimruli"],
+        "commons_queries": ["Bhimruli floating guava market", "Floating guava market Barishal"],
+    },
+    {
+        "slug": "nafakhum-debotakhum",
+        "wiki_titles": ["Nafakhum", "Amiakhum"],
+        "commons_queries": ["Nafakhum waterfall", "Debotakhum Bandarban"],
+    },
+]
