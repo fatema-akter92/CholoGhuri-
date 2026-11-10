@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Hotels, Resorts &amp; Halal/Allergy Local Food Explorer — CholoGhuri{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:28px;">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:18px;">
+      <div>
+        <span class="section-eyebrow">Module 04 &bull; Stays, Dining &amp; Dietary Safety</span>
+        <h1 class="section-title">Hotels, Resorts &amp; Local Food Explorer</h1>
+        <p class="section-sub">Compare verified Bangladesh hotels side-by-side or discover regional specialties with verified Halal, Vegetarian, and Allergy-safe filters.</p>
+      </div>
+    </div>
+
+    <!-- Switch Tabs -->
+    <div class="tabs">
+      <a href="/hotels-food/?tab=hotels" class="tab-btn {% if tab == 'hotels' %}active{% endif %}">&#127976; Hotels &amp; Resorts ({{ hotels|length }})</a>
+      <a href="/hotels-food/?tab=food" class="tab-btn {% if tab == 'food' %}active{% endif %}">&#127869; Restaurants &amp; Local Food ({{ restaurants|length }})</a>
+    </div>
+
+    {% if tab == "hotels" %}
+      <!-- Hotel Filter Form -->
+      <div class="card card-static" style="background:var(--bg-cream); margin-bottom:20px;">
+        <div class="card-body">
+          <form method="get" class="grid-4" style="gap:12px; align-items:end;">
+            <input type="hidden" name="tab" value="hotels" />
+            <div>
+              <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">City or Hotel Name</label>
+              <input class="input" type="text" name="city" value="{{ filters.city }}" placeholder="Cox's Bazar, Dhaka, Sylhet..." />
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Budget Tier</label>
+              <select class="select" name="tier">
+                <option value="">All Tiers</option>
+                <option value="low" {% if filters.tier == "low" %}selected{% endif %}>Budget Stay</option>
+                <option value="mid" {% if filters.tier == "mid" %}selected{% endif %}>Mid-Range</option>
+                <option value="luxury" {% if filters.tier == "luxury" %}selected{% endif %}>Luxury Resort</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Facility</label>
+              <select class="select" name="facility">
+                <option value="">Any Facility</option>
+                <option value="Sea View" {% if filters.facility == "Sea View" %}selected{% endif %}>Sea View</option>
+                <option value="Pool" {% if filters.facility == "Pool" %}selected{% endif %}>Pool</option>
+                <option value="Halal Kitchen" {% if filters.facility == "Halal Kitchen" %}selected{% endif %}>Halal Kitchen</option>
+                <option value="Family Rooms" {% if filters.facility == "Family Rooms" %}selected{% endif %}>Family Rooms</option>
+                <option value="WiFi" {% if filters.facility == "WiFi" %}selected{% endif %}>Free WiFi</option>
+              </select>
+            </div>
