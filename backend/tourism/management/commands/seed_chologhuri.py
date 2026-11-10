@@ -1322,3 +1322,63 @@ class Command(BaseCommand):
             ("Aung Shwe Marma", "Bandarban", "Chattogram", ["English", "Bengali", "Marma"], ["Boga Lake Trek", "Nafakhum", "Hill Culture"], 2500, "+880-1823-445511", "CHT-BND-2025-078", "verified", "Certified Bandarban mountain expedition & Ruma/Thanchi community guide."),
             ("Kamrul Hasan", "Khulna / Sundarbans", "Khulna", ["English", "Bengali"], ["Mangrove Ecology", "Birding", "Bagerhat UNESCO"], 2800, "+880-1718-332244", "FD-KHL-2026-019", "verified", "Naturalist and Sundarbans eco-cruise coordinator."),
             ("Nusrat Jahan", "Sylhet / Sreemangal", "Sylhet", ["English", "Bengali", "Japanese"], ["Tea Estates", "Lawachara Gibbons", "Tanguar Haor"], 2600, "+880-1744-556677", "BTB-SYL-2026-009", "pending", "Bilingual Sylhet heritage & eco-tour specialist awaiting final NID verification."),
+        ]
+        for g_name, city, div, langs, specs, rate, phone, lic, status_v, bio in guides_data:
+            LocalGuide.objects.update_or_create(
+                full_name=g_name,
+                defaults={
+                    "city": city,
+                    "division": div,
+                    "languages": langs,
+                    "specialties": specs,
+                    "daily_rate_bdt": rate,
+                    "phone": phone,
+                    "license_ref": lic,
+                    "verification_status": status_v,
+                    "bio": bio,
+                },
+            )
+
+        # 8. Sample Reviews (including 1 flagged review for Admin Moderation demo)
+        if not Review.objects.exists():
+            sample_reviews = [
+                ("coxs-bazar", traveler_user, 5, "Breathtaking Marine Drive Sunset", "Driving along Marine Drive from Kolatoli down to Inani Beach around 4:30 PM was unforgettable. Clean beach breeze and amazing grilled red snapper!", "couple", False, ""),
+                ("lalbagh-fort", traveler_user, 5, "Must-visit Mughal Oasis in Old Dhaka", "Visited on a weekday morning as part of a 6-hour Dhaka layover. The gardens and Pari Bibi's tomb are extraordinarily peaceful compared to the lively streets outside.", "solo", False, ""),
+                ("sajek-valley", admin_user, 5, "Waking up literally inside the clouds", "Joined the 10 AM convoy and woke up at 5:45 AM on Ruilui ridge watching clouds drift past our wooden balcony. Truly surreal.", "friends", False, ""),
+                ("sundarbans", traveler_user, 5, "Magical quiet creeks & deer herds", "Cruised silently down small tidal canals at dawn. Spotted spotted deer, estuarine crocodiles, and vibrant kingfishers.", "family", False, ""),
+                ("old-dhaka-food", admin_user, 4, "Hajir Biryani lives up to the legend", "Mustard oil aroma makes it lighter than typical kacchi. Busy seating, so go slightly before 1 PM!", "friends", True, "Suspicious spam URL check test for moderation queue"),
+            ]
+            for p_slug, usr, rat, title, comm, vtype, rep, rreason in sample_reviews:
+                Review.objects.create(
+                    place=places[p_slug],
+                    user=usr,
+                    rating=rat,
+                    title=title,
+                    comment=comm,
+                    visit_type=vtype,
+                    is_reported=rep,
+                    report_reason=rreason,
+                )
+
+        # 9. Sample Wishlist, Saved Trip Plan + Expenses, Feedback, Search & AI Logs
+        WishlistItem.objects.get_or_create(user=traveler_user, place=places["saint-martins-island"])
+        WishlistItem.objects.get_or_create(user=traveler_user, place=places["sajek-valley"])
+        WishlistItem.objects.get_or_create(user=traveler_user, place=places["shat-gambuj-mosque"])
+
+        if not TripPlan.objects.exists():
+            sample_plan = build_smart_itinerary(
+                start_city="Dhaka",
+                duration_days=5.0,
+                duration_label="5 days",
+                budget_bdt=30000,
+                budget_tier="mid",
+                traveler_type="solo",
+                interests=["nature", "sea", "historical", "food"],
+            )
+            tp = TripPlan.objects.create(
+                user=traveler_user,
+                share_code="CHOLO5BD30",
+                title="5-Day Bangladesh Nature, Sea, Heritage & Food Explorer",
+                start_city="Dhaka",
+                duration_days=5.0,
+                duration_label="5 days",
