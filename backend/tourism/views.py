@@ -452,3 +452,60 @@ class TranslatorTTSView(APIView):
     def get(self, request):
         text = (request.query_params.get("text") or "").strip()[:220]
         lang = (request.query_params.get("lang") or "bn").split("-")[0].lower()
+        if lang not in {"bn", "en", "hi", "ar", "ja", "fr", "es"}:
+            lang = "bn"
+        if not text:
+            return Response({"detail": "No text provided"}, status=400)
+        try:
+            r = requests.get(
+                "https://translate.google.com/translate_tts",
+                params={"ie": "UTF-8", "client": "tw-ob", "tl": lang, "q": text},
+                headers={"User-Agent": "Mozilla/5.0"},
+                timeout=6,
+            )
+            if r.status_code == 200 and r.content:
+                return HttpResponse(r.content, content_type="audio/mpeg")
+        except Exception:
+            pass
+        return Response({"detail": "Audio TTS unavailable"}, status=503)
+
+
+class TripGenerateView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        start_city = request.data.get("start_city", "Dhaka")
+        duration_label = request.data.get("duration_label", "3 days")
+        duration_map = {
+            "half_day": 0.5,
+            "half day": 0.5,
+            "1_day": 1.0,
+            "1 day": 1.0,
+            "3_days": 3.0,
+            "3 days": 3.0,
+            "5_days": 5.0,
+            "5 days": 5.0,
+            "7_days": 7.0,
+            "7 days": 7.0,
+        }
+        duration_days = float(
+            request.data.get("duration_days")
+            or duration_map.get(str(duration_label).lower(), 3.0)
+        )
+        budget_bdt = int(request.data.get("budget_bdt", 20000))
+        budget_tier = request.data.get("budget_tier", "mid")
+        traveler_type = request.data.get("traveler_type", "friends")
+        interests = request.data.get("interests") or ["nature", "historical"]
+        weather_aware = bool(request.data.get("weather_aware", True))
+
+        plan_data = build_smart_itinerary(
+            start_city=start_city,
+            duration_days=duration_days,
+            duration_label=duration_label.replace("_", " "),
+            budget_bdt=budget_bdt,
+            budget_tier=budget_tier,
+            traveler_type=traveler_type,
+            interests=interests,
+            weather_aware=weather_aware,
+        )
+
