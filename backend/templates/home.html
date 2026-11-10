@@ -108,3 +108,59 @@
             <p style="font-size:13px; color:var(--text-muted); margin:0;">{{ cat.description }}</p>
           </a>
         {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Verified Bangladesh Destinations -->
+  <section class="section section-cream">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="section-eyebrow">Real Verified Photography</span>
+          <h2 class="section-title">Most Loved Destinations in Bangladesh</h2>
+          <p class="section-sub">Verified opening hours, local &amp; foreign entry fees, weather advice &amp; nearby hotels.</p>
+        </div>
+        <a href="/destinations/" class="btn btn-cyan btn-sm">View Full Directory &rarr;</a>
+      </div>
+
+      <div class="grid-4">
+        {% for place in featured_places %}
+          {% include "partials/place_card.html" with place=place %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Weather-Aware Bangladesh Travel Check -->
+  <section class="section">
+    <div class="container">
+      <div class="card card-static" style="background:linear-gradient(125deg, #ffffff 0%, #ecfeff 100%); border:1px solid var(--cyan-200);">
+        <div class="card-body" style="padding:28px;">
+          <div class="grid-2" style="align-items:center;">
+            <div>
+              <span class="section-eyebrow">Weather-Aware Smart Guide</span>
+              <h2 class="section-title">Check Live Weather &amp; Rainy-Day Alternatives</h2>
+              <p class="section-sub" style="margin-bottom:16px;">
+                Live Open-Meteo forecasts for Bangladesh destinations — with outdoor suitability scores, coastal ferry alerts, and automatic indoor backup suggestions.
+              </p>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <select id="homeWeatherSelect" class="select" style="max-width:260px;">
+                  {% for p in all_places_light %}
+                    <option value="{{ p.slug }}" {% if p.slug == "coxs-bazar" %}selected{% endif %}>{{ p.name }} ({{ p.district }})</option>
+                  {% endfor %}
+                </select>
+                <button type="button" id="homeWeatherBtn" class="btn btn-cyan btn-sm">Check Forecast</button>
+              </div>
+            </div>
+
+            <div id="homeWeatherBox" style="background:#ffffff; border:1px solid var(--cyan-200); border-radius:14px; padding:18px;">
+              <div style="color:var(--text-soft); font-size:13px;">Loading live weather suitability...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dedicated Famous Foods of Bangladesh Section (5 Culinary Categories) -->
