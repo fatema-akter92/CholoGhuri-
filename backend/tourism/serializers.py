@@ -266,3 +266,57 @@ class TripPlanSerializer(serializers.ModelSerializer):
         return sum(e.amount_bdt for e in obj.expenses.all())
 
 
+class WishlistItemSerializer(serializers.ModelSerializer):
+    place_detail = PlaceListSerializer(source="place", read_only=True)
+
+    class Meta:
+        model = WishlistItem
+        fields = ["id", "place", "place_detail", "created_at"]
+        read_only_fields = ["created_at"]
+
+
+class FeedbackCorrectionSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True, default="Guest Traveler")
+    place_name = serializers.CharField(source="place.name", read_only=True, default="General Platform")
+
+    class Meta:
+        model = FeedbackCorrection
+        fields = [
+            "id",
+            "user",
+            "username",
+            "place",
+            "place_name",
+            "subject",
+            "message",
+            "correction_type",
+            "status",
+            "admin_note",
+            "created_at",
+        ]
+        read_only_fields = ["user", "created_at"]
+
+
+class SearchLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SearchLog
+        fields = "__all__"
+
+
+class AIQueryLogSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True, default="Guest")
+
+    class Meta:
+        model = AIQueryLog
+        fields = [
+            "id",
+            "username",
+            "prompt",
+            "response_preview",
+            "provider",
+            "latency_ms",
+            "tokens_used",
+            "estimated_cost_usd",
+            "helpful_vote",
+            "created_at",
+        ]
