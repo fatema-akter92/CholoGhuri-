@@ -48,3 +48,54 @@
             </label>
             <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px; cursor:pointer;">
               <input type="checkbox" class="layer-toggle" value="hotels" checked />
+              <span style="width:10px; height:10px; border-radius:999px; background:#4f46e5; display:inline-block;"></span>
+              Hotels &amp; Resorts
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px; cursor:pointer;">
+              <input type="checkbox" class="layer-toggle" value="restaurants" />
+              <span style="width:10px; height:10px; border-radius:999px; background:#d97706; display:inline-block;"></span>
+              Restaurants &amp; Local Food
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+              <input type="checkbox" class="layer-toggle" value="safety" checked />
+              <span style="width:10px; height:10px; border-radius:999px; background:#dc2626; display:inline-block;"></span>
+              Hospitals, Pharmacies &amp; Police
+            </label>
+          </div>
+        </div>
+
+        <div id="routeResultBox" class="card card-static" style="border-color:var(--cyan-200);">
+          <div class="card-body" style="font-size:13.5px; color:var(--text-muted);">
+            Select a start hub and destination to view route distance, drive time, transport options &amp; nearby facilities.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Map + Nearby Panel -->
+      <div style="grid-column:span 2; display:flex; flex-direction:column; gap:18px;">
+        <div class="card card-static" style="overflow:hidden;">
+          <div style="padding:10px 14px; background:var(--bg-cream); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; gap:8px;">
+              <button type="button" id="btnInteractiveMap" class="btn btn-cyan btn-sm" onclick="switchMapView('interactive')">Interactive Google Map &amp; Pins</button>
+              <button type="button" id="btnGoogleEmbed" class="btn btn-offwhite btn-sm" onclick="switchMapView('embed')">Google Maps Live Route Embed</button>
+            </div>
+            <a id="openGoogleMapsLink" href="https://www.google.com/maps/dir/?api=1&origin=Dhaka,Bangladesh&destination=Cox's+Bazar,Bangladesh" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+              Open in Google Maps &nearr;
+            </a>
+          </div>
+          <div id="bdMainMap" style="height:520px; width:100%;"></div>
+          <iframe id="googleEmbedFrame" title="Google Maps Route View" style="display:none; width:100%; height:520px; border:0;" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+
+        <div id="routeNearbyGrid" class="grid-3" style="gap:14px;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let mainLeafletMap = null;
+
+function switchMapView(mode) {
