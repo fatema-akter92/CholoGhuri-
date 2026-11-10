@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}CholoGhuri — Smart Bangladesh Tourism Guide{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/chologhuri.css' %}" />
+  <link rel="stylesheet" href="{% static 'vendor/leaflet/leaflet.css' %}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Header (Japan Travel Guide Inspired Layout in Cyan & Off-White) -->
+  <header class="site-header no-print">
+    <!-- Top Utility Strip (matched cleanly with main CholoGhuri navbar style) -->
+    <div class="utility-bar">
+      <div class="container utility-inner">
+        <div class="utility-links">
+          <a href="/safety/" style="color: var(--cyan-800);">&#9888; Safety 999</a>
+          <a href="/foods/">Famous Foods</a>
+          <a href="/planner/">Trip Planner</a>
+          <a href="/translator/">Translator</a>
+          <a href="/safety/#guides">Local Guides</a>
+          {% if request.user.is_staff %}
+            <a href="/admin-portal/" style="color:var(--cyan-700);">Admin Portal</a>
+          {% endif %}
+        </div>
+        <div class="utility-right">
+          <a href="/dashboard/?tab=wishlist" class="wishlist-pill" title="Saved Wishlist Places">
+            <span>&#9829; Saved</span>
+            <span class="wishlist-count" id="navWishlistCount">{{ wishlist_count|default:0 }}</span>
+          </a>
+
+          <div class="lang-select-wrap">
+            <span style="font-size:13px;">&#127760;</span>
+            <select id="navLangSelect" aria-label="Select Language">
+              <option value="en">English • Translate</option>
+              <option value="bn">Bengali (বাংলা)</option>
+              <option value="hi">Hindi (हिन्दी)</option>
+              <option value="ar">Arabic (العربية)</option>
+              <option value="ja">Japanese (日本語)</option>
+              <option value="fr">French (Français)</option>
