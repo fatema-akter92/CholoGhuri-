@@ -282,3 +282,60 @@ function switchDetailTab(btn, paneId) {
   btn.parentElement.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
   btn.classList.add("active");
   document.querySelectorAll(".detail-tab-pane").forEach((p) => (p.style.display = "none"));
+  document.getElementById(paneId).style.display = "block";
+}
+
+async function reportReview(id, btn) {
+  await apiFetch(`/api/reviews/${id}/report/`, { method: "POST", body: JSON.stringify({ reason: "User flagged" }) });
+  btn.textContent = "Reported for review ✓";
+  btn.disabled = true;
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  // Mini Google Map
+  const mapEl = document.getElementById("detailMiniMap");
+  if (mapEl && window.L) {
+    const map = initGoogleBaseMap("detailMiniMap", [{{ place.latitude }}, {{ place.longitude }}], 12, false);
+    L.marker([{{ place.latitude }}, {{ place.longitude }}])
+      .addTo(map)
+      .bindPopup("<strong>{{ place.name|escapejs }}</strong><br/>{{ place.district|escapejs }}")
+      .openPopup();
+  }
+
+  // Live Weather Forecast
+  const wBox = document.getElementById("placeWeatherBox");
+  if (wBox) {
+    try {
+      const w = await apiFetch("/api/places/{{ place.slug }}/weather/");
+      const daysHtml = (w.forecast || []).slice(0, 4).map((d) => `
+        <div style="display:flex; justify-content:space-between; font-size:12px; padding:5px 0; border-bottom:1px solid #eef6f8;">
+          <span>${d.date}</span>
+          <span>${d.short}</span>
+          <strong>${d.temp_max}&deg; / ${d.temp_min}&deg;C</strong>
+        </div>
+      `).join("");
+      const altsHtml = (w.rainy_day_alternatives || []).slice(0, 2).map((a) => `
+        <a href="/destinations/${a.slug}/" style="display:block; font-size:12px; font-weight:700; color:var(--cyan-700); margin-top:4px;">&rarr; ${a.name} (${a.district})</a>
+      `).join("");
+      wBox.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <div>
+            <div style="font-size:26px; font-weight:800; color:var(--cyan-800);">${w.current.temperature_c}&deg;C</div>
+            <div style="font-size:12.5px; font-weight:700;">${w.current.condition} &bull; Humidity ${w.current.humidity_pct}%</div>
+          </div>
+          <span class="badge badge-cyan">Suitability ${w.outdoor_suitability_score}%</span>
+        </div>
+        <div class="bar-track" style="margin-bottom:10px;"><div class="bar-fill" style="width:${w.outdoor_suitability_score}%;"></div></div>
+        <div style="font-size:12.5px; margin-bottom:10px;">${w.itinerary_update_suggestion}</div>
+        ${(w.alerts || []).map((al) => `<div class="alert alert-warning" style="padding:8px 10px; font-size:12px; margin-bottom:8px;">${al}</div>`).join("")}
+        ${daysHtml}
+        <div style="margin-top:10px; font-size:12px; font-weight:700; color:var(--cyan-900);">Rainy-Day Backup Options:</div>
+        ${altsHtml}
+      `;
+    } catch {
+      wBox.textContent = "Weather service temporarily offline.";
+    }
+  }
+});
+</script>
+{% endblock %}
