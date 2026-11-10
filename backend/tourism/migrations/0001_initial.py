@@ -236,3 +236,63 @@ class Migration(migrations.Migration):
                 ('phone', models.CharField(max_length=60)),
                 ('emergency_24h', models.BooleanField(default=True)),
                 ('latitude', models.FloatField()),
+                ('longitude', models.FloatField()),
+                ('verified_notes', models.CharField(blank=True, max_length=255)),
+                ('place', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='safety_facilities', to='tourism.place')),
+            ],
+            options={
+                'ordering': ['division', 'city', 'facility_type'],
+            },
+        ),
+        migrations.CreateModel(
+            name='TripPlan',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('share_code', models.CharField(default='', max_length=16, unique=True)),
+                ('title', models.CharField(max_length=200)),
+                ('start_city', models.CharField(default='Dhaka', max_length=80)),
+                ('duration_days', models.FloatField(default=3.0)),
+                ('duration_label', models.CharField(default='3 days', max_length=30)),
+                ('budget_bdt', models.PositiveIntegerField(default=15000)),
+                ('budget_tier', models.CharField(choices=[('low', 'Low-Cost / Backpacker'), ('mid', 'Mid-Range'), ('luxury', 'Luxury')], default='mid', max_length=15)),
+                ('traveler_type', models.CharField(choices=[('solo', 'Solo'), ('couple', 'Couple'), ('family', 'Family'), ('friends', 'Friends')], default='friends', max_length=15)),
+                ('interests', models.JSONField(blank=True, default=list)),
+                ('itinerary_json', models.JSONField(blank=True, default=list)),
+                ('estimated_breakdown_json', models.JSONField(blank=True, default=dict)),
+                ('weather_notes', models.TextField(blank=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='trip_plans', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['-created_at'],
+            },
+        ),
+        migrations.CreateModel(
+            name='TripExpense',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('category', models.CharField(choices=[('transport', 'Transport'), ('hotel', 'Hotel & Stay'), ('food', 'Food & Dining'), ('entry_fee', 'Entry Fees & Permits'), ('other', 'Shopping & Misc')], default='food', max_length=20)),
+                ('title', models.CharField(max_length=160)),
+                ('amount_bdt', models.PositiveIntegerField(default=0)),
+                ('day_number', models.PositiveSmallIntegerField(default=1)),
+                ('spent_at', models.DateTimeField(auto_now_add=True)),
+                ('trip', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='expenses', to='tourism.tripplan')),
+            ],
+            options={
+                'ordering': ['day_number', '-spent_at'],
+            },
+        ),
+        migrations.CreateModel(
+            name='WishlistItem',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('place', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='wishlisted_by', to='tourism.place')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='wishlist', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['-created_at'],
+                'unique_together': {('user', 'place')},
+            },
+        ),
+    ]
