@@ -42,3 +42,47 @@ def parse_natural_language_query(raw_query: str):
     q = (raw_query or "").strip()
     lower = q.lower()
 
+    intent = {
+        "raw_query": q,
+        "duration_hours": None,
+        "duration_days": None,
+        "budget_bdt": None,
+        "budget_tier": None,
+        "locations": [],
+        "interests": [],
+        "indoor_only": False,
+        "keywords": [],
+    }
+
+    # Extract hours e.g. "6 hours", "only 4 hrs", "half day"
+    hr_match = re.search(r"(\d+(?:\.\d+)?)\s*(?:hour|hours|hr|hrs)\b", lower)
+    if hr_match:
+        intent["duration_hours"] = float(hr_match.group(1))
+    elif "half day" in lower or "half-day" in lower:
+        intent["duration_hours"] = 5.0
+
+    # Extract days e.g. "5 days", "3 day", "weekend"
+    day_match = re.search(r"(\d+)\s*(?:day|days)\b", lower)
+    if day_match:
+        intent["duration_days"] = int(day_match.group(1))
+        if intent["duration_hours"] is None:
+            intent["duration_hours"] = int(day_match.group(1)) * 10.0
+    elif "weekend" in lower:
+        intent["duration_days"] = 2
+
+    # Extract budget in BDT (e.g. "30,000", "30000 tk", "5000 taka", "15k")
+    k_match = re.search(r"(\d+(?:\.\d+)?)\s*k\b", lower)
+    bdt_match = re.search(r"(\d[\d,]{2,})\s*(?:bdt|tk|taka|৳)?", lower)
+    if k_match:
+        intent["budget_bdt"] = int(float(k_match.group(1)) * 1000)
+    elif bdt_match:
+        val = int(bdt_match.group(1).replace(",", ""))
+        if val >= 200:
+            intent["budget_bdt"] = val
+
+    if any(w in lower for w in ("cheap", "low cost", "low-cost", "budget", "backpacker", "free")):
+        intent["budget_tier"] = "low"
+    elif any(w in lower for w in ("luxury", "resort", "premium", "5 star", "5-star")):
+        intent["budget_tier"] = "luxury"
+
+    if any(w in lower for w in ("rain", "rainy", "monsoon", "indoor", "wet")):
