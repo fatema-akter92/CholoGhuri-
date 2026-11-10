@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Sign In or Create Account — CholoGhuri{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:520px;">
+    <div class="card card-static">
+      <div class="card-body" style="padding:28px;">
+        <div style="text-align:center; margin-bottom:20px;">
+          <span class="section-eyebrow">CholoGhuri Traveler Account</span>
+          <h1 style="font-size:26px; margin-bottom:4px;">Welcome to CholoGhuri</h1>
+          <p style="font-size:13.5px; color:var(--text-muted); margin:0;">Sign in or create your account to save wishlist places, build trips, track expenses &amp; post reviews.</p>
+        </div>
+
+        <div class="tabs" style="justify-content:center;">
+          <button type="button" id="tabLoginBtn" class="tab-btn {% if mode != 'register' %}active{% endif %}" onclick="switchAuthTab('login')">Sign In</button>
+          <button type="button" id="tabRegBtn" class="tab-btn {% if mode == 'register' %}active{% endif %}" onclick="switchAuthTab('register')">Create Account</button>
+        </div>
+
+        <!-- Login Form -->
+        <form method="post" id="loginPane" style="{% if mode == 'register' %}display:none;{% endif %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="login" />
+          <input type="hidden" name="next" value="{{ next_url }}" />
+          <div style="margin-bottom:12px;">
+            <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Username or Email</label>
+            <input id="loginUser" class="input" type="text" name="username" required />
+          </div>
+          <div style="margin-bottom:18px;">
+            <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Password</label>
+            <input id="loginPass" class="input" type="password" name="password" required />
+          </div>
+          <button type="submit" class="btn btn-cyan" style="width:100%;">Sign In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form method="post" id="regPane" style="{% if mode != 'register' %}display:none;{% endif %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="register" />
+          <input type="hidden" name="next" value="{{ next_url }}" />
+          <div class="grid-2" style="gap:10px; margin-bottom:10px;">
+            <div>
+              <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">First Name</label>
+              <input class="input" type="text" name="first_name" required />
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Last Name</label>
+              <input class="input" type="text" name="last_name" />
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Username</label>
+            <input class="input" type="text" name="username" required />
+          </div>
+          <div class="grid-2" style="gap:10px; margin-bottom:10px;">
+            <div>
+              <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Email</label>
+              <input class="input" type="email" name="email" />
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Nationality</label>
+              <input class="input" type="text" name="nationality" value="International Visitor" />
+            </div>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Password (min 6 chars)</label>
+            <input class="input" type="password" name="password" minlength="6" required />
+          </div>
+          <button type="submit" class="btn btn-cyan" style="width:100%;">Create Traveler Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function switchAuthTab(mode) {
+  document.getElementById("loginPane").style.display = mode === "login" ? "block" : "none";
+  document.getElementById("regPane").style.display = mode === "register" ? "block" : "none";
+  document.getElementById("tabLoginBtn").classList.toggle("active", mode === "login");
+  document.getElementById("tabRegBtn").classList.toggle("active", mode === "register");
+}
+</script>
+{% endblock %}
