@@ -94,3 +94,52 @@ def build_smart_itinerary(
     total_entry = 0
 
     for d_idx in range(days_count):
+        primary_place = selected[d_idx % len(selected)]
+        # Pick nearby/secondary place in same division if available
+        secondary_place = next(
+            (
+                p
+                for p in selected
+                if p.id != primary_place.id and p.division == primary_place.division
+            ),
+            None,
+        )
+
+        # Match hotel & restaurant near primary place
+        day_hotel = next(
+            (h for h in hotels if h.place_id == primary_place.id and h.tier == budget_tier),
+            next((h for h in hotels if h.division == primary_place.division), hotels[0] if hotels else None),
+        )
+        day_rest = next(
+            (r for r in restaurants if r.place_id == primary_place.id),
+            next((r for r in restaurants if r.division == primary_place.division), restaurants[0] if restaurants else None),
+        )
+
+        h_cost = 0 if duration_days < 1 else int((day_hotel.price_per_night_bdt if day_hotel else tier_hotel_cost) * scale)
+        f_cost = int(((day_rest.avg_meal_bdt * 2.5) if day_rest else tier_food_cost) * scale)
+        t_cost = int(tier_transport_base * scale)
+        e_cost = primary_place.entry_fee_bdt + (secondary_place.entry_fee_bdt if secondary_place else 0)
+
+        total_hotel += h_cost
+        total_food += f_cost
+        total_transport += t_cost
+        total_entry += e_cost
+
+        slots = [
+            {
+                "time": "08:30 AM – 12:30 PM",
+                "activity": f"Explore {primary_place.name} ({primary_place.district})",
+                "details": primary_place.tagline or primary_place.description[:140],
+                "place_slug": primary_place.slug,
+                "place_id": primary_place.id,
+            },
+            {
+                "time": "01:00 PM – 02:30 PM",
+                "activity": f"Local Culinary Stop at {day_rest.name if day_rest else 'Regional Kitchen'}",
+                "details": (
+                    f"Must try: {', '.join(day_rest.menu_highlights[:2])}"
+                    if day_rest and day_rest.menu_highlights
+                    else f"Authentic regional dining in {primary_place.district}"
+                ),
+            },
+            {
