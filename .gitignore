@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+.env
+.venv/
+venv/
+.DS_Store
+Thumbs.db
+backend/staticfiles/
+scripts/food_cands/
+*.zip
