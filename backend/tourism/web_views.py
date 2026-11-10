@@ -400,3 +400,61 @@ def hotels_food_view(request):
     hotels_list = list(hotels)
     if facility_q:
         hotels_list = [h for h in hotels_list if any(facility_q.lower() in f.lower() for f in (h.facilities or []))]
+
+    # Restaurant filters
+    cuisine_q = (request.GET.get("cuisine") or "").strip()
+    price_range = request.GET.get("price_range", "")
+    halal = request.GET.get("halal") == "1"
+    veg = request.GET.get("vegetarian") == "1"
+    nut_free = request.GET.get("nut_free") == "1"
+    dairy_free = request.GET.get("dairy_free") == "1"
+    shellfish_free = request.GET.get("shellfish_free") == "1"
+
+    rests = Restaurant.objects.select_related("place").all()
+    if city_q:
+        rests = rests.filter(Q(city__icontains=city_q) | Q(name__icontains=city_q) | Q(regional_specialty__icontains=city_q))
+    if division_q:
+        rests = rests.filter(division__iexact=division_q)
+    if cuisine_q:
+        rests = rests.filter(Q(cuisine_type__icontains=cuisine_q) | Q(regional_specialty__icontains=cuisine_q))
+    if price_range:
+        rests = rests.filter(price_range=price_range)
+    if halal:
+        rests = rests.filter(is_halal_verified=True)
+    if veg:
+        rests = rests.filter(is_vegetarian_friendly=True)
+    if nut_free:
+        rests = rests.filter(is_nut_free_safe=True)
+    if dairy_free:
+        rests = rests.filter(is_dairy_free_safe=True)
+    if shellfish_free:
+        rests = rests.filter(is_shellfish_free_safe=True)
+
+    divisions = sorted(list(Place.objects.values_list("division", flat=True).distinct()))
+    return render(
+        request,
+        "hotels_food.html",
+        {
+            "tab": tab,
+            "hotels": hotels_list,
+            "restaurants": list(rests),
+            "divisions": divisions,
+            "filters": {
+                "city": city_q,
+                "division": division_q,
+                "tier": tier_q,
+                "max_price": max_price,
+                "facility": facility_q,
+                "cuisine": cuisine_q,
+                "price_range": price_range,
+                "halal": halal,
+                "vegetarian": veg,
+                "nut_free": nut_free,
+                "dairy_free": dairy_free,
+                "shellfish_free": shellfish_free,
+            },
+        },
+    )
+
+
+def assistant_view(request):
