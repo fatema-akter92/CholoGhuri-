@@ -249,3 +249,53 @@ class WishlistItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wishlist")
     place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="wishlisted_by")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "place")
+        ordering = ["-created_at"]
+
+
+class TripPlan(models.Model):
+    TRAVELER_TYPES = [
+        ("solo", "Solo"),
+        ("couple", "Couple"),
+        ("family", "Family"),
+        ("friends", "Friends"),
+    ]
+    BUDGET_TIERS = [
+        ("low", "Low-Cost / Backpacker"),
+        ("mid", "Mid-Range"),
+        ("luxury", "Luxury"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="trip_plans")
+    share_code = models.CharField(max_length=16, unique=True, default="")
+    title = models.CharField(max_length=200)
+    start_city = models.CharField(max_length=80, default="Dhaka")
+    duration_days = models.FloatField(default=3.0)
+    duration_label = models.CharField(max_length=30, default="3 days")
+    budget_bdt = models.PositiveIntegerField(default=15000)
+    budget_tier = models.CharField(max_length=15, choices=BUDGET_TIERS, default="mid")
+    traveler_type = models.CharField(max_length=15, choices=TRAVELER_TYPES, default="friends")
+    interests = models.JSONField(default=list, blank=True)
+    itinerary_json = models.JSONField(default=list, blank=True)
+    estimated_breakdown_json = models.JSONField(default=dict, blank=True)
+    weather_notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def save(self, *args, **kwargs):
+        if not self.share_code:
+            self.share_code = uuid.uuid4().hex[:10].upper()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.title} ({self.share_code})"
+
+
+class TripExpense(models.Model):
+    CATEGORY_CHOICES = [
+        ("transport", "Transport"),
+        ("hotel", "Hotel & Stay"),
