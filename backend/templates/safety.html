@@ -84,3 +84,46 @@
         </div>
       </div>
     </div>
+
+    <!-- Emergency Map + Directory -->
+    <div class="grid-3" style="gap:20px; margin-bottom:34px; align-items:start;">
+      <div class="card card-static" style="overflow:hidden;">
+        <div id="safetyMap" style="height:430px;"></div>
+      </div>
+
+      <div style="grid-column:span 2;">
+        <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+          <select class="select" name="division" style="max-width:190px;">
+            <option value="">All Divisions</option>
+            {% for d in divisions %}
+              <option value="{{ d }}" {% if division_q == d %}selected{% endif %}>{{ d }}</option>
+            {% endfor %}
+          </select>
+          <select class="select" name="type" style="max-width:210px;">
+            <option value="">All Facility Types</option>
+            <option value="hospital" {% if ftype_q == "hospital" %}selected{% endif %}>Hospitals</option>
+            <option value="tourist_police" {% if ftype_q == "tourist_police" %}selected{% endif %}>Tourist Police</option>
+            <option value="pharmacy" {% if ftype_q == "pharmacy" %}selected{% endif %}>24h Pharmacies</option>
+            <option value="coast_guard" {% if ftype_q == "coast_guard" %}selected{% endif %}>Coast Guard</option>
+          </select>
+          <button class="btn btn-cyan btn-sm" type="submit">Filter Directory</button>
+        </form>
+
+        <div class="grid-2" style="gap:12px;">
+          {% for f in facilities %}
+            <div class="card card-static">
+              <div class="card-body" style="padding:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <span class="badge {% if f.facility_type == 'hospital' %}badge-rose{% else %}badge-cyan{% endif %}">{{ f.get_facility_type_display }}</span>
+                  {% if f.emergency_24h %}<span class="badge badge-emerald">24/7</span>{% endif %}
+                </div>
+                <strong style="font-size:15px; color:var(--cyan-900); display:block; margin-bottom:3px;">{{ f.name }}</strong>
+                <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:4px;">{{ f.address }} ({{ f.city }})</div>
+                <div style="font-size:14px; font-weight:800; color:var(--cyan-700);">&#128222; {{ f.phone }}</div>
+                <div style="font-size:12px; color:var(--text-soft); margin-top:4px;">{{ f.verified_notes }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
