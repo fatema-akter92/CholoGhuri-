@@ -145,3 +145,53 @@
       <div class="grid-2" style="gap:20px; align-items:start;">
         <div class="card card-static">
           <div class="card-body">
+            <h3>Submit Feedback or Data Correction</h3>
+            <form method="post">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="submit_feedback" />
+              <div style="margin-bottom:10px;">
+                <label style="font-size:12px; font-weight:700;">Related Place (optional)</label>
+                <select class="select" name="place_id">
+                  <option value="">General Platform</option>
+                  {% for p in all_places %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+                </select>
+              </div>
+              <div style="margin-bottom:10px;">
+                <label style="font-size:12px; font-weight:700;">Type</label>
+                <select class="select" name="correction_type">
+                  <option value="entry_fee">Entry Fee Update</option>
+                  <option value="hours">Opening Hours / Closed</option>
+                  <option value="safety">Safety / Restriction</option>
+                  <option value="broken_link">Broken Hotel Link</option>
+                  <option value="general">General Feedback</option>
+                </select>
+              </div>
+              <input class="input" type="text" name="subject" placeholder="Subject..." required style="margin-bottom:10px;" />
+              <textarea class="textarea" name="message" rows="3" placeholder="Explain correction or feedback..." required style="margin-bottom:12px;"></textarea>
+              <button class="btn btn-cyan" type="submit">Submit Request</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="card card-static">
+          <div class="card-body">
+            <h3>Your Submitted Requests</h3>
+            {% for fb in feedbacks %}
+              <div style="border-bottom:1px solid var(--border); padding:10px 0;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <strong>{{ fb.subject }}</strong>
+                  <span class="badge {% if fb.status == 'resolved' %}badge-emerald{% else %}badge-amber{% endif %}">{{ fb.get_status_display }}</span>
+                </div>
+                <p style="font-size:13px; color:var(--text-muted); margin:4px 0;">{{ fb.message }}</p>
+                {% if fb.admin_note %}<div style="font-size:12px; color:var(--cyan-700);"><strong>Admin Reply:</strong> {{ fb.admin_note }}</div>{% endif %}
+              </div>
+            {% empty %}
+              <p style="color:var(--text-soft);">No feedback submitted yet.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
