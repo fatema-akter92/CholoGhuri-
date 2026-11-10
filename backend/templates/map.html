@@ -150,3 +150,54 @@ document.addEventListener("DOMContentLoaded", async () => {
         .bindPopup(`<strong>&#127976; ${h.name}</strong><br/>${h.city} &bull; ৳${h.price_per_night_bdt}/night<br/>${h.contact_phone}`)
         .addTo(layers.hotels);
     });
+    (data.restaurants || []).forEach((r) => {
+      L.marker([r.latitude, r.longitude], { icon: makeCircleIcon("#d97706", 13) })
+        .bindPopup(`<strong>&#127869; ${r.name}</strong><br/>${r.cuisine_type}<br/>Avg ৳${r.avg_meal_bdt}`)
+        .addTo(layers.restaurants);
+    });
+    (data.safety || []).forEach((s) => {
+      L.marker([s.latitude, s.longitude], { icon: makeCircleIcon("#dc2626", 13) })
+        .bindPopup(`<strong>&#127973; ${s.name}</strong><br/>${s.facility_label}<br/>Tel: <strong>${s.phone}</strong>`)
+        .addTo(layers.safety);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+
+  document.querySelectorAll(".layer-toggle").forEach((cb) => {
+    cb.addEventListener("change", () => {
+      const key = cb.value;
+      if (cb.checked) map.addLayer(layers[key]);
+      else map.removeLayer(layers[key]);
+    });
+  });
+
+  async function computeRoute() {
+    const start = document.getElementById("routeStart").value;
+    const dest = document.getElementById("routeDest").value;
+    const resBox = document.getElementById("routeResultBox");
+    const nearGrid = document.getElementById("routeNearbyGrid");
+    resBox.innerHTML = '<div class="card-body">Calculating road distance &amp; transport options...</div>';
+
+    try {
+      const routeData = await apiFetch(`/api/routes/plan/?start=${encodeURIComponent(start)}&destination=${encodeURIComponent(dest)}`);
+      layers.route.clearLayers();
+      const poly = L.polyline(routeData.route_geometry, {
+        color: "#0891b2",
+        weight: 5,
+        opacity: 0.88,
+        dashArray: routeData.routing_source.includes("OSRM") ? null : "8, 6",
+      }).addTo(layers.route);
+
+      L.marker([routeData.start.latitude, routeData.start.longitude], { icon: makeCircleIcon("#0f172a", 16) })
+        .bindPopup(`<strong>Start: ${routeData.start.name}</strong>`)
+        .addTo(layers.route);
+
+      map.fitBounds(poly.getBounds(), { padding: [45, 45] });
+
+      const gOrigin = `${routeData.start.latitude},${routeData.start.longitude}`;
+      const gDest = `${routeData.destination.latitude},${routeData.destination.longitude}`;
+      const gMapsLink = document.getElementById("openGoogleMapsLink");
+      const gEmbedFrame = document.getElementById("googleEmbedFrame");
+      if (gMapsLink) {
+        gMapsLink.href = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(gOrigin)}&destination=${encodeURIComponent(gDest)}&travelmode=driving`;
