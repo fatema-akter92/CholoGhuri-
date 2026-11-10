@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Explore Bangladesh Destinations — CholoGhuri{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:32px;">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:20px;">
+      <div>
+        <span class="section-eyebrow">Module A &bull; Tourist Destination Explorer</span>
+        <h1 class="section-title">Explore Bangladesh Destinations</h1>
+        <p class="section-sub">Filter by category, division, budget tier, interest, rain-safe indoor suitability, or natural-language search.</p>
+      </div>
+      <span class="badge badge-cyan" style="font-size:13px; padding:6px 14px;">{{ places|length }} Destinations Found</span>
+    </div>
+
+    <!-- Filter & NLP Search Card -->
+    <div class="card card-static" style="margin-bottom:24px; background:var(--bg-cream);">
+      <div class="card-body">
+        <form method="get" action="/destinations/">
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+            <input
+              class="input"
+              style="flex:1; min-width:240px;"
+              type="text"
+              name="nlp"
+              value="{{ nlp_query }}"
+              placeholder='Natural-language search: e.g. "I have only 6 hours in Dhaka" or "rainy day in Sylhet"...'
+            />
+            <button type="submit" class="btn btn-cyan">Smart Search</button>
+            <a href="/destinations/" class="btn btn-offwhite">Reset</a>
+          </div>
+
+          <div class="grid-4" style="gap:12px;">
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--cyan-900); display:block; margin-bottom:4px;">Category</label>
+              <select class="select" name="category">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                  <option value="{{ cat.slug }}" {% if selected_cat == cat.slug %}selected{% endif %}>{{ cat.name }} ({{ cat.place_count }})</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--cyan-900); display:block; margin-bottom:4px;">Division</label>
+              <select class="select" name="division">
+                <option value="">All Divisions</option>
+                {% for div in divisions %}
+                  <option value="{{ div }}" {% if selected_div == div %}selected{% endif %}>{{ div }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--cyan-900); display:block; margin-bottom:4px;">Budget Tier</label>
+              <select class="select" name="budget_tier">
+                <option value="">Any Budget</option>
+                <option value="low" {% if selected_tier == "low" %}selected{% endif %}>Low-Cost / Budget</option>
+                <option value="mid" {% if selected_tier == "mid" %}selected{% endif %}>Mid-Range</option>
+                <option value="luxury" {% if selected_tier == "luxury" %}selected{% endif %}>Luxury / Resort</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--cyan-900); display:block; margin-bottom:4px;">Interest Tag</label>
+              <select class="select" name="interest">
+                <option value="">All Interests</option>
+                {% for intr in interests_list %}
+                  <option value="{{ intr }}" {% if selected_interest == intr %}selected{% endif %}>{{ intr|title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <label style="display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--cyan-900); cursor:pointer;">
+              <input type="checkbox" name="indoor" value="1" {% if indoor_only %}checked{% endif %} />
+              Show Rainy-Day / Indoor-Friendly Options Only
+            </label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <a class="chip" href="/destinations/?nlp=I+have+only+6+hours+in+Dhaka">"6 hours in Dhaka"</a>
+              <a class="chip" href="/destinations/?nlp=nature+sea+historical+food+5+days+30000">5 days • ৳30,000</a>
+              <a class="chip" href="/destinations/?indoor=1">Rain-Safe Picks</a>
+            </div>
+          </div>
+        </form>
+
+        {% if explanation %}
+          <div class="alert alert-info" style="margin-top:14px; margin-bottom:0;">
+            <strong>&#10024; Smart Query Interpretation:</strong> {{ explanation }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if places %}
+      <div class="grid-3">
+        {% for place in places %}
+          {% include "partials/place_card.html" with place=place %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="card card-static" style="padding:40px; text-align:center;">
+        <h3>No exact destinations matched your filters</h3>
+        <p style="color:var(--text-muted);">Try clearing a filter or searching with natural language like "6 hours in Dhaka" or "waterfall".</p>
+        <a href="/destinations/" class="btn btn-cyan">Show All Destinations</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
