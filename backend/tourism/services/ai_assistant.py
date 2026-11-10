@@ -130,3 +130,47 @@ def generate_ai_response(prompt: str, user=None):
             "\n*Weather & Backup Note:* If heavy rain affects outdoor spots, indoor heritage sites like "
             "Ahsan Manzil, Star Mosque, or regional culinary trails are included as instant swaps."
         )
+    elif is_weather_or_closed:
+        indoor_places = list(Place.objects.filter(is_indoor_friendly=True)[:4])
+        lines.append("If rain or seasonal closures affect outdoor coastal/hill attractions in Bangladesh, here are verified alternatives:")
+        for p in indoor_places:
+            lines.append(f"• **{p.name} ({p.district})**: {p.rainy_day_alternative_note or p.tagline}")
+        lines.append("\n**Tip:** Always verify sea-crossing advisories before Saint Martin's Island (open mainly Nov–Mar) and carry waterproof gear in Sylhet during monsoon.")
+    elif is_safety_query:
+        lines.append("**Bangladesh Tourist Safety & Emergency Quick Guide:**")
+        lines.append("• **National Emergency (Police / Ambulance / Fire):** Dial **999** (24/7 toll-free)")
+        lines.append("• **Tourist Police Control Room:** **01320-222222** (Cox's Bazar, Dhaka, Sylhet & major hubs)")
+        facilities = list(SafetyFacility.objects.filter(emergency_24h=True)[:3])
+        for f in facilities:
+            lines.append(f"• **{f.name} ({f.city})** — {f.get_facility_type_display()}: `{f.phone}`")
+        lines.append("\n*Reminder:* Carry passport/NID copies when traveling to Sajek Valley, Bandarban, or Rangamati security checkpoints.")
+    elif is_food_query:
+        rests = list(Restaurant.objects.all()[:4])
+        lines.append("**Top Verified Regional Food & Dietary-Safe Picks in Bangladesh:**")
+        for r in rests:
+            flags = []
+            if r.is_halal_verified:
+                flags.append("Halal Verified")
+            if r.is_vegetarian_friendly:
+                flags.append("Veg Friendly")
+            if r.is_nut_free_safe:
+                flags.append("Nut-Free Safe")
+            lines.append(
+                f"• **{r.name} ({r.city})** — {r.cuisine_type} (~৳{r.avg_meal_bdt}/meal) | "
+                f"Highlights: {', '.join(r.menu_highlights[:2])} [{', '.join(flags)}]"
+            )
+    else:
+        lines.append(f"Here are the best verified Bangladesh picks for your query:")
+        for p in top_places:
+            fee_txt = "Free entry" if p.entry_fee_bdt == 0 else f"৳{p.entry_fee_bdt} local / ৳{p.entry_fee_foreigner_bdt} foreign"
+            lines.append(
+                f"• **{p.name} ({p.district}, {p.division})** — {p.tagline} "
+                f"(Best time: {p.best_time_to_visit} • {fee_txt})"
+            )
+        lines.append("\nAsk me to build a day-by-day budget itinerary, check rainy-day backups, or find nearby verified hotels & hospitals!")
+
+    fallback_reply = "\n".join(lines)
+
+    context_summary = "\n".join(
+        [
+            f"- {p.name} ({p.district}, {p.category.name}): fee {p.entry_fee_bdt} BDT, daily cost ~{p.estimated_daily_cost_bdt} BDT, best {p.best_time_to_visit}."
