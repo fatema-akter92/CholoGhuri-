@@ -199,3 +199,53 @@ class LocalGuide(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending Verification"),
         ("verified", "Verified Guide"),
+        ("rejected", "Rejected"),
+    ]
+
+    full_name = models.CharField(max_length=140)
+    city = models.CharField(max_length=80)
+    division = models.CharField(max_length=80)
+    languages = models.JSONField(default=list, blank=True)
+    specialties = models.JSONField(default=list, blank=True)
+    daily_rate_bdt = models.PositiveIntegerField(default=2000)
+    phone = models.CharField(max_length=50)
+    license_ref = models.CharField(max_length=100, blank=True)
+    verification_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    bio = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.full_name} ({self.city})"
+
+
+class Review(models.Model):
+    VISIT_CHOICES = [
+        ("solo", "Solo Traveler"),
+        ("couple", "Couple"),
+        ("family", "Family"),
+        ("friends", "Friends Group"),
+    ]
+
+    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="reviews")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="place_reviews")
+    rating = models.PositiveSmallIntegerField(default=5)
+    title = models.CharField(max_length=160)
+    comment = models.TextField()
+    photo_url = models.CharField(max_length=500, blank=True)
+    visit_type = models.CharField(max_length=20, choices=VISIT_CHOICES, default="friends")
+    is_reported = models.BooleanField(default=False)
+    report_reason = models.CharField(max_length=255, blank=True)
+    is_approved = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.place.name} — {self.rating}★ by {self.user.username}"
+
+
+class WishlistItem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wishlist")
+    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="wishlisted_by")
+    created_at = models.DateTimeField(auto_now_add=True)
