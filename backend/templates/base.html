@@ -136,3 +136,49 @@
           <div style="font-weight:800; font-size:15px;">CholoGhuri AI Travel Assistant</div>
           <div style="font-size:11px; opacity:0.9;">Bangladesh itineraries, weather swaps &amp; local tips</div>
         </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <a href="/assistant/" style="font-size:11px; color:#ecfeff; text-decoration:underline;">Full View</a>
+          <button id="aiDrawerClose" style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">&times;</button>
+        </div>
+      </div>
+
+      <div class="ai-drawer-msgs" id="aiDrawerMsgs">
+        <div class="msg-bubble msg-ai">Hello! I'm your CholoGhuri Bangladesh Travel Guide. Ask me to build a budget itinerary, find halal/veg food, check rainy-day backups, or get emergency info.</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <button type="button" class="chip" data-ai-quick="5 days Bangladesh budget 30000 nature sea historical food">5 days • ৳30,000</button>
+          <button type="button" class="chip" data-ai-quick="What if it rains in Cox's Bazar?">Rainy alternatives</button>
+          <button type="button" class="chip" data-ai-quick="Emergency numbers and safety in Bangladesh">Safety &amp; 999</button>
+        </div>
+      </div>
+
+      <form class="ai-drawer-foot" id="aiDrawerForm">
+        <input class="input" id="aiDrawerInput" type="text" placeholder="Ask about routes, budget, weather..." />
+        <button class="btn btn-cyan btn-sm" type="submit">Send</button>
+      </form>
+    </div>
+
+    <div class="ai-fab-tooltip">How can we<br/>help you?</div>
+    <button class="ai-fab-btn" id="aiFabBtn" aria-label="Open AI Travel Assistant">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        <path d="M9 10h6"></path>
+        <path d="M12 7v6"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Show-Local Full Screen Display Modal -->
+  <div class="modal-backdrop no-print" id="showLocalModal" onclick="if(event.target===this) closeShowLocalModal();">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <span class="badge badge-cyan">SHOW TO LOCAL DRIVER / HOST / DOCTOR</span>
+        <button onclick="closeShowLocalModal()" class="btn btn-offwhite btn-sm">Close &times;</button>
+      </div>
+      <div id="showLocalNative" style="font-size:clamp(26px, 4vw, 38px); font-weight:800; color:var(--cyan-900); line-height:1.35; margin-bottom:14px;"></div>
+      <div id="showLocalPhonetic" style="font-size:17px; font-weight:700; color:var(--cyan-700); margin-bottom:10px;"></div>
+      <div id="showLocalEnglish" style="font-size:15px; color:var(--text-muted); border-top:1px solid var(--border); padding-top:12px;"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer no-print">
