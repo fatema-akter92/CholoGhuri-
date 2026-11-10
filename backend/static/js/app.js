@@ -107,3 +107,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* 5. Floating AI Assistant Drawer */
   const aiToggle = document.getElementById("aiFabBtn");
+  const aiDrawer = document.getElementById("aiDrawer");
+  const aiClose = document.getElementById("aiDrawerClose");
+  const aiForm = document.getElementById("aiDrawerForm");
+  const aiInput = document.getElementById("aiDrawerInput");
+  const aiMsgs = document.getElementById("aiDrawerMsgs");
+
+  if (aiToggle && aiDrawer) {
+    aiToggle.addEventListener("click", () => {
+      aiDrawer.classList.toggle("open");
+      if (aiDrawer.classList.contains("open")) aiInput?.focus();
+    });
+    aiClose?.addEventListener("click", () => aiDrawer.classList.remove("open"));
+  }
+
+  const appendFloatingMsg = (text, isUser = false, extraData = null) => {
+    if (!aiMsgs) return;
+    const div = document.createElement("div");
+    div.className = `msg-bubble ${isUser ? "msg-user" : "msg-ai"}`;
+    div.textContent = text;
+
+    if (!isUser && extraData?.recommended_places?.length) {
+      const links = document.createElement("div");
+      links.style.marginTop = "8px";
+      links.style.display = "flex";
+      links.style.flexWrap = "wrap";
+      links.style.gap = "5px";
+      extraData.recommended_places.slice(0, 3).forEach((p) => {
+        const a = document.createElement("a");
+        a.href = `/destinations/${p.slug}/`;
+        a.className = "badge badge-cyan";
+        a.textContent = `${p.name} →`;
+        links.appendChild(a);
+      });
+      div.appendChild(links);
+    }
+
+    aiMsgs.appendChild(div);
+    aiMsgs.scrollTop = aiMsgs.scrollHeight;
+  };
+
+  if (aiForm && aiInput) {
+    aiForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const q = aiInput.value.trim();
+      if (!q) return;
+      appendFloatingMsg(q, true);
+      aiInput.value = "";
+      const thinking = document.createElement("div");
+      thinking.className = "msg-bubble msg-ai";
+      thinking.textContent = "Planning your Bangladesh answer...";
+      aiMsgs.appendChild(thinking);
+      aiMsgs.scrollTop = aiMsgs.scrollHeight;
+
+      try {
+        const res = await apiFetch("/api/ai/chat/", {
