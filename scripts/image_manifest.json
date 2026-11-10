@@ -1,0 +1,66 @@
+{
+  "coxs-bazar": {
+    "files": [
+      "/media/places/coxs-bazar.jpg",
+      "/media/places/coxs-bazar-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "coxs-bazar.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Cox's_Bazar",
+        "title": "Cox's Bazar",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      },
+      {
+        "file": "coxs-bazar-2.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Cox's_Bazar_Beach",
+        "title": "Cox's Bazar Beach",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x787"
+      }
+    ]
+  },
+  "saint-martins-island": {
+    "files": [
+      "/media/places/saint-martins-island.jpg",
+      "/media/places/saint-martins-island-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "saint-martins-island.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Saint_Martin's_Island",
+        "title": "Saint Martin's Island",
+        "license": "Wikimedia Commons",
+        "dimensions": "1200x756"
+      },
+      {
+        "file": "saint-martins-island-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Saint_Martin_(6).jpg",
+        "title": "File:Saint Martin (6).jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x960"
+      }
+    ]
+  },
+  "kuakata": {
+    "files": [
+      "/media/places/kuakata.jpg",
+      "/media/places/kuakata-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "kuakata.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Kuakata",
+        "title": "Kuakata",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      },
+      {
+        "file": "kuakata-2.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Kuakata_Beach",
+        "title": "Kuakata Beach",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      }
+    ]
