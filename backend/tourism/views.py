@@ -339,3 +339,60 @@ class SafetySupportView(APIView):
 
         advisories = [
             {
+                "region": "Saint Martin's Island & Coastal Cruises",
+                "level": "Seasonal Advisory",
+                "summary": "Tourist ferries operate primarily November–March subject to BIWTA sea-state clearance and daily eco-visitor limits.",
+            },
+            {
+                "region": "Chattogram Hill Tracts (Sajek, Bandarban, Rangamati)",
+                "level": "Checkpoint Protocol",
+                "summary": "Carry original NID/Passport. Foreign nationals require DC/Ministry clearance for restricted Bandarban/Rangamati frontier zones.",
+            },
+            {
+                "region": "Sundarbans Mangrove Reserve",
+                "level": "Permit & Guide Mandatory",
+                "summary": "Forest Department pass and armed forest guard escort are required for overnight eco-cruises.",
+            },
+        ]
+
+        return Response({
+            "helplines": helplines,
+            "advisories": advisories,
+            "facilities": SafetyFacilitySerializer(qs, many=True).data,
+        })
+
+
+class MapHubsAndDataView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        places = PlaceListSerializer(Place.objects.select_related("category").all(), many=True).data
+        hotels = HotelSerializer(Hotel.objects.all(), many=True).data
+        restaurants = RestaurantSerializer(Restaurant.objects.all(), many=True).data
+        safety = SafetyFacilitySerializer(SafetyFacility.objects.all(), many=True).data
+        hubs = [
+            {"name": name, "latitude": coords[0], "longitude": coords[1]}
+            for name, coords in STARTING_HUBS.items()
+        ]
+        return Response({
+            "hubs": hubs,
+            "places": places,
+            "hotels": hotels,
+            "restaurants": restaurants,
+            "safety": safety,
+        })
+
+
+class RoutePlanView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        start = request.query_params.get("start", "Dhaka")
+        dest_slug = request.query_params.get("destination")
+        place = (
+            get_object_or_404(Place, slug=dest_slug)
+            if dest_slug
+            else Place.objects.first()
+        )
+        if not place:
+            return Response({"detail": "No destinations found."}, status=404)
