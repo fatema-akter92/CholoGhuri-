@@ -874,3 +874,71 @@ img {
 }
 
 .place-cat-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--cyan-900);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.wish-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.94);
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+  transition: all 0.2s;
+}
+
+.wish-btn.saved,
+.wish-btn:hover {
+  color: #e11d48;
+  transform: scale(1.08);
+}
+
+.place-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-soft);
+  margin-bottom: 6px;
+}
+
+.place-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--cyan-900);
+  margin-bottom: 6px;
+}
+
+.place-desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin: 0 0 12px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Pure CSS Analytics Bars */
+.bar-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
