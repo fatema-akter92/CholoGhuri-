@@ -739,3 +739,71 @@ img {
   font-weight: 700;
 }
 
+.badge-cyan {
+  background: var(--cyan-50);
+  color: var(--cyan-800);
+  border: 1px solid var(--cyan-200);
+}
+
+.badge-emerald {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.badge-amber {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.badge-rose {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* Grids */
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+
+/* Natural Language Search Box Banner (cleanly spaced well below hero) */
+.nlp-banner {
+  padding: 46px 0 12px;
+  margin-top: 12px;
+  position: relative;
+  z-index: 5;
+}
+
+.nlp-box {
+  background: var(--surface);
+  border: 1px solid var(--cyan-200);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-md);
+}
+
+.nlp-form {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nlp-form input {
+  flex: 1;
+  min-width: 240px;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
