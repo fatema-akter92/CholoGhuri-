@@ -50,3 +50,55 @@
                   <option value="friends" {% if generated_plan.traveler_type == "friends" %}selected{% endif %}>Friends</option>
                 </select>
               </div>
+            </div>
+
+            <div class="grid-2" style="gap:10px; margin-bottom:12px;">
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Total Budget (BDT ৳)</label>
+                <input class="input" type="number" name="budget_bdt" min="500" step="500" value="{{ generated_plan.budget_bdt|default:30000 }}" />
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Comfort Tier</label>
+                <select class="select" name="budget_tier">
+                  <option value="low" {% if generated_plan.budget_tier == "low" %}selected{% endif %}>Low-Cost</option>
+                  <option value="mid" {% if generated_plan.budget_tier == "mid" %}selected{% endif %}>Mid-Range</option>
+                  <option value="luxury" {% if generated_plan.budget_tier == "luxury" %}selected{% endif %}>Luxury</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom:12px;">
+              <label style="font-size:12px; font-weight:700; display:block; margin-bottom:6px;">Interests</label>
+              <div style="display:flex; flex-wrap:wrap; gap:8px; font-size:13px;">
+                <label><input type="checkbox" name="interests" value="nature" {% if "nature" in generated_plan.interests %}checked{% endif %} /> Nature</label>
+                <label><input type="checkbox" name="interests" value="sea" {% if "sea" in generated_plan.interests %}checked{% endif %} /> Sea</label>
+                <label><input type="checkbox" name="interests" value="historical" {% if "historical" in generated_plan.interests %}checked{% endif %} /> Historical</label>
+                <label><input type="checkbox" name="interests" value="food" {% if "food" in generated_plan.interests %}checked{% endif %} /> Local Food</label>
+                <label><input type="checkbox" name="interests" value="wildlife" {% if "wildlife" in generated_plan.interests %}checked{% endif %} /> Wildlife</label>
+                <label><input type="checkbox" name="interests" value="adventure" {% if "adventure" in generated_plan.interests %}checked{% endif %} /> Adventure</label>
+              </div>
+            </div>
+
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:16px;">
+              <input type="checkbox" name="weather_aware" checked />
+              Include Weather-Aware Rainy-Day Backups
+            </label>
+
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <button type="submit" class="btn btn-cyan">Generate Smart Itinerary</button>
+              <button type="submit" name="save_trip" value="1" class="btn btn-offwhite">Save &amp; Get Shareable Trip Link</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Generated Schedule & Cost Estimate -->
+      <div style="grid-column:span 2; display:flex; flex-direction:column; gap:20px;">
+        <div class="card card-static" style="border-color:var(--cyan-200);">
+          <div class="card-body">
+            <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px;">
+              <div>
+                <span class="badge badge-cyan">{{ generated_plan.traveler_type|title }} &bull; {{ generated_plan.budget_tier|title }} Tier</span>
+                <h2 style="margin:6px 0 0;">{{ generated_plan.title }}</h2>
+              </div>
+              <div style="text-align:right;">
