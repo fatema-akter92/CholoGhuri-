@@ -461,3 +461,69 @@
       }
     ]
   },
+  "kantajew-temple": {
+    "files": [
+      "/media/places/kantajew-temple.jpg",
+      "/media/places/kantajew-temple-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "kantajew-temple.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Kantajew_Temple",
+        "title": "Kantajew Temple",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x1050"
+      },
+      {
+        "file": "kantajew-temple-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Kantajew_Temple,_Dinajpur,_Bangladesh,_early_18th_century_(1).jpg",
+        "title": "File:Kantajew Temple, Dinajpur, Bangladesh, early 18th century (1).jpg",
+        "license": "CC BY 4.0",
+        "dimensions": "1280x721"
+      }
+    ]
+  },
+  "buddha-dhatu-jadi": {
+    "files": [
+      "/media/places/buddha-dhatu-jadi.jpg",
+      "/media/places/buddha-dhatu-jadi-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "buddha-dhatu-jadi.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Buddha_Dhatu_Jadi",
+        "title": "Buddha Dhatu Jadi",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x932"
+      },
+      {
+        "file": "buddha-dhatu-jadi-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Buddha_Dhatu_Jadi_DJI_0249-1.jpg",
+        "title": "File:Buddha Dhatu Jadi DJI 0249-1.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x853"
+      }
+    ]
+  },
+  "old-dhaka-food": {
+    "files": [
+      "/media/places/old-dhaka-food.jpg",
+      "/media/places/old-dhaka-food-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "old-dhaka-food.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Bangladeshi_cuisine",
+        "title": "Bangladeshi cuisine",
+        "license": "Wikimedia Commons",
+        "dimensions": "1024x768"
+      },
+      {
+        "file": "old-dhaka-food-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Kacchi_Biryani.jpg",
+        "title": "File:Kacchi Biryani.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x960"
+      }
+    ]
+  },
