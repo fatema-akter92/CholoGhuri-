@@ -47,3 +47,52 @@
                 <div style="font-size:11px; color:var(--text-soft); font-weight:700;">NIGHTLY RATE</div>
                 <strong style="font-size:20px; color:var(--cyan-700);">৳{{ hotel.price_per_night_bdt }}</strong>
               </div>
+              <div style="background:#fff; padding:10px 12px; border-radius:10px; border:1px solid var(--border);">
+                <div style="font-size:11px; color:var(--text-soft); font-weight:700;">CITY &amp; DIVISION</div>
+                <strong>{{ hotel.city }}, {{ hotel.division }}</strong>
+              </div>
+              <div style="background:#fff; padding:10px 12px; border-radius:10px; border:1px solid var(--border);">
+                <div style="font-size:11px; color:var(--text-soft); font-weight:700;">ADDRESS</div>
+                <strong style="font-size:13px;">{{ hotel.address }}</strong>
+              </div>
+              <div style="background:#fff; padding:10px 12px; border-radius:10px; border:1px solid var(--border);">
+                <div style="font-size:11px; color:var(--text-soft); font-weight:700;">RESERVATION DESK</div>
+                <strong style="font-size:13.5px;">&#128222; {{ hotel.contact_phone }}</strong>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;">
+              {% for fac in hotel.facilities %}
+                <span class="badge badge-emerald">&#10003; {{ fac }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <a href="#book" class="btn btn-cyan">Book Online Now &darr;</a>
+            <a href="{{ hotel.booking_url }}" target="_blank" rel="noopener" class="btn btn-offwhite">Official / Partner Booking &nearr;</a>
+            {% if hotel.place %}
+              <a href="/destinations/{{ hotel.place.slug }}/" class="btn btn-outline btn-sm">Explore {{ hotel.place.name }}</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Online Booking Form + Google Maps Location -->
+    <div class="grid-3" style="gap:24px; align-items:start;">
+      <div id="book" class="card card-static" style="grid-column:span 2; border-color:var(--cyan-300);">
+        <div class="card-body">
+          <span class="section-eyebrow">Instant Online Reservation</span>
+          <h2 style="margin:6px 0 14px;">Book Your Stay at {{ hotel.name }}</h2>
+
+          <form method="post">
+            {% csrf_token %}
+            <div class="grid-2" style="gap:12px; margin-bottom:12px;">
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Guest Full Name</label>
+                <input class="input" type="text" name="guest_name" value="{% if request.user.is_authenticated %}{{ request.user.get_full_name|default:request.user.username }}{% endif %}" required />
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Mobile / WhatsApp Number</label>
+                <input class="input" type="text" name="guest_phone" placeholder="+880-1XXX-XXXXXX" required />
