@@ -168,3 +168,60 @@ TARGETS = [
         "commons_queries": ["Nafakhum waterfall", "Debotakhum Bandarban"],
     },
 ]
+
+
+def is_good_photo_url(url: str) -> bool:
+    if not url:
+        return False
+    lower = url.lower()
+    bad_ext = (".svg", ".gif", ".pdf", ".tif", ".tiff", ".ogv", ".webm")
+    if any(ext in lower for ext in bad_ext):
+        return False
+    bad_words = ("flag_of", "coat_of_arms", "map_of", "locator", "blank_map", "emblem", "logo", "icon")
+    if any(w in lower for w in bad_words):
+        return False
+    return True
+
+
+def fetch_wiki_summary_candidates(titles):
+    candidates = []
+    for title in titles:
+        url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{quote(title.replace(' ', '_'))}"
+        try:
+            r = requests.get(url, headers=HEADERS, timeout=15)
+            if r.status_code == 200:
+                data = r.json()
+                for key in ("originalimage", "thumbnail"):
+                    img = data.get(key)
+                    if img and is_good_photo_url(img.get("source", "")):
+                        src = img["source"]
+                        # Prefer <=1600px thumb if Wikimedia original is huge
+                        candidates.append({
+                            "url": src,
+                            "source_page": data.get("content_urls", {}).get("desktop", {}).get("page", url),
+                            "title": data.get("title", title),
+                        })
+                        break
+        except Exception:
+            pass
+    return candidates
+
+
+def fetch_commons_candidates(queries):
+    candidates = []
+    api = "https://commons.wikimedia.org/w/api.php"
+    for q in queries:
+        params = {
+            "action": "query",
+            "generator": "search",
+            "gsrsearch": f"filetype:bitmap {q}",
+            "gsrnamespace": 6,
+            "gsrlimit": 6,
+            "prop": "imageinfo",
+            "iiprop": "url|size|mime|extmetadata",
+            "iiurlwidth": 1280,
+            "format": "json",
+        }
+        try:
+            r = requests.get(api, params=params, headers=HEADERS, timeout=15)
+            if r.status_code == 200:
