@@ -297,3 +297,53 @@ def translate_text(text: str, source_lang: str = "en", target_lang: str = "bn"):
                 candidate = "".join(seg[0] for seg in segments if seg and seg[0]).strip()
                 if candidate:
                     translated = candidate
+                    provider = "Google Translate Live Engine"
+        except Exception:
+            translated = None
+
+    # 3. Backup: MyMemory Translation API
+    if not translated and source_lang != target_lang:
+        try:
+            r = requests.get(
+                "https://api.mymemory.translated.net/get",
+                params={"q": clean, "langpair": f"{source_lang}|{target_lang}"},
+                timeout=4,
+            )
+            if r.status_code == 200:
+                resp_data = r.json().get("responseData", {})
+                candidate = (resp_data.get("translatedText") or "").strip()
+                if candidate and "MYMEMORY WARNING" not in candidate.upper():
+                    translated = candidate
+                    provider = "MyMemory Live Translation API"
+        except Exception:
+            translated = None
+
+    # 4. Offline dictionary fallback
+    if not translated:
+        if source_lang == target_lang:
+            translated = clean
+        else:
+            words = clean.split()
+            hints = [PHONETIC_WORD_MAP.get(w.lower().strip("?!.,"), w) for w in words]
+            translated = (
+                f"{' '.join(hints)} (Offline phonetic guide)"
+                if target_lang == "bn"
+                else clean
+            )
+
+    # Generate approximate Bengali phonetic guide if target is Bengali
+    phonetic = ""
+    if target_lang == "bn":
+        matched_hints = [
+            f"{k} -> {v}" for k, v in PHONETIC_WORD_MAP.items() if k in lower
+        ]
+        phonetic = " | ".join(matched_hints[:4]) if matched_hints else "Tap speaker button to play native Bengali audio."
+
+    return {
+        "source_text": clean,
+        "source_lang": source_lang,
+        "target_lang": target_lang,
+        "translated_text": translated,
+        "phonetic": phonetic,
+        "provider": provider,
+    }
