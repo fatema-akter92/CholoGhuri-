@@ -219,3 +219,58 @@
           <span class="section-eyebrow">AI Travel &amp; Budget Planner</span>
           <h2 class="section-title">Visiting for 5 Days with a ৳30,000 BDT Budget?</h2>
           <p class="section-sub" style="margin-bottom:18px;">
+            Tell CholoGhuri your duration, budget, traveler style (Solo, Couple, Family, Friends), and interests. Instantly receive a day-by-day schedule, matched hotels, halal &amp; local food picks, transport costs, and a live expense tracker!
+          </p>
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <a href="/planner/" class="btn btn-cyan">Open Smart Trip Planner &rarr;</a>
+            <a href="/map/" class="btn btn-offwhite">Open Interactive Route Map</a>
+          </div>
+        </div>
+        <div class="grid-2" style="gap:14px;">
+          {% for cp in culinary_places %}
+            <a href="/destinations/{{ cp.slug }}/" class="card" style="text-decoration:none;">
+              <div style="height:125px; overflow:hidden;">
+                <img src="{{ cp.image_url }}" alt="{{ cp.name }}" style="width:100%; height:100%; object-fit:cover;" />
+              </div>
+              <div class="card-body" style="padding:12px;">
+                <span class="badge badge-emerald" style="margin-bottom:4px;">Food Heritage</span>
+                <div style="font-weight:700; font-size:14px; color:var(--cyan-900);">{{ cp.name }}</div>
+                <div style="font-size:12px; color:var(--text-soft);">{{ cp.district }}</div>
+              </div>
+            </a>
+          {% endfor %}
+          <a href="/hotels-food/?tab=food" class="card" style="background:var(--cyan-700); color:#fff; display:flex; align-items:center; justify-content:center; padding:18px; text-align:center;">
+            <div>
+              <div style="font-size:24px; margin-bottom:4px;">&#127858;</div>
+              <div style="font-weight:800; font-size:15px;">Halal &amp; Allergy-Safe Dining</div>
+              <div style="font-size:12px; opacity:0.9; margin-top:4px;">Explore Verified Restaurants &rarr;</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Emergency & Multilingual Quick Strip -->
+  <section class="section">
+    <div class="container">
+      <div class="grid-3">
+        <div class="card card-static">
+          <div class="card-body">
+            <span class="badge badge-rose" style="margin-bottom:10px;">24/7 Emergency Support</span>
+            <h3 style="font-size:18px;">Bangladesh Safety Network</h3>
+            <p style="font-size:13.5px; color:var(--text-muted);">Instant access to National Emergency <strong>999</strong>, Tourist Police <strong>01320-222222</strong>, nearby hospitals &amp; family trip sharing.</p>
+            <a href="/safety/" class="btn btn-outline btn-sm">Open Safety Directory &rarr;</a>
+          </div>
+        </div>
+        <div class="card card-static">
+          <div class="card-body">
+            <span class="badge badge-cyan" style="margin-bottom:10px;">Multilingual Assistant</span>
+            <h3 style="font-size:18px;">Speak or "Show Local" in Bengali</h3>
+            <p style="font-size:13.5px; color:var(--text-muted);">Translate across Bengali, English, Hindi, Arabic, Japanese, French &amp; Spanish with audio playback and giant local cards.</p>
+            <a href="/translator/" class="btn btn-outline btn-sm">Open Translator &rarr;</a>
+          </div>
+        </div>
+        <div class="card card-static">
+          <div class="card-body">
+            <span class="badge badge-emerald" style="margin-bottom:10px;">Interactive Map &amp; Routes</span>
