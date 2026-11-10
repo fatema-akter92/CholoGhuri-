@@ -225,3 +225,60 @@ class ReportReviewView(APIView):
         review.is_reported = True
         review.report_reason = (request.data.get("reason") or "Flagged by community traveler")[:255]
         review.save(update_fields=["is_reported", "report_reason"])
+        return Response({"detail": "Review reported for moderation."})
+
+
+class HotelListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        qs = Hotel.objects.select_related("place").all()
+        city = request.query_params.get("city")
+        division = request.query_params.get("division")
+        tier = request.query_params.get("tier")
+        max_price = request.query_params.get("max_price")
+        min_rating = request.query_params.get("min_rating")
+        facility = request.query_params.get("facility")
+        q = (request.query_params.get("q") or "").strip()
+
+        if city:
+            qs = qs.filter(city__icontains=city)
+        if division:
+            qs = qs.filter(division__iexact=division)
+        if tier:
+            qs = qs.filter(tier=tier)
+        if max_price and str(max_price).isdigit():
+            qs = qs.filter(price_per_night_bdt__lte=int(max_price))
+        if min_rating:
+            try:
+                qs = qs.filter(rating__gte=float(min_rating))
+            except ValueError:
+                pass
+        if q:
+            qs = qs.filter(
+                Q(name__icontains=q)
+                | Q(city__icontains=q)
+                | Q(division__icontains=q)
+                | Q(description__icontains=q)
+            )
+
+        hotels = list(qs)
+        if facility:
+            fac_lower = facility.lower()
+            hotels = [h for h in hotels if any(fac_lower in f.lower() for f in (h.facilities or []))]
+
+        return Response(HotelSerializer(hotels, many=True).data)
+
+
+class RestaurantListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        qs = Restaurant.objects.select_related("place").all()
+        city = request.query_params.get("city")
+        division = request.query_params.get("division")
+        price_range = request.query_params.get("price_range")
+        cuisine = request.query_params.get("cuisine")
+        halal = request.query_params.get("halal")
+        vegetarian = request.query_params.get("vegetarian")
+        nut_free = request.query_params.get("nut_free")
