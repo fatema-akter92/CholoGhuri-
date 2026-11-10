@@ -131,3 +131,47 @@ def search_places_nlp(raw_query: str, queryset=None):
                 | Q(address__icontains=loc)
             )
         loc_matches = filtered.filter(loc_q)
+        if loc_matches.exists():
+            filtered = loc_matches
+            notes.append(f"Located in/around {', '.join(intent['locations'])}")
+
+    if intent["duration_hours"] is not None and intent["duration_hours"] <= 10:
+        short_matches = filtered.filter(recommended_duration_hours__lte=intent["duration_hours"] + 1.0)
+        if short_matches.exists():
+            filtered = short_matches
+            notes.append(f"Fits within ~{int(intent['duration_hours'])} hours")
+
+    if intent["budget_tier"]:
+        tier_matches = filtered.filter(budget_tier=intent["budget_tier"])
+        if tier_matches.exists():
+            filtered = tier_matches
+            notes.append(f"Budget tier: {intent['budget_tier']}")
+    elif intent["budget_bdt"] and intent["duration_days"]:
+        daily_allowance = intent["budget_bdt"] / max(1, intent["duration_days"])
+        if daily_allowance < 2500:
+            tier_matches = filtered.filter(budget_tier="low")
+            if tier_matches.exists():
+                filtered = tier_matches
+                notes.append("Budget-friendly options matching your daily BDT allowance")
+
+    if intent["indoor_only"]:
+        indoor_matches = filtered.filter(
+            Q(is_indoor_friendly=True) | Q(seasonal_suitability__monsoon__gte=65)
+        )
+        if indoor_matches.exists():
+            filtered = indoor_matches
+            notes.append("Rain-friendly / monsoon-suitable selections")
+
+    # Score remaining matches by interests and direct text keywords
+    scored = []
+    for place in filtered:
+        score = 0
+        blob = " ".join([
+            place.name,
+            place.tagline,
+            place.category.name,
+            place.division,
+            place.district,
+            place.description,
+            " ".join(place.interests or []),
+            " ".join(place.quick_tags or []),
