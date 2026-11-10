@@ -6,7 +6,7 @@
 
 ---
 
-Visit the Livelink: https://chologhuri.onrender.com/ *(Render blueprint ready — replace with your live Render URL after deployment)*
+#### Visit the Livelink: 
 
 ---
 
@@ -33,7 +33,7 @@ Visit the Livelink: https://chologhuri.onrender.com/ *(Render blueprint ready �
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 | :--- | :--- |
@@ -46,7 +46,7 @@ Visit the Livelink: https://chologhuri.onrender.com/ *(Render blueprint ready �
 
 ---
 
-## 🧭 Core Routes & Modules
+## Core Routes & Modules
 
 | Route | Module | Purpose |
 | :--- | :--- | :--- |
@@ -66,11 +66,11 @@ Visit the Livelink: https://chologhuri.onrender.com/ *(Render blueprint ready �
 
 ---- 
 
-## 👩‍💻 Author
+### Author
 
 Developed by **Fatema**
 
----
+----------
 
-> *"To travel through Bangladesh is to read a living poem of winding rivers, green hills, timeless heritage, and golden hospitality — every road leads to a story waiting to be discovered."*
-> **— CholoGhuri | Explore Bangladesh Smarter**
+ #### "To travel through Bangladesh is to read a living poem of winding rivers, green hills, timeless heritage, and golden hospitality — every road leads to a story waiting to be discovered."*
+ **— CholoGhuri | Explore Bangladesh Smarter**
