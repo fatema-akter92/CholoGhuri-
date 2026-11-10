@@ -509,3 +509,60 @@ class TripGenerateView(APIView):
             weather_aware=weather_aware,
         )
 
+        save_plan = bool(request.data.get("save", False))
+        saved_obj = None
+        if save_plan:
+            saved_obj = TripPlan.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                title=request.data.get("title") or plan_data["title"],
+                start_city=start_city,
+                duration_days=duration_days,
+                duration_label=plan_data["duration_label"],
+                budget_bdt=budget_bdt,
+                budget_tier=budget_tier,
+                traveler_type=traveler_type,
+                interests=interests,
+                itinerary_json=plan_data["itinerary"],
+                estimated_breakdown_json=plan_data["estimated_breakdown"],
+                weather_notes=plan_data["weather_notes"],
+            )
+            plan_data["saved_trip"] = TripPlanSerializer(saved_obj).data
+
+        return Response(plan_data)
+
+
+class TripPlanListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        trips = TripPlan.objects.filter(user=request.user).prefetch_related("expenses")
+        return Response(TripPlanSerializer(trips, many=True).data)
+
+    def post(self, request):
+        data = request.data
+        trip = TripPlan.objects.create(
+            user=request.user,
+            title=data.get("title", "My Bangladesh Trip"),
+            start_city=data.get("start_city", "Dhaka"),
+            duration_days=float(data.get("duration_days", 3)),
+            duration_label=data.get("duration_label", "3 days"),
+            budget_bdt=int(data.get("budget_bdt", 15000)),
+            budget_tier=data.get("budget_tier", "mid"),
+            traveler_type=data.get("traveler_type", "friends"),
+            interests=data.get("interests", []),
+            itinerary_json=data.get("itinerary_json", []),
+            estimated_breakdown_json=data.get("estimated_breakdown_json", {}),
+            weather_notes=data.get("weather_notes", ""),
+        )
+        return Response(TripPlanSerializer(trip).data, status=201)
+
+
+class TripPlanDetailView(APIView):
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return [IsAuthenticated()]
+
+    def get(self, request, pk):
+        trip = get_object_or_404(TripPlan.objects.prefetch_related("expenses"), pk=pk)
+        return Response(TripPlanSerializer(trip).data)
