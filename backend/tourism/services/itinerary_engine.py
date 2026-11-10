@@ -143,3 +143,51 @@ def build_smart_itinerary(
                 ),
             },
             {
+                "time": "03:00 PM – 06:30 PM",
+                "activity": (
+                    f"Visit {secondary_place.name}"
+                    if secondary_place
+                    else f"Sunset & Local Markets around {primary_place.district}"
+                ),
+                "details": (
+                    secondary_place.tagline
+                    if secondary_place
+                    else (primary_place.travel_tips[0] if primary_place.travel_tips else "Relaxed evening sightseeing.")
+                ),
+                "place_slug": secondary_place.slug if secondary_place else primary_place.slug,
+            },
+        ]
+
+        if duration_days < 1:
+            slots = slots[:2]
+
+        itinerary.append({
+            "day": d_idx + 1,
+            "title": f"Day {d_idx + 1}: {primary_place.district} & {primary_place.name}",
+            "division": primary_place.division,
+            "destination": {
+                "id": primary_place.id,
+                "name": primary_place.name,
+                "slug": primary_place.slug,
+                "image_url": primary_place.image_url,
+                "safety_tip": (primary_place.safety_tips[0] if primary_place.safety_tips else "Keep hydration & ID handy."),
+            },
+            "hotel": (
+                {
+                    "id": day_hotel.id,
+                    "name": day_hotel.name,
+                    "tier": day_hotel.tier,
+                    "price_per_night_bdt": day_hotel.price_per_night_bdt,
+                }
+                if (day_hotel and duration_days >= 1)
+                else None
+            ),
+            "restaurant": (
+                {
+                    "id": day_rest.id,
+                    "name": day_rest.name,
+                    "cuisine_type": day_rest.cuisine_type,
+                    "avg_meal_bdt": day_rest.avg_meal_bdt,
+                }
+                if day_rest
+                else None
