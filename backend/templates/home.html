@@ -53,3 +53,58 @@
         <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
           <strong style="color:var(--cyan-900); font-size:15px;">&#10024; Smart Natural-Language Destination Finder</strong>
           <span style="font-size:12px; color:var(--text-soft);">Search by hours, days, budget in BDT, weather, or interests</span>
+        </div>
+        <form action="/destinations/" method="get" class="nlp-form">
+          <input
+            class="input"
+            type="text"
+            name="nlp"
+            placeholder='Try: "I have only 6 hours in Dhaka" or "5 days budget 30000 nature sea historical food"'
+          />
+          <button class="btn btn-cyan" type="submit">Find Places</button>
+          <a href="/planner/" class="btn btn-offwhite">Smart Itinerary</a>
+        </form>
+        <div class="chip-row">
+          <span style="font-size:12px; font-weight:700; color:var(--text-soft);">Try instantly:</span>
+          <a class="chip" href="/destinations/?nlp=I+have+only+6+hours+in+Dhaka">6 hours in Dhaka</a>
+          <a class="chip" href="/destinations/?nlp=5+days+budget+30000+nature+sea+historical+food">5 days • ৳30,000 BD tour</a>
+          <a class="chip" href="/destinations/?nlp=rainy+day+indoor+in+Dhaka">Rainy-day Dhaka picks</a>
+          <a class="chip" href="/destinations/?nlp=low+cost+sea+beach">Low-cost beaches</a>
+          <a class="chip" href="/destinations/?nlp=haor+waterfall+hidden+gems">Hidden haors &amp; falls</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module A1: Category-Based Discovery -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="section-eyebrow">Module A &bull; Discover Bangladesh</span>
+          <h2 class="section-title">Explore Across 8 Curated Categories</h2>
+          <p class="section-sub">From Cox's Bazar coral shores to UNESCO heritage cities and regional food trails.</p>
+        </div>
+        <a href="/destinations/" class="btn btn-outline btn-sm">Browse All 30 Places &rarr;</a>
+      </div>
+
+      <div class="grid-4">
+        {% for cat in categories %}
+          <a href="/destinations/?category={{ cat.slug }}" class="cat-tile">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div class="cat-icon-box">
+                {% if cat.slug == "sea-beaches" %}&#127754;
+                {% elif cat.slug == "hills-nature" %}&#9968;
+                {% elif cat.slug == "forests-wildlife" %}&#127795;
+                {% elif cat.slug == "historical-places" %}&#127963;
+                {% elif cat.slug == "archaeological-cultural" %}&#129517;
+                {% elif cat.slug == "religious-tourism" %}&#128332;
+                {% elif cat.slug == "food-tourism" %}&#127869;
+                {% else %}&#128142;{% endif %}
+              </div>
+              <span class="badge badge-cyan">{{ cat.place_count }} spots</span>
+            </div>
+            <h3 style="font-size:16px; margin:4px 0 2px;">{{ cat.name }}</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin:0;">{{ cat.description }}</p>
+          </a>
+        {% endfor %}
