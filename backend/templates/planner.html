@@ -207,3 +207,56 @@
                           <input type="hidden" name="action" value="delete_expense" />
                           <input type="hidden" name="expense_id" value="{{ exp.id }}" />
                           <button type="submit" style="border:none; background:none; color:var(--rose); cursor:pointer;">&times;</button>
+                        </form>
+                      </div>
+                    </div>
+                  {% empty %}
+                    <div style="font-size:12.5px; color:var(--text-soft);">No actual expenses logged yet. Add one below!</div>
+                  {% endfor %}
+                </div>
+
+                <form method="post" style="display:grid; grid-template-columns:1fr 1fr auto; gap:8px;">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="add_expense" />
+                  <input type="hidden" name="trip_id" value="{{ trip.id }}" />
+                  <input class="input" type="text" name="title" placeholder="Expense item..." required />
+                  <div style="display:flex; gap:6px;">
+                    <select class="select" name="category">
+                      <option value="transport">Transport</option>
+                      <option value="hotel">Hotel</option>
+                      <option value="food">Food</option>
+                      <option value="entry_fee">Entry Fee</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <input class="input" type="number" name="amount_bdt" placeholder="৳" min="1" required style="width:90px;" />
+                  </div>
+                  <button class="btn btn-cyan btn-sm" type="submit">+ Add</button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="card card-static" style="padding:24px; text-align:center;">
+          <p style="margin:0; color:var(--text-muted);">Generate a trip above and click <strong>"Save &amp; Get Shareable Trip Link"</strong> to track estimated vs. actual expenses here.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".trip-actual-sum").forEach((el) => {
+    const tid = el.getAttribute("data-trip");
+    let sum = 0;
+    document.querySelectorAll(`.exp-row-${tid}`).forEach((r) => {
+      sum += parseInt(r.getAttribute("data-amt") || "0", 10);
+    });
+    el.textContent = `৳${sum.toLocaleString()}`;
+  });
+});
+</script>
+{% endblock %}
