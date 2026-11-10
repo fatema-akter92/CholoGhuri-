@@ -688,3 +688,60 @@ def hotel_detail_view(request, slug):
             co = today + timedelta(days=4)
         nights = max(1, (co - ci).days)
         mult = 1.6 if "Family" in room_type else 1.35 if "Suite" in room_type else 1.0
+        total_bdt = int(round(hotel.price_per_night_bdt * nights * rooms * mult))
+
+        latest_booking = HotelBooking.objects.create(
+            hotel=hotel,
+            user=request.user if request.user.is_authenticated else None,
+            guest_name=guest_name or "Valued Guest",
+            guest_phone=guest_phone,
+            guest_email=guest_email,
+            check_in=ci,
+            check_out=co,
+            rooms=rooms,
+            guests=guests,
+            room_type=room_type,
+            total_bdt=total_bdt,
+            special_requests=special_requests,
+        )
+        messages.success(request, f"Reservation confirmed! Booking Code: {latest_booking.booking_code}")
+
+    return render(
+        request,
+        "hotel_detail.html",
+        {
+            "hotel": hotel,
+            "default_checkin": default_checkin,
+            "default_checkout": default_checkout,
+            "latest_booking": latest_booking,
+        },
+    )
+
+
+def _is_staff(u):
+    return u.is_authenticated and u.is_staff
+
+
+@user_passes_test(_is_staff, login_url="/auth/")
+def admin_portal_view(request):
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "add_place":
+            name = (request.POST.get("name") or "").strip()
+            slug = slugify(name)
+            cat = get_object_or_404(Category, pk=int(request.POST.get("category_id")))
+            Place.objects.update_or_create(
+                slug=slug,
+                defaults={
+                    "name": name,
+                    "tagline": (request.POST.get("tagline") or "").strip(),
+                    "category": cat,
+                    "division": request.POST.get("division", "Dhaka"),
+                    "district": request.POST.get("district", "Dhaka"),
+                    "latitude": float(request.POST.get("latitude") or 23.8103),
+                    "longitude": float(request.POST.get("longitude") or 90.4125),
+                    "description": (request.POST.get("description") or "").strip(),
+                    "image_url": (request.POST.get("image_url") or "/media/places/coxs-bazar.jpg").strip(),
+                    "entry_fee_bdt": int(request.POST.get("entry_fee_bdt") or 0),
+                    "entry_fee_foreigner_bdt": int(request.POST.get("entry_fee_foreigner_bdt") or 0),
+                    "opening_hours": (request.POST.get("opening_hours") or "9:00 AM – 5:00 PM").strip(),
