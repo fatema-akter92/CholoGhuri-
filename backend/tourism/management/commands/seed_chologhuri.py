@@ -1202,3 +1202,63 @@ class Command(BaseCommand):
             ("Old Dhaka Heritage Guesthouse", "old-dhaka-food", "Dhaka", "Dhaka", "Wari / Rankin Street, Old Dhaka", 23.7192, 90.4175, "low", 1900, 4.3, ["WiFi", "AC", "Family Rooms", "Walking Guide"], "+880-1715-667788", "https://www.booking.com/searchresults.html?ss=Old+Dhaka+Bangladesh", "active"),
             ("Momo Inn Resort Bogura", "mahasthangarh", "Bogura", "Rajshahi", "Naodapara, Bogura", 24.8920, 89.3652, "luxury", 7800, 4.7, ["Pool", "Helipad", "WiFi", "AC", "Halal Kitchen", "Family Rooms"], "+880-1755-669900", "https://momoinn.com", "active"),
             ("Bongotori Tanguar Houseboat", "tanguar-haor", "Sunamganj", "Sylhet", "Tahirpur Ghat, Sunamganj", 25.1095, 91.1682, "mid", 6000, 4.8, ["Private Cabin", "3 Meals Included", "Halal Kitchen", "Life Jackets", "Roof Deck"], "+880-1799-887766", "https://www.booking.com/searchresults.html?ss=Sunamganj+Bangladesh", "active"),
+        ]
+
+        hotel_media_dir = base_dir / "backend" / "media" / "hotels"
+        for h_name, p_slug, city, div, addr, lat, lon, tier, price, rating, facs, phone, url, l_status in hotels_data:
+            p_obj = places.get(p_slug)
+            h_slug = slugify(h_name)
+            hotel_img_path = hotel_media_dir / f"{h_slug}.jpg"
+            img = f"/media/hotels/{h_slug}.jpg" if hotel_img_path.exists() else (p_obj.image_url if p_obj else "/media/places/coxs-bazar.jpg")
+            Hotel.objects.update_or_create(
+                slug=h_slug,
+                defaults={
+                    "name": h_name,
+                    "place": p_obj,
+                    "city": city,
+                    "division": div,
+                    "address": addr,
+                    "latitude": lat,
+                    "longitude": lon,
+                    "tier": tier,
+                    "price_per_night_bdt": price,
+                    "rating": rating,
+                    "facilities": facs,
+                    "description": f"Verified {tier}-tier accommodation in {city}, ideal for exploring {p_obj.name if p_obj else city}.",
+                    "image_url": img,
+                    "contact_phone": phone,
+                    "booking_url": url,
+                    "is_verified_business": True,
+                    "link_status": l_status,
+                },
+            )
+
+        # 5. Restaurants & Local Food Spots (with verified Halal, Veg & Allergy flags!)
+        restaurants_data = [
+            ("Hajir Biryani (Est. 1939)", "old-dhaka-food", "Dhaka", "Dhaka", "70 Kazi Alauddin Road, Nazira Bazar, Old Dhaka", 23.7192, 90.4044, "Old Dhaka Heritage", "Mustard-oil Mutton Biryani", "budget", 280, 4.9, ["Original Mutton Biryani", "Jackfruit-leaf Eco Box", "Borhani"], "11:00 AM – 11:30 PM", "+880-1711-523456", True, False, True, True, True, "Cooked in pure mustard oil (no ghee/dairy/nuts); strictly halal."),
+            ("Star Kabab & Restaurant", "lalbagh-fort", "Dhaka", "Dhaka", "Satmasjid Road / Dhanmondi & Old Dhaka", 23.7398, 90.3765, "Bangladeshi & Mughlai", "Mutton Leg Roast & Khichuri", "moderate", 520, 4.7, ["Mutton Leg Roast", "Special Kacchi", "Vegetable Tehari", "Falooda"], "7:00 AM – 11:30 PM", "+880-2-9661212", True, True, False, False, True, "Dedicated vegetarian thali/khichuri available; biryani contains cashew/ghee."),
+            ("Beauty Lassi & Falooda", "star-mosque", "Dhaka", "Dhaka", "30A Johnson Road, Ray Saheb Bazar, Old Dhaka", 23.7115, 90.4112, "Traditional Drinks & Desserts", "Heritage Lassi & Lemonade", "budget", 120, 4.8, ["Classic Sweet Lassi", "Lemon Sharbat", "Special Falooda"], "10:00 AM – 10:30 PM", "+880-1911-234567", True, True, True, False, True, "100% vegetarian & halal; yogurt base in lassi (lemonade is dairy-free)."),
+            ("Korai Gost — Old Dhaka Kitchen", "ahsan-manzil", "Dhaka", "Dhaka", "Wari / Rankin Street, Old Dhaka", 23.7190, 90.4170, "Bengali Traditional", "Beef Bhuna & Bhorta Platter", "moderate", 480, 4.6, ["12-Item Bhorta Platter", "Plain Dal & Veg Curry", "Ilish Polao"], "12:00 PM – 11:00 PM", "+880-1716-778899", True, True, True, True, False, "Wide vegetarian bhorta/dal selection; serves hilsa fish (shellfish cooked separately)."),
+            ("Mezban Haat", "chattogram-mezban", "Chattogram", "Chattogram", "Mehedibag, GEC Circle, Chattogram", 22.3578, 91.8251, "Chattogram Regional", "Authentic Mezbani Beef", "moderate", 550, 4.9, ["Traditional Mezbani Beef", "Chana Dal with Bone", "Kala Bhuna"], "12:00 PM – 11:00 PM", "+880-1819-334455", True, False, True, True, True, "Halal-verified spice-rich recipes; nut-free and dairy-free slow-cooked beef."),
+            ("Poushee Restaurant", "coxs-bazar", "Cox's Bazar", "Chattogram", "Jhaubon / Main Road, Cox's Bazar", 21.4342, 91.9875, "Coastal Bengali & Seafood", "10+ Coastal Bhorta & Loitta Fry", "budget", 420, 4.7, ["Coral Fish Curry", "Loitta Fry", "Aloo & Eggplant Bhorta", "Dal"], "8:00 AM – 11:00 PM", "+880-1815-667788", True, True, True, True, False, "Serves both fresh seafood and vegetarian bhorta/rice meals; notify staff for prawn allergy."),
+            ("Mermaid Beach Cafe", "coxs-bazar", "Cox's Bazar", "Chattogram", "Pechardwip / Kolatoli Beachfront, Cox's Bazar", 21.3471, 92.0110, "Organic Coastal & International", "Grilled Red Snapper & Fresh Smoothies", "fine", 1150, 4.7, ["Grilled Whole Red Snapper", "Organic Veg Bowl", "Coconut Cooler"], "9:00 AM – 11:00 PM", "+880-1841-416468", True, True, False, True, False, "Explicit allergy-aware kitchen; caters vegan & gluten-free requests on order."),
+            ("Panshi Restaurant", "sylhet-tea-food", "Sylhet", "Sylhet", "Zindabazar Main Road, Sylhet", 24.8967, 91.8692, "Sylheti Regional", "Beef Shatkora & Bhuna Khichuri", "budget", 360, 4.8, ["Sylheti Beef Shatkora", "Vegetable Khichuri", "Roasted Duck", "7-Layer Tea"], "7:30 AM – 11:30 PM", "+880-1711-889922", True, True, True, True, True, "Halal verified; crisp veg curries & bhorta available; nut-free base curries."),
+            ("Nilkantha Tea Cabin", "sreemangal", "Moulvibazar", "Sylhet", "Ramnagar Manipuri Para, Sreemangal", 24.3038, 91.7412, "Tea Heritage & Snacks", "Original Seven-Layer Rainbow Tea", "budget", 150, 4.8, ["7-Layer Tea", "Lemon Ginger Tea", "Manipuri Veg Singara"], "8:00 AM – 8:30 PM", "+880-1716-543210", True, True, True, False, True, "100% vegetarian tea & snacks; layered tea contains condensed milk (lemon tea dairy-free)."),
+            ("Abbas Hotel — Chui Jhal Heritage", "sundarbans", "Khulna", "Khulna", "Chuknagar / Khulna Highway", 22.8421, 89.3812, "Khulna Regional", "Chui Jhal Mutton", "budget", 380, 4.8, ["Slow-Cooked Chui Jhal Mutton", "Plain Steamed Rice", "Dal"], "10:00 AM – 10:30 PM", "+880-1712-456789", True, False, True, True, True, "Famous Khulna piper chaba (chui jhal) aromatic spice; nut & dairy free."),
+            ("Akbaria Hotel & Bogura Doi", "mahasthangarh", "Bogura", "Rajshahi", "Satmatha, Bogura Town", 24.8481, 89.3730, "North Bengal Classics", "Royal Bogura Mishti Doi & Lachha", "budget", 320, 4.7, ["Clay-Pot Bogura Doi", "Mughlai Paratha", "Vegetable Thali"], "7:00 AM – 11:00 PM", "+880-1711-314151", True, True, False, False, True, "Vegetarian breakfast & sweets; dairy present in famed curd desserts."),
+            ("Peda Ting Ting Island Kitchen", "rangamati", "Rangamati", "Chattogram", "Kaptai Lake Island, Rangamati", 22.6472, 92.2268, "Indigenous Hill Cuisine", "Bamboo Chicken & Hill Greens", "moderate", 450, 4.6, ["Bamboo-Baked Chicken", "Steamed Hill Bamboo Shoots", "Lake Tilapia Fry"], "10:00 AM – 5:30 PM", "+880-1819-998877", True, True, True, True, True, "Fresh lake & vegetarian bamboo-shoot dishes cooked without dairy or peanuts."),
+        ]
+
+        for r_name, p_slug, city, div, addr, lat, lon, cuisine, spec, prange, meal, rating, menu, hrs, phone, halal, veg, nut_f, dairy_f, shell_f, dnotes in restaurants_data:
+            p_obj = places.get(p_slug)
+            img = p_obj.image_url if p_obj else "/media/places/old-dhaka-food.jpg"
+            Restaurant.objects.update_or_create(
+                slug=slugify(r_name),
+                defaults={
+                    "name": r_name,
+                    "place": p_obj,
+                    "city": city,
+                    "division": div,
+                    "address": addr,
+                    "latitude": lat,
+                    "longitude": lon,
