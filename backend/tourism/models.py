@@ -349,3 +349,54 @@ class SearchLog(models.Model):
     is_failure = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class AIQueryLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    prompt = models.TextField()
+    response_preview = models.TextField(blank=True)
+    provider = models.CharField(max_length=40, default="chologhuri-engine")
+    latency_ms = models.PositiveIntegerField(default=120)
+    tokens_used = models.PositiveIntegerField(default=0)
+    estimated_cost_usd = models.FloatField(default=0.0)
+    helpful_vote = models.SmallIntegerField(null=True, blank=True)  # 1 or -1
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class HotelBooking(models.Model):
+    STATUS_CHOICES = [
+        ("confirmed", "Confirmed"),
+        ("cancelled", "Cancelled"),
+    ]
+
+    booking_code = models.CharField(max_length=16, unique=True, default="")
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name="bookings")
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="hotel_bookings")
+    guest_name = models.CharField(max_length=140)
+    guest_email = models.EmailField(blank=True)
+    guest_phone = models.CharField(max_length=40)
+    check_in = models.DateField()
+    check_out = models.DateField()
+    rooms = models.PositiveSmallIntegerField(default=1)
+    guests = models.PositiveSmallIntegerField(default=2)
+    room_type = models.CharField(max_length=80, default="Deluxe Room")
+    total_bdt = models.PositiveIntegerField(default=0)
+    special_requests = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="confirmed")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def save(self, *args, **kwargs):
+        if not self.booking_code:
+            self.booking_code = f"CGH-{uuid.uuid4().hex[:6].upper()}"
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.booking_code} — {self.hotel.name}"
