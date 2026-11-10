@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ trip.title }} — Shareable Trip Plan{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:28px;">
+  <div class="container" style="max-width:920px;">
+    <div class="card card-static" style="border-color:var(--cyan-300); margin-bottom:22px;">
+      <div class="card-body">
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:12px;">
+          <div>
+            <span class="badge badge-cyan">Share Code: {{ trip.share_code }} &bull; {{ trip.traveler_type|title }}</span>
+            <h1 style="margin:8px 0 4px;">{{ trip.title }}</h1>
+            <p style="margin:0; color:var(--text-muted);">Origin: {{ trip.start_city }} &bull; Duration: {{ trip.duration_label }} &bull; Target Budget: ৳{{ trip.budget_bdt }}</p>
+          </div>
+          <div class="no-print" style="display:flex; gap:8px;">
+            <button type="button" onclick="navigator.clipboard.writeText(window.location.href); this.textContent='Link Copied!';" class="btn btn-cyan btn-sm">Copy Family Share Link</button>
+            <button type="button" onclick="window.print()" class="btn btn-offwhite btn-sm">Print / Save PDF</button>
+          </div>
+        </div>
+
+        <div class="grid-3" style="gap:12px; margin-top:16px;">
+          <div style="background:var(--bg-cream); padding:12px; border-radius:10px;">
+            <div style="font-size:11px; color:var(--text-soft); font-weight:700;">ESTIMATED COST</div>
+            <strong style="font-size:20px; color:var(--cyan-700);">৳{{ est_total }}</strong>
+          </div>
+          <div style="background:var(--bg-cream); padding:12px; border-radius:10px;">
+            <div style="font-size:11px; color:var(--text-soft); font-weight:700;">LOGGED ACTUAL SPEND</div>
+            <strong style="font-size:20px; color:var(--cyan-900);">৳{{ actual_total }}</strong>
+          </div>
+          <div style="background:#fef2f2; padding:12px; border-radius:10px;">
+            <div style="font-size:11px; color:#991b1b; font-weight:700;">BD EMERGENCY NUMBERS</div>
+            <strong style="font-size:15px; color:#991b1b;">999 &bull; Tourist Police 01320-222222</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% for day in trip.itinerary_json %}
+      <div class="card card-static" style="margin-bottom:16px;">
+        <div class="card-body">
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <h3 style="margin:0;">{{ day.title }}</h3>
+            <span class="badge badge-cyan">Est. ৳{{ day.estimated_day_cost_bdt }}</span>
+          </div>
+          {% for slot in day.slots %}
+            <div style="padding:8px 12px; border-left:3px solid var(--cyan-600); background:var(--bg-cream); margin-bottom:8px; border-radius:6px;">
+              <strong style="font-size:12px; color:var(--cyan-700);">{{ slot.time }}</strong> — <strong>{{ slot.activity }}</strong>
+              <div style="font-size:13px; color:var(--text-muted);">{{ slot.details }}</div>
+            </div>
+          {% endfor %}
+          <div style="font-size:12.5px; color:var(--text-soft);">
+            Safety: {{ day.destination.safety_tip }} &bull; Rain Backup: {{ day.rainy_backup }}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
