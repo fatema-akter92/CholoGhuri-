@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Admin Content &amp; AI Analytics Dashboard — CholoGhuri{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:28px;">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:20px;">
+      <div>
+        <span class="section-eyebrow">Modules 16 &amp; 18 &bull; Tourism Admin &amp; AI Analytics</span>
+        <h1 class="section-title">CholoGhuri Admin Command Center</h1>
+        <p class="section-sub">Manage tourist destinations, verification freshness, local guides, moderation queues, search analytics &amp; AI usage metrics.</p>
+      </div>
+      <a href="/admin/" class="btn btn-offwhite btn-sm">Open Django Admin Panel</a>
+    </div>
+
+    <!-- Top KPI Strip -->
+    <div class="grid-4" style="margin-bottom:24px;">
+      <div class="card card-static"><div class="card-body">
+        <div style="font-size:12px; color:var(--text-soft); font-weight:700;">DESTINATIONS / HOTELS</div>
+        <div style="font-size:28px; font-weight:800; color:var(--cyan-800);">{{ overview.places }} / {{ overview.hotels }}</div>
+      </div></div>
+      <div class="card card-static"><div class="card-body">
+        <div style="font-size:12px; color:var(--text-soft); font-weight:700;">AI QUERIES / AVG LATENCY</div>
+        <div style="font-size:28px; font-weight:800; color:var(--cyan-700);">{{ ai_stats.total }} / {{ ai_stats.avg_latency }} ms</div>
+      </div></div>
+      <div class="card card-static"><div class="card-body">
+        <div style="font-size:12px; color:var(--text-soft); font-weight:700;">PENDING GUIDES / OPEN FIXES</div>
+        <div style="font-size:28px; font-weight:800; color:#b45309;">{{ overview.pending_guides }} / {{ overview.open_corrections }}</div>
+      </div></div>
+      <div class="card card-static"><div class="card-body">
+        <div style="font-size:12px; color:var(--text-soft); font-weight:700;">REPORTED REVIEWS / TRIPS</div>
+        <div style="font-size:28px; font-weight:800; color:#dc2626;">{{ overview.reported_reviews }} / {{ overview.trips }}</div>
+      </div></div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+      <a href="/admin-portal/?tab=analytics" class="tab-btn {% if tab == 'analytics' %}active{% endif %}">&#128202; 18. AI &amp; Analytics Dashboard</a>
+      <a href="/admin-portal/?tab=content" class="tab-btn {% if tab == 'content' %}active{% endif %}">&#127963; 16. Manage Places ({{ overview.places }})</a>
+      <a href="/admin-portal/?tab=freshness" class="tab-btn {% if tab == 'freshness' %}active{% endif %}">&#128279; Data Freshness &amp; Links ({{ stale_places|length|add:flagged_hotels|length }})</a>
+      <a href="/admin-portal/?tab=moderation" class="tab-btn {% if tab == 'moderation' %}active{% endif %}">&#128737; Moderation &amp; Verification</a>
+    </div>
+
+    {% if tab == "analytics" %}
+      <div class="grid-2" style="gap:20px; margin-bottom:24px;">
+        <!-- Most Viewed Places -->
+        <div class="card card-static">
+          <div class="card-body">
+            <h3>Most-Viewed Tourist Places</h3>
+            {% for p in most_viewed %}
+              <div style="margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:4px;">
+                  <span>{{ p.name }} ({{ p.district }})</span>
+                  <span style="color:var(--cyan-700);">{{ p.view_count }} views</span>
