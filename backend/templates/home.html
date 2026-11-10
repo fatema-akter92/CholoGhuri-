@@ -164,3 +164,58 @@
   </section>
 
   <!-- Dedicated Famous Foods of Bangladesh Section (5 Culinary Categories) -->
+  <section class="section" id="famous-foods">
+    <div class="container">
+      <div class="section-header" style="margin-bottom:18px;">
+        <div>
+          <span class="section-eyebrow">Taste Bangladesh &bull; {{ total_foods_count }} Iconic Dishes</span>
+          <h2 class="section-title">Famous Foods of Bangladesh</h2>
+          <p class="section-sub">Explore signature Mains, Street Foods, Sweets &amp; Desserts, Winter Pithas &amp; Drinks — paired with the famous tourist places where they taste best.</p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a href="/foods/" class="btn btn-cyan btn-sm">Explore All {{ total_foods_count }} Dishes by Section &rarr;</a>
+          <a href="/hotels-food/?tab=food" class="btn btn-offwhite btn-sm">Halal &amp; Allergy Restaurants</a>
+        </div>
+      </div>
+
+      <!-- 5 Category Jump Chips -->
+      <div class="chip-row" style="margin-top:0; margin-bottom:24px;">
+        {% for sec in food_sections %}
+          <a href="/foods/?section={{ sec.key }}" class="chip">{{ sec.title }} ({{ sec.badge }})</a>
+        {% endfor %}
+      </div>
+
+      <div class="grid-4">
+        {% for f in famous_foods %}
+          <article class="card">
+            <div class="place-thumb-wrap" style="height:185px;">
+              <a href="/foods/?section={{ f.section }}">
+                <img src="{{ f.image_url }}" alt="{{ f.name }}" loading="lazy" />
+              </a>
+              <span class="place-cat-tag">{{ f.region }}</span>
+            </div>
+            <div class="card-body" style="padding:15px;">
+              <div class="place-meta-row">
+                <span>{{ f.spice }}</span>
+                <strong style="color:var(--cyan-700);">{{ f.price_bdt }}</strong>
+              </div>
+              <h3 class="place-title" style="font-size:15.5px;">{{ f.name }}</h3>
+              <p class="place-desc" style="margin-bottom:8px;">{{ f.why_try }}</p>
+              <div style="font-size:12px; color:var(--text-soft); border-top:1px solid #eef6f8; padding-top:8px;">
+                <a href="/destinations/{{ f.place_slug }}/" style="color:var(--cyan-700); font-weight:700;">&#128205; Best near: {{ f.famous_place }} &rarr;</a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Smart 5-Day / 30,000 BDT Scenario Banner + Culinary Preview -->
+  <section class="section section-cyan-soft">
+    <div class="container">
+      <div class="grid-2" style="align-items:center; gap:32px;">
+        <div>
+          <span class="section-eyebrow">AI Travel &amp; Budget Planner</span>
+          <h2 class="section-title">Visiting for 5 Days with a ৳30,000 BDT Budget?</h2>
+          <p class="section-sub" style="margin-bottom:18px;">
