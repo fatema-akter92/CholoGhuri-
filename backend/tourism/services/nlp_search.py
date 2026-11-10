@@ -175,3 +175,48 @@ def search_places_nlp(raw_query: str, queryset=None):
             place.description,
             " ".join(place.interests or []),
             " ".join(place.quick_tags or []),
+        ]).lower()
+
+        for interest in intent["interests"]:
+            if interest in (place.interests or []) or interest in blob:
+                score += 5
+        for kw in intent["keywords"]:
+            if kw in place.name.lower():
+                score += 8
+            elif kw in blob:
+                score += 3
+        if intent["duration_hours"] and place.recommended_duration_hours <= intent["duration_hours"]:
+            score += 3
+        if score > 0 or (not intent["interests"] and not intent["keywords"]):
+            scored.append((score, place))
+
+    # If narrow location + interest filter returned nothing, fall back to global text/interest scoring
+    if not scored:
+        for place in qs:
+            blob = " ".join([
+                place.name,
+                place.tagline,
+                place.category.name,
+                place.division,
+                place.district,
+                place.description,
+                " ".join(place.interests or []),
+            ]).lower()
+            score = sum(4 for kw in intent["keywords"] if kw in blob) + sum(
+                5 for i in intent["interests"] if i in (place.interests or [])
+            )
+            if score > 0:
+                scored.append((score, place))
+
+    scored.sort(key=lambda pair: (-pair[0], -pair[1].view_count, pair[1].name))
+    matched_places = [p for _, p in scored]
+
+    explanation = (
+        " • ".join(notes)
+        if notes
+        else f"Smart matches for \"{raw_query}\" across Bangladesh"
+    )
+    if intent["interests"]:
+        explanation += f" • Interests: {', '.join(intent['interests'])}"
+
+    return intent, explanation, matched_places
