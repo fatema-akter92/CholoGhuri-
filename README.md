@@ -64,68 +64,7 @@ Visit the Livelink: https://chologhuri.onrender.com/ *(Render blueprint ready �
 | `/auth/` & `/dashboard/` | Traveler Account | Account registration/sign-in, saved itineraries, bookings & reviews |
 | `/admin-portal/` | Admin Portal | Staff-only analytics, booking oversight & feedback moderation |
 
----
-
-## 📂 Project Structure
-
-```text
-chologhuri/
-├── Procfile                  # Gunicorn startup with migrate & collectstatic
-├── render.yaml               # Render Blueprint deployment configuration
-├── runtime.txt               # Python 3.12.7 runtime specification
-├── README.md                 # Project overview and documentation
-├── start_windows.bat         # One-click Windows local server launcher
-├── scripts/                  # Image fetchers, manifests & live verification suite
-└── backend/
-    ├── manage.py
-    ├── requirements.txt
-    ├── db.sqlite3            # Pre-seeded Bangladesh tourism database
-    ├── chologhuri_project/   # Django settings, root URLs & WSGI
-    ├── accounts/             # Custom user & authentication API
-    ├── tourism/              # Models, famous_foods catalog, DRF APIs, web views & services
-    ├── static/               # Pure CSS3, Vanilla JS & vendored Leaflet 1.9.4
-    ├── templates/            # Responsive HTML5 Django templates
-    └── media/                # Verified local photos (places/, foods/, hotels/)
-```
-
----
-
-## ⚙️ Quick Start (Local Development)
-
-### 1. Prerequisites
-- Python **3.10+** (`3.12+` recommended)
-
-### 2. Clone & Install Dependencies
-```bash
-git clone https://github.com/fatema-akter92/chologhuri.git
-cd chologhuri/backend
-pip install -r requirements.txt
-```
-
-### 3. Migrate & Verify Seeded Database
-*(The SQLite database already ships pre-seeded; `seed_chologhuri` is idempotent and safe to re-run anytime.)*
-```bash
-python manage.py migrate
-python manage.py seed_chologhuri
-```
-
-### 4. Run Tests & Start Server
-```bash
-python manage.py test -v 2
-python manage.py runserver
-```
-Open **`http://127.0.0.1:8000`** in your browser *(or double-click `start_windows.bat` on Windows)*.
-
----
-
-## 🚀 Deployment (Render Blueprint)
-
-1. Push this repository to GitHub (`main` branch).
-2. In **Render Dashboard**, choose **New + -> Blueprint** and select your GitHub repository.
-3. Render reads [`render.yaml`](render.yaml), installs `backend/requirements.txt`, applies migrations and `collectstatic`, and launches Gunicorn with production `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS`.
-4. *(Optional)* Set `GEMINI_API_KEY` or `OPENAI_API_KEY` in environment variables for live LLM replies (works cleanly offline with the built-in travel assistant even without API keys).
-
----
+---- 
 
 ## 👩‍💻 Author
 
