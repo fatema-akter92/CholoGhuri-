@@ -47,3 +47,53 @@ def calculate_route(start_name: str, destination: Place):
         if start_place:
             start_coords = (start_place.latitude, start_place.longitude)
         else:
+            start_name = "Dhaka"
+            start_coords = STARTING_HUBS["Dhaka"]
+
+    s_lat, s_lon = start_coords
+    d_lat, d_lon = destination.latitude, destination.longitude
+    straight_km = haversine_km(s_lat, s_lon, d_lat, d_lon)
+
+    route_geometry = [[s_lat, s_lon], [d_lat, d_lon]]
+    road_km = round(max(1.5, straight_km * 1.32), 1)
+    osrm_used = False
+
+    if straight_km > 0.5:
+        try:
+            url = (
+                f"https://router.project-osrm.org/route/v1/driving/"
+                f"{s_lon},{s_lat};{d_lon},{d_lat}?overview=full&geometries=geojson"
+            )
+            r = requests.get(url, timeout=4)
+            if r.status_code == 200:
+                routes = r.json().get("routes") or []
+                if routes:
+                    road_km = round(routes[0]["distance"] / 1000.0, 1)
+                    coords = routes[0]["geometry"]["coordinates"]
+                    # GeoJSON uses [lon, lat]; Leaflet prefers [lat, lon]
+                    route_geometry = [[c[1], c[0]] for c in coords]
+                    osrm_used = True
+        except Exception:
+            pass
+
+    # Realistic Bangladesh transport options
+    transport_options = []
+    if road_km <= 25:
+        transport_options.append({
+            "mode": "CNG Auto-Rickshaw / Ride-Share",
+            "estimated_time": _format_duration(max(0.25, road_km / 22.0)),
+            "estimated_fare_bdt": f"৳{int(max(120, road_km * 35))} – ৳{int(max(200, road_km * 55))}",
+            "notes": "Fastest door-to-door urban transfer; confirm fare or use meter/app.",
+        })
+        transport_options.append({
+            "mode": "Rickshaw / Local E-Bike",
+            "estimated_time": _format_duration(max(0.3, road_km / 14.0)),
+            "estimated_fare_bdt": f"৳{int(max(60, road_km * 20))} – ৳{int(max(120, road_km * 32))}",
+            "notes": "Ideal for Old Dhaka lanes and short intra-city hops.",
+        })
+    else:
+        transport_options.append({
+            "mode": "AC / Sleeper Highway Coach (Green Line, Hanif, Shohagh)",
+            "estimated_time": _format_duration(road_km / 46.0),
+            "estimated_fare_bdt": f"৳{int(max(450, road_km * 3.2))} – ৳{int(max(900, road_km * 5.2))}",
+            "notes": "Comfortable inter-district highway travel with online seat booking.",
