@@ -803,3 +803,61 @@ def admin_portal_view(request):
 
     most_viewed = list(Place.objects.order_by("-view_count")[:8])
     max_views = max([p.view_count for p in most_viewed] or [1])
+    most_saved = list(Place.objects.annotate(save_count=Count("wishlisted_by")).order_by("-save_count", "-view_count")[:8])
+    max_saves = max([p.save_count for p in most_saved] or [1])
+
+    popular_searches = list(SearchLog.objects.filter(is_failure=False).values("query").annotate(count=Count("id")).order_by("-count")[:8])
+    failed_searches = list(SearchLog.objects.filter(is_failure=True).values("query").annotate(count=Count("id")).order_by("-count")[:8])
+
+    ai_logs = list(AIQueryLog.objects.select_related("user").all()[:12])
+    ai_stats = {
+        "total": AIQueryLog.objects.count(),
+        "avg_latency": round(float(AIQueryLog.objects.aggregate(a=Avg("latency_ms"))["a"] or 0), 1),
+        "total_tokens": AIQueryLog.objects.aggregate(s=Sum("tokens_used"))["s"] or 0,
+        "total_cost": round(float(AIQueryLog.objects.aggregate(s=Sum("estimated_cost_usd"))["s"] or 0.0), 5),
+        "helpful": AIQueryLog.objects.filter(helpful_vote=1).count(),
+        "unhelpful": AIQueryLog.objects.filter(helpful_vote=-1).count(),
+    }
+
+    trip_budgets = list(TripPlan.objects.values("budget_tier").annotate(count=Count("id"), avg_bdt=Avg("budget_bdt")).order_by("-count"))
+    trip_durations = list(TripPlan.objects.values("duration_label").annotate(count=Count("id")).order_by("-count")[:6])
+
+    stale_cutoff = date.today() - timedelta(days=90)
+    stale_places = list(Place.objects.filter(Q(last_verified_date__isnull=True) | Q(last_verified_date__lt=stale_cutoff)))
+    flagged_hotels = list(Hotel.objects.exclude(link_status="active"))
+
+    tab = request.GET.get("tab", "analytics")
+    return render(
+        request,
+        "admin_portal.html",
+        {
+            "tab": tab,
+            "overview": {
+                "places": Place.objects.count(),
+                "hotels": Hotel.objects.count(),
+                "restaurants": Restaurant.objects.count(),
+                "reviews": Review.objects.count(),
+                "reported_reviews": Review.objects.filter(is_reported=True).count(),
+                "pending_guides": LocalGuide.objects.filter(verification_status="pending").count(),
+                "open_corrections": FeedbackCorrection.objects.filter(status="open").count(),
+                "trips": TripPlan.objects.count(),
+            },
+            "most_viewed": most_viewed,
+            "max_views": max_views,
+            "most_saved": most_saved,
+            "max_saves": max_saves,
+            "popular_searches": popular_searches,
+            "failed_searches": failed_searches,
+            "ai_stats": ai_stats,
+            "ai_logs": ai_logs,
+            "trip_budgets": trip_budgets,
+            "trip_durations": trip_durations,
+            "stale_places": stale_places,
+            "flagged_hotels": flagged_hotels,
+            "all_places": Place.objects.select_related("category").order_by("name"),
+            "categories": Category.objects.order_by("display_order"),
+            "all_guides": LocalGuide.objects.order_by("-created_at"),
+            "reported_reviews_list": Review.objects.filter(Q(is_reported=True) | Q(is_approved=False)).select_related("place", "user"),
+            "feedback_list": FeedbackCorrection.objects.select_related("place", "user").order_by("-created_at"),
+        },
+    )
