@@ -396,3 +396,59 @@ class RoutePlanView(APIView):
         )
         if not place:
             return Response({"detail": "No destinations found."}, status=404)
+        return Response(calculate_route(start, place))
+
+
+class AIChatView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        prompt = (request.data.get("prompt") or request.data.get("message") or "").strip()
+        if not prompt:
+            return Response({"detail": "Please provide a travel question or request."}, status=400)
+        result = generate_ai_response(prompt, user=request.user)
+        return Response(result)
+
+
+class AIFeedbackView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        log_id = request.data.get("log_id")
+        vote = request.data.get("vote")
+        if log_id and vote in (1, -1, "1", "-1"):
+            AIQueryLog.objects.filter(id=log_id).update(helpful_vote=int(vote))
+        return Response({"detail": "Thank you for rating the assistant response."})
+
+
+class TranslatorPhrasesView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        category = request.query_params.get("category")
+        phrases = TRAVEL_PHRASES
+        if category and category != "All":
+            phrases = [p for p in TRAVEL_PHRASES if p["category"] == category]
+        return Response({
+            "languages": SUPPORTED_LANGUAGES,
+            "categories": sorted(list({p["category"] for p in TRAVEL_PHRASES})),
+            "phrases": phrases,
+        })
+
+
+class TranslateTextView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        text = request.data.get("text", "")
+        source_lang = request.data.get("source_lang", "en")
+        target_lang = request.data.get("target_lang", "bn")
+        return Response(translate_text(text, source_lang, target_lang))
+
+
+class TranslatorTTSView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        text = (request.query_params.get("text") or "").strip()[:220]
+        lang = (request.query_params.get("lang") or "bn").split("-")[0].lower()
