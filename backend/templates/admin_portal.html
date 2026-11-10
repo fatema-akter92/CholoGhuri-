@@ -272,3 +272,58 @@
         </div>
 
         <!-- Reported Reviews Moderation -->
+        <div class="card card-static">
+          <div class="card-body">
+            <h3>Reported &amp; Hidden Reviews Moderation</h3>
+            {% for r in reported_reviews_list %}
+              <div style="padding:10px 0; border-bottom:1px solid var(--border);">
+                <strong>{{ r.place.name }} — {{ r.title }}</strong>
+                <div style="font-size:12.5px; color:var(--text-muted); margin:4px 0;">"{{ r.comment }}"</div>
+                <div style="font-size:12px; color:var(--rose); margin-bottom:6px;">Reason: {{ r.report_reason|default:"Flagged" }}</div>
+                <form method="post" style="display:flex; gap:6px;">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="moderate_review" />
+                  <input type="hidden" name="review_id" value="{{ r.id }}" />
+                  <button class="btn btn-cyan btn-sm" type="submit" name="decision" value="approve">Clear &amp; Approve</button>
+                  <button class="btn btn-offwhite btn-sm" type="submit" name="decision" value="hide">Hide</button>
+                  <button class="btn btn-danger btn-sm" type="submit" name="decision" value="delete">Delete</button>
+                </form>
+              </div>
+            {% empty %}<p style="color:var(--emerald);">No reported reviews in moderation queue.</p>{% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- User Feedback & Correction Requests -->
+      <div class="card card-static">
+        <div class="card-body">
+          <h3>User Feedback &amp; Correction Requests</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Subject &amp; Place</th><th>Message</th><th>Status</th><th>Resolve</th></tr></thead>
+              <tbody>
+                {% for fb in feedback_list %}
+                  <tr>
+                    <td><strong>{{ fb.subject }}</strong><br/><span style="font-size:12px; color:var(--text-soft);">{{ fb.place.name|default:"General" }}</span></td>
+                    <td>{{ fb.message }}</td>
+                    <td><span class="badge {% if fb.status == 'resolved' %}badge-emerald{% else %}badge-amber{% endif %}">{{ fb.get_status_display }}</span></td>
+                    <td>
+                      <form method="post" style="display:flex; gap:6px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="resolve_feedback" />
+                        <input type="hidden" name="feedback_id" value="{{ fb.id }}" />
+                        <input class="input" type="text" name="admin_note" value="{{ fb.admin_note }}" placeholder="Admin note..." style="padding:5px 8px; font-size:12px;" />
+                        <button class="btn btn-cyan btn-sm" type="submit" name="status" value="resolved">Resolve</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
