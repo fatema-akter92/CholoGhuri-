@@ -111,3 +111,60 @@
               <ul style="padding-left:18px; color:#78350f; font-size:14px; margin:0 0 8px 0;">
                 {% for s in place.safety_tips %}
                   <li style="margin-bottom:6px;">{{ s }}</li>
+                {% endfor %}
+              </ul>
+              {% if place.seasonal_restrictions %}
+                <div style="font-size:12.5px; font-weight:700; color:#b45309;">Notice: {{ place.seasonal_restrictions }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Nearby Stays, Dining & Safety -->
+        <div class="card card-static">
+          <div class="card-body">
+            <h3>Nearby Hotels, Food &amp; Emergency Facilities</h3>
+            <div class="tabs" style="margin-top:12px;">
+              <button type="button" class="tab-btn active" onclick="switchDetailTab(this, 'nearHotels')">Hotels ({{ nearby_hotels|length }})</button>
+              <button type="button" class="tab-btn" onclick="switchDetailTab(this, 'nearFood')">Restaurants ({{ nearby_restaurants|length }})</button>
+              <button type="button" class="tab-btn" onclick="switchDetailTab(this, 'nearSafety')">Hospitals &amp; Police ({{ nearby_safety|length }})</button>
+            </div>
+
+            <div id="nearHotels" class="detail-tab-pane">
+              <div class="grid-2" style="gap:12px;">
+                {% for h in nearby_hotels %}
+                  <div style="border:1px solid var(--border); border-radius:10px; padding:12px; background:var(--bg-cream);">
+                    <div style="display:flex; justify-content:space-between;">
+                      <strong style="color:var(--cyan-900);">{{ h.name }}</strong>
+                      <span class="badge badge-cyan">৳{{ h.price_per_night_bdt }}/night</span>
+                    </div>
+                    <div style="font-size:12.5px; color:var(--text-soft); margin:4px 0;">{{ h.city }} &bull; {{ h.distance_km }} km away &bull; &#9733; {{ h.rating }}</div>
+                    <div style="font-size:12px; color:var(--text-muted);">{{ h.contact_phone }}</div>
+                  </div>
+                {% empty %}<p style="color:var(--text-soft);">Browse full Hotels Directory for nearby stays.</p>{% endfor %}
+              </div>
+            </div>
+
+            <div id="nearFood" class="detail-tab-pane" style="display:none;">
+              <div class="grid-2" style="gap:12px;">
+                {% for r in nearby_restaurants %}
+                  <div style="border:1px solid var(--border); border-radius:10px; padding:12px; background:var(--bg-cream);">
+                    <div style="display:flex; justify-content:space-between;">
+                      <strong style="color:var(--cyan-900);">{{ r.name }}</strong>
+                      <span class="badge badge-emerald">~৳{{ r.avg_meal_bdt }}</span>
+                    </div>
+                    <div style="font-size:12.5px; color:var(--text-soft); margin:4px 0;">{{ r.cuisine_type }} &bull; {{ r.distance_km }} km away</div>
+                    <div style="font-size:12px; color:var(--text-muted);">{% if r.is_halal_verified %}Halal Verified{% endif %}{% if r.is_vegetarian_friendly %} &bull; Veg Friendly{% endif %}</div>
+                  </div>
+                {% empty %}<p style="color:var(--text-soft);">Explore our Regional Food Explorer for dining nearby.</p>{% endfor %}
+              </div>
+            </div>
+
+            <div id="nearSafety" class="detail-tab-pane" style="display:none;">
+              <div class="grid-2" style="gap:12px;">
+                {% for s in nearby_safety %}
+                  <div style="border:1px solid #fecaca; border-radius:10px; padding:12px; background:#fffafa;">
+                    <strong style="color:#991b1b;">{{ s.name }}</strong>
+                    <div style="font-size:12px; color:#b91c1c; font-weight:700; margin:3px 0;">{{ s.get_facility_type_display }} &bull; {{ s.distance_km }} km away</div>
+                    <div style="font-size:13px; font-weight:700;">&#128222; {{ s.phone }}</div>
+                  </div>
