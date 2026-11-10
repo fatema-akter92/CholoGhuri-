@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Traveler Dashboard — CholoGhuri{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:28px;">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:20px;">
+      <div>
+        <span class="section-eyebrow">Module 08 &bull; Traveler Dashboard</span>
+        <h1 class="section-title">Hello, {{ request.user.first_name|default:request.user.username }}!</h1>
+        <p class="section-sub">Manage your saved Bangladesh places, planned trips, traveler preferences, and feedback requests.</p>
+      </div>
+      {% if request.user.is_staff %}
+        <a href="/admin-portal/" class="btn btn-cyan">Open Admin &amp; Analytics Portal &rarr;</a>
+      {% endif %}
+    </div>
+
+    <div class="tabs">
+      <a href="/dashboard/?tab=wishlist" class="tab-btn {% if tab == 'wishlist' %}active{% endif %}">&#9829; Saved Wishlist ({{ wishlist_items|length }})</a>
+      <a href="/dashboard/?tab=trips" class="tab-btn {% if tab == 'trips' %}active{% endif %}">&#128506; Trip History ({{ trips|length }})</a>
+      <a href="/dashboard/?tab=bookings" class="tab-btn {% if tab == 'bookings' %}active{% endif %}">&#127976; Hotel Bookings ({{ hotel_bookings|length }})</a>
+      <a href="/dashboard/?tab=profile" class="tab-btn {% if tab == 'profile' %}active{% endif %}">&#128100; Profile &amp; Preferences</a>
+      <a href="/dashboard/?tab=feedback" class="tab-btn {% if tab == 'feedback' %}active{% endif %}">&#128221; Feedback &amp; Corrections ({{ feedbacks|length }})</a>
+    </div>
+
+    {% if tab == "wishlist" %}
+      {% if wishlist_items %}
+        <div class="grid-3">
+          {% for w in wishlist_items %}
+            <div class="card">
+              <div class="place-thumb-wrap">
+                <a href="/destinations/{{ w.place.slug }}/"><img src="{{ w.place.image_url }}" alt="{{ w.place.name }}" /></a>
+                <span class="place-cat-tag">{{ w.place.category.name }}</span>
+              </div>
+              <div class="card-body">
+                <h3 class="place-title">{{ w.place.name }}</h3>
+                <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">{{ w.place.district }}, {{ w.place.division }}</div>
+                <div style="display:flex; justify-content:space-between; gap:8px;">
+                  <a href="/destinations/{{ w.place.slug }}/" class="btn btn-cyan btn-sm">Open Guide</a>
+                  <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="remove_wishlist" />
+                    <input type="hidden" name="place_id" value="{{ w.place.id }}" />
+                    <button class="btn btn-offwhite btn-sm" type="submit">Remove</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
