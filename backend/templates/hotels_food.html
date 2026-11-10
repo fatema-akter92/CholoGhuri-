@@ -148,3 +148,53 @@
                 <a href="/hotels-food/?tab=food" class="btn btn-offwhite">Reset</a>
               </div>
             </div>
+
+            <div style="display:flex; flex-wrap:wrap; gap:14px; font-size:13px; font-weight:600; color:var(--cyan-900);">
+              <label><input type="checkbox" name="halal" value="1" {% if filters.halal %}checked{% endif %} /> &#10003; Halal Verified</label>
+              <label><input type="checkbox" name="vegetarian" value="1" {% if filters.vegetarian %}checked{% endif %} /> &#127807; Vegetarian Friendly</label>
+              <label><input type="checkbox" name="nut_free" value="1" {% if filters.nut_free %}checked{% endif %} /> Nut-Free Safe</label>
+              <label><input type="checkbox" name="dairy_free" value="1" {% if filters.dairy_free %}checked{% endif %} /> Dairy-Free Safe</label>
+              <label><input type="checkbox" name="shellfish_free" value="1" {% if filters.shellfish_free %}checked{% endif %} /> Shellfish-Free Safe</label>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        {% for r in restaurants %}
+          <article class="card">
+            <div class="place-thumb-wrap" style="height:165px;">
+              <img src="{{ r.image_url }}" alt="{{ r.name }}" loading="lazy" />
+              <span class="place-cat-tag">{{ r.cuisine_type }}</span>
+            </div>
+            <div class="card-body">
+              <div class="place-meta-row">
+                <span>&#128205; {{ r.city }}</span>
+                <span style="color:#d97706; font-weight:800;">&#9733; {{ r.rating }}</span>
+              </div>
+              <h3 class="place-title">{{ r.name }}</h3>
+              <div style="font-size:12.5px; font-weight:700; color:var(--cyan-700); margin-bottom:8px;">Specialty: {{ r.regional_specialty }}</div>
+              <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px;">
+                {% if r.is_halal_verified %}<span class="badge badge-emerald">Halal Verified</span>{% endif %}
+                {% if r.is_vegetarian_friendly %}<span class="badge badge-cyan">Veg Friendly</span>{% endif %}
+                {% if r.is_nut_free_safe %}<span class="badge badge-cyan">Nut-Free</span>{% endif %}
+              </div>
+              <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 8px;">{{ r.dietary_notes }}</p>
+              <div style="font-size:12px; color:var(--text-soft); border-top:1px solid var(--border); padding-top:8px;">
+                <div><strong>Menu:</strong> {{ r.menu_highlights|join:", " }}</div>
+                <div><strong>Hours:</strong> {{ r.opening_hours }} &bull; <strong>Avg:</strong> ৳{{ r.avg_meal_bdt }}</div>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const comparedHotels = [];
+
+function renderCompare() {
