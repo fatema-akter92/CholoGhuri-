@@ -282,3 +282,60 @@ def main():
     if MANIFEST_PATH.exists():
         try:
             manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            manifest = {}
+
+    for item in TARGETS:
+        slug = item["slug"]
+        primary_file = MEDIA_PLACES_DIR / f"{slug}.jpg"
+        secondary_file = MEDIA_PLACES_DIR / f"{slug}-2.jpg"
+
+        if primary_file.exists() and secondary_file.exists() and slug in manifest:
+            print(f"[SKIP] {slug} already downloaded")
+            continue
+
+        print(f"[FETCH] {slug}...")
+        candidates = fetch_commons_candidates(item["commons_queries"])
+        wiki_cands = fetch_wiki_summary_candidates(item["wiki_titles"])
+        # Combine: prioritize good landscape commons photos + wiki summary photo
+        all_cands = []
+        seen_urls = set()
+        for c in wiki_cands + candidates:
+            u = c["url"]
+            if u not in seen_urls:
+                seen_urls.add(u)
+                all_cands.append(c)
+
+        saved_files = []
+        attributions = []
+        for idx, cand in enumerate(all_cands):
+            if len(saved_files) >= 2:
+                break
+            target = primary_file if len(saved_files) == 0 else secondary_file
+            try:
+                size = download_and_save(cand["url"], target)
+                saved_files.append(f"/media/places/{target.name}")
+                attributions.append({
+                    "file": target.name,
+                    "source_url": cand.get("source_page", ""),
+                    "title": cand.get("title", ""),
+                    "license": cand.get("license", "Wikimedia Commons"),
+                    "dimensions": f"{size[0]}x{size[1]}",
+                })
+                print(f"  -> saved {target.name} ({size[0]}x{size[1]})")
+            except Exception as e:
+                print(f"  -> candidate failed ({cand['url'][:60]}...): {e}")
+            time.sleep(0.3)
+
+        manifest[slug] = {
+            "files": saved_files,
+            "attributions": attributions,
+        }
+        MANIFEST_PATH.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    missing = [t["slug"] for t in TARGETS if not manifest.get(t["slug"], {}).get("files")]
+    print(f"\nDone! Total targets: {len(TARGETS)}, Missing: {len(missing)} -> {missing}")
+
+
+if __name__ == "__main__":
+    main()
