@@ -566,3 +566,60 @@ class TripPlanDetailView(APIView):
     def get(self, request, pk):
         trip = get_object_or_404(TripPlan.objects.prefetch_related("expenses"), pk=pk)
         return Response(TripPlanSerializer(trip).data)
+
+    def delete(self, request, pk):
+        trip = get_object_or_404(TripPlan, pk=pk, user=request.user)
+        trip.delete()
+        return Response(status=204)
+
+
+class TripSharedView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, share_code):
+        trip = get_object_or_404(TripPlan.objects.prefetch_related("expenses"), share_code=share_code)
+        return Response(TripPlanSerializer(trip).data)
+
+
+class TripExpenseView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        trip = get_object_or_404(TripPlan, pk=pk, user=request.user)
+        expense = TripExpense.objects.create(
+            trip=trip,
+            category=request.data.get("category", "food"),
+            title=(request.data.get("title") or "Trip Expense").strip()[:160],
+            amount_bdt=int(request.data.get("amount_bdt", 0)),
+            day_number=int(request.data.get("day_number", 1)),
+        )
+        return Response(TripExpenseSerializer(expense).data, status=201)
+
+
+class TripExpenseDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk, exp_id):
+        expense = get_object_or_404(TripExpense, pk=exp_id, trip_id=pk, trip__user=request.user)
+        expense.delete()
+        return Response(status=204)
+
+
+class WishlistView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        items = WishlistItem.objects.filter(user=request.user).select_related("place", "place__category")
+        return Response(
+            WishlistItemSerializer(
+                items,
+                many=True,
+                context={"wishlist_place_ids": _wishlist_ids_for(request)},
+            ).data
+        )
+
+
+class WishlistToggleView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
