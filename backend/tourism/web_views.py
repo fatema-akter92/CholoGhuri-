@@ -573,3 +573,60 @@ def auth_view(request):
                 return redirect("/admin-portal/" if user.is_staff and next_url == "/dashboard/" else next_url)
             messages.error(request, "Invalid username/email or password.")
             mode = "login"
+        elif action == "register":
+            uname = (request.POST.get("username") or "").strip()
+            email = (request.POST.get("email") or "").strip()
+            pwd = request.POST.get("password") or ""
+            fname = (request.POST.get("first_name") or "").strip()
+            lname = (request.POST.get("last_name") or "").strip()
+            nat = (request.POST.get("nationality") or "International Visitor").strip()
+
+            if len(pwd) < 6:
+                messages.error(request, "Password must be at least 6 characters.")
+                mode = "register"
+            elif User.objects.filter(username__iexact=uname).exists():
+                messages.error(request, "That username is already taken.")
+                mode = "register"
+            else:
+                user = User.objects.create_user(
+                    username=uname, email=email, password=pwd, first_name=fname, last_name=lname
+                )
+                TravelerProfile.objects.create(user=user, nationality=nat)
+                login(request, user)
+                messages.success(request, "Account created! Welcome to CholoGhuri.")
+                return redirect(next_url)
+
+    return render(request, "auth.html", {"mode": mode, "next_url": next_url})
+
+
+def logout_web_view(request):
+    logout(request)
+    messages.info(request, "Signed out cleanly.")
+    return redirect("/")
+
+
+@login_required
+def dashboard_view(request):
+    profile, _ = TravelerProfile.objects.get_or_create(user=request.user)
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "update_profile":
+            request.user.first_name = (request.POST.get("first_name") or "").strip()
+            request.user.last_name = (request.POST.get("last_name") or "").strip()
+            request.user.email = (request.POST.get("email") or "").strip()
+            request.user.save()
+            profile.nationality = (request.POST.get("nationality") or "Bangladesh").strip()
+            profile.phone = (request.POST.get("phone") or "").strip()
+            profile.preferred_budget_tier = request.POST.get("preferred_budget_tier", "mid")
+            profile.emergency_contact_name = (request.POST.get("emergency_contact_name") or "").strip()
+            profile.emergency_contact_phone = (request.POST.get("emergency_contact_phone") or "").strip()
+            profile.dietary_preferences = request.POST.getlist("dietary_preferences")
+            profile.save()
+            messages.success(request, "Traveler profile updated.")
+            return redirect("/dashboard/")
+        elif action == "submit_feedback":
+            p_id = request.POST.get("place_id") or None
+            FeedbackCorrection.objects.create(
+                user=request.user,
+                place_id=int(p_id) if p_id else None,
+                subject=(request.POST.get("subject") or "Feedback").strip()[:180],
