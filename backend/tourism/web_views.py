@@ -170,3 +170,61 @@ def place_detail_view(request, slug):
         ),
         slug=slug,
     )
+
+    # Handle review post
+    if request.method == "POST":
+        form_action = request.POST.get("form_action", "review")
+        if form_action == "review":
+            if not request.user.is_authenticated:
+                messages.warning(request, "Please sign in to submit a review.")
+                return redirect(f"/auth/?next=/destinations/{slug}/")
+            rating = max(1, min(5, int(request.POST.get("rating", 5))))
+            Review.objects.create(
+                place=place,
+                user=request.user,
+                rating=rating,
+                title=(request.POST.get("title") or "Great Place").strip()[:160],
+                comment=(request.POST.get("comment") or "").strip(),
+                photo_url=(request.POST.get("photo_url") or "").strip(),
+                visit_type=request.POST.get("visit_type", "friends"),
+            )
+            avg = place.reviews.filter(is_approved=True).aggregate(avg=Avg("rating"))["avg"]
+            if avg:
+                place.avg_rating = round(float(avg), 2)
+                place.save(update_fields=["avg_rating"])
+            messages.success(request, "Thank you! Your review has been published.")
+            return redirect(f"/destinations/{slug}/#reviews")
+
+        if form_action == "correction":
+            FeedbackCorrection.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                place=place,
+                subject=(request.POST.get("subject") or f"Update for {place.name}")[:180],
+                message=(request.POST.get("message") or "").strip(),
+                correction_type=request.POST.get("correction_type", "general"),
+            )
+            messages.success(request, "Correction request submitted to CholoGhuri moderators. Thank you!")
+            return redirect(f"/destinations/{slug}/")
+
+    Place.objects.filter(pk=place.pk).update(view_count=place.view_count + 1)
+    place.view_count += 1
+
+    nearby_hotels = []
+    for h in Hotel.objects.all():
+        dist = haversine_km(place.latitude, place.longitude, h.latitude, h.longitude)
+        if h.place_id == place.id or dist <= 55:
+            h.distance_km = dist
+            nearby_hotels.append(h)
+    nearby_hotels.sort(key=lambda x: x.distance_km)
+
+    nearby_restaurants = []
+    for r in Restaurant.objects.all():
+        dist = haversine_km(place.latitude, place.longitude, r.latitude, r.longitude)
+        if r.place_id == place.id or dist <= 55:
+            r.distance_km = dist
+            nearby_restaurants.append(r)
+    nearby_restaurants.sort(key=lambda x: x.distance_km)
+
+    nearby_safety = []
+    for s in SafetyFacility.objects.all():
+        dist = haversine_km(place.latitude, place.longitude, s.latitude, s.longitude)
