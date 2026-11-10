@@ -225,3 +225,60 @@
               </div>
             {% empty %}
               <p style="color:var(--text-soft);">Be the first traveler to share a review for {{ place.name }}!</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Sidebar: Weather + Mini Map + Verification & Correction -->
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div class="card card-static" style="border-color:var(--cyan-200);">
+          <div class="card-body">
+            <h3 style="font-size:17px;">&#9925; Live Weather &amp; Rain Backup</h3>
+            <div id="placeWeatherBox" style="font-size:13.5px; color:var(--text-muted);">Loading 5-day Open-Meteo forecast...</div>
+          </div>
+        </div>
+
+        <div class="card card-static">
+          <div class="card-body">
+            <h3 style="font-size:17px;">&#128506; Google Maps Location Pin</h3>
+            <div id="detailMiniMap" style="height:230px; border-radius:10px; overflow:hidden; margin-bottom:10px;"></div>
+            <div style="font-size:12px; color:var(--text-soft); margin-bottom:10px;">GPS: {{ place.latitude }}, {{ place.longitude }}</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <a href="/map/?dest={{ place.slug }}" class="btn btn-cyan btn-sm" style="width:100%;">Plan Route From Any City &rarr;</a>
+              <a href="https://www.google.com/maps/search/?api=1&query={{ place.latitude }},{{ place.longitude }}" target="_blank" rel="noopener" class="btn btn-offwhite btn-sm" style="width:100%;">Open in Google Maps &nearr;</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-static" style="background:var(--bg-cream);">
+          <div class="card-body">
+            <h3 style="font-size:16px;">&#128221; Report Correction / Closed Notice</h3>
+            <p style="font-size:12.5px; color:var(--text-muted);">Help keep entry fees, opening hours &amp; advisories verified.</p>
+            <form method="post">
+              {% csrf_token %}
+              <input type="hidden" name="form_action" value="correction" />
+              <select class="select" name="correction_type" style="margin-bottom:8px;">
+                <option value="entry_fee">Entry Fee Update</option>
+                <option value="hours">Opening Hours / Closed</option>
+                <option value="safety">Safety / Road Advisory</option>
+                <option value="general">General Correction</option>
+              </select>
+              <input class="input" type="text" name="subject" placeholder="Short summary..." required style="margin-bottom:8px;" />
+              <textarea class="textarea" name="message" rows="2" placeholder="Provide updated details..." required style="margin-bottom:8px;"></textarea>
+              <button class="btn btn-cyan btn-sm" style="width:100%;" type="submit">Submit Update</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function switchDetailTab(btn, paneId) {
+  btn.parentElement.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".detail-tab-pane").forEach((p) => (p.style.display = "none"));
