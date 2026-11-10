@@ -47,3 +47,52 @@
               </div>
             </div>
           {% endfor %}
+        </div>
+      {% else %}
+        <div class="card card-static" style="padding:36px; text-align:center;">
+          <h3>No saved places yet</h3>
+          <p style="color:var(--text-muted);">Tap the heart icon on any Bangladesh destination to build your bucket list.</p>
+          <a href="/destinations/" class="btn btn-cyan">Explore Destinations</a>
+        </div>
+      {% endif %}
+
+    {% elif tab == "trips" %}
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="margin:0;">Your Saved Trips &amp; Expenses</h3>
+        <a href="/planner/" class="btn btn-cyan btn-sm">+ Plan New Trip</a>
+      </div>
+      <div class="grid-2">
+        {% for t in trips %}
+          <div class="card card-static">
+            <div class="card-body">
+              <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span class="badge badge-cyan">{{ t.duration_label }} &bull; {{ t.traveler_type|title }}</span>
+                <strong>Budget: ৳{{ t.budget_bdt }}</strong>
+              </div>
+              <h3 style="font-size:18px; margin-bottom:8px;">{{ t.title }}</h3>
+              <p style="font-size:13px; color:var(--text-muted);">Share Code: <strong>{{ t.share_code }}</strong> &bull; Origin: {{ t.start_city }}</p>
+              <div style="display:flex; gap:8px;">
+                <a href="/trips/shared/{{ t.share_code }}/" class="btn btn-cyan btn-sm">View / Share Itinerary</a>
+                <a href="/planner/#saved-trips" class="btn btn-offwhite btn-sm">Manage Expenses ({{ t.expenses.count }})</a>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <p style="color:var(--text-muted);">No trips saved yet. Head to Smart Trip Planner to create one!</p>
+        {% endfor %}
+      </div>
+
+    {% elif tab == "bookings" %}
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="margin:0;">Your Online Hotel Reservations</h3>
+        <a href="/hotels-food/?tab=hotels" class="btn btn-cyan btn-sm">+ Browse Hotels</a>
+      </div>
+      <div class="grid-2">
+        {% for b in hotel_bookings %}
+          <div class="card card-static">
+            <div class="card-body">
+              <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span class="badge badge-emerald">{{ b.booking_code }} &bull; {{ b.get_status_display }}</span>
+                <strong style="color:var(--cyan-700);">৳{{ b.total_bdt }}</strong>
+              </div>
+              <h3 style="font-size:18px; margin-bottom:6px;"><a href="/hotels/{{ b.hotel.slug }}/">{{ b.hotel.name }}</a></h3>
