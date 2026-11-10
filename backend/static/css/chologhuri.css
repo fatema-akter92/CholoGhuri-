@@ -65,3 +65,70 @@ img {
   display: block;
   max-width: 100%;
 }
+
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section {
+  padding: 52px 0;
+}
+
+.section-cream {
+  background-color: var(--bg-cream);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.section-cyan-soft {
+  background: linear-gradient(135deg, var(--cyan-50) 0%, #f0fbfe 100%);
+  border-top: 1px solid var(--cyan-100);
+  border-bottom: 1px solid var(--cyan-100);
+}
+
+.section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.section-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cyan-700);
+  background: var(--cyan-100);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.section-sub {
+  color: var(--text-muted);
+  margin: 0;
+  font-size: 15px;
+}
+
+/* ==========================================================================
+   Header & Two-Tier Navigation (Japan Guide Inspired)
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
