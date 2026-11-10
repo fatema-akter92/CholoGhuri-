@@ -191,3 +191,52 @@ def build_smart_itinerary(
                 }
                 if day_rest
                 else None
+            ),
+            "estimated_day_cost_bdt": h_cost + f_cost + t_cost + e_cost,
+            "rainy_backup": primary_place.rainy_day_alternative_note
+            or "Switch to indoor heritage museums or local tea/food trails if rain intensifies.",
+            "slots": slots,
+        })
+
+    total_est = total_transport + total_hotel + total_food + total_entry
+    breakdown = {
+        "transport_bdt": total_transport,
+        "hotel_bdt": total_hotel,
+        "food_bdt": total_food,
+        "entry_fees_bdt": total_entry,
+        "total_bdt": total_est,
+        "target_budget_bdt": budget_bdt,
+        "within_budget": total_est <= budget_bdt if budget_bdt else True,
+    }
+
+    weather_notes = (
+        "Weather-Aware Mode Active: Check live forecast 24h before coastal/hill travel. "
+        "Indoor heritage backups are included for every day."
+        if weather_aware
+        else "Standard clear-season pacing applied."
+    )
+
+    return {
+        "title": f"{duration_label.title()} Bangladesh Smart Trip from {start_city}",
+        "start_city": start_city,
+        "duration_days": duration_days,
+        "duration_label": duration_label,
+        "budget_bdt": budget_bdt,
+        "budget_tier": budget_tier,
+        "traveler_type": traveler_type,
+        "interests": interests,
+        "recommended_places": [
+            {
+                "id": p.id,
+                "name": p.name,
+                "slug": p.slug,
+                "district": p.district,
+                "category": p.category.name,
+                "image_url": p.image_url,
+            }
+            for p in selected
+        ],
+        "itinerary": itinerary,
+        "estimated_breakdown": breakdown,
+        "weather_notes": weather_notes,
+    }
