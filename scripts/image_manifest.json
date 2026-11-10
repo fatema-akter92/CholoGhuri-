@@ -395,3 +395,69 @@
       }
     ]
   },
+  "mainamati": {
+    "files": [
+      "/media/places/mainamati.jpg",
+      "/media/places/mainamati-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "mainamati.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Shalban_Vihara",
+        "title": "Shalban Vihara",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x680"
+      },
+      {
+        "file": "mainamati-2.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Mainamati",
+        "title": "Mainamati",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x1050"
+      }
+    ]
+  },
+  "star-mosque": {
+    "files": [
+      "/media/places/star-mosque.jpg",
+      "/media/places/star-mosque-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "star-mosque.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Star_Mosque",
+        "title": "Star Mosque",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x787"
+      },
+      {
+        "file": "star-mosque-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Star_Mosque,_Dhaka,_(1967).jpg",
+        "title": "File:Star Mosque, Dhaka, (1967).jpg",
+        "license": "Public domain",
+        "dimensions": "720x478"
+      }
+    ]
+  },
+  "dhakeshwari-temple": {
+    "files": [
+      "/media/places/dhakeshwari-temple.jpg",
+      "/media/places/dhakeshwari-temple-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "dhakeshwari-temple.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Dhakeshwari_Temple",
+        "title": "Dhakeshwari Temple",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x1050"
+      },
+      {
+        "file": "dhakeshwari-temple-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Shiva_temples_Dhakeshwari_Mandir_2_by_Ragib_Hasan.jpg",
+        "title": "File:Shiva temples Dhakeshwari Mandir 2 by Ragib Hasan.jpg",
+        "license": "CC BY 2.5",
+        "dimensions": "1280x960"
+      }
+    ]
+  },
