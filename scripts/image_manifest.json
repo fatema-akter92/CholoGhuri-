@@ -593,3 +593,70 @@
       }
     ]
   },
+  "nikli-haor": {
+    "files": [
+      "/media/places/nikli-haor.jpg",
+      "/media/places/nikli-haor-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "nikli-haor.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Nikli_Upazila",
+        "title": "Nikli Upazila",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      },
+      {
+        "file": "nikli-haor-2.jpg",
+        "source_url": "https://en.wikipedia.org/wiki/Mithamain_Upazila",
+        "title": "Mithamain Upazila",
+        "license": "Wikimedia Commons",
+        "dimensions": "1400x933"
+      }
+    ]
+  },
+  "bhimruli-guava-market": {
+    "files": [
+      "/media/places/bhimruli-guava-market.jpg",
+      "/media/places/bhimruli-guava-market-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "bhimruli-guava-market.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Bhimruli_Floating_Guava_Market,_Jhalokathi,_Barisal.jpg",
+        "title": "File:Bhimruli Floating Guava Market, Jhalokathi, Barisal.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x960"
+      },
+      {
+        "file": "bhimruli-guava-market-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Bhimruli_Floating_Guava_Market,_Jhalokathi_(2).jpg",
+        "title": "File:Bhimruli Floating Guava Market, Jhalokathi (2).jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x960"
+      }
+    ]
+  },
+  "nafakhum-debotakhum": {
+    "files": [
+      "/media/places/nafakhum-debotakhum.jpg",
+      "/media/places/nafakhum-debotakhum-2.jpg"
+    ],
+    "attributions": [
+      {
+        "file": "nafakhum-debotakhum.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Nafakhum_Waterfalls.jpg",
+        "title": "File:Nafakhum Waterfalls.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x848"
+      },
+      {
+        "file": "nafakhum-debotakhum-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Nafakhum_water_falls.jpg",
+        "title": "File:Nafakhum water falls.jpg",
+        "license": "CC BY-SA 4.0",
+        "dimensions": "1280x720"
+      }
+    ]
+  }
+}
