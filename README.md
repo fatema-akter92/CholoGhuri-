@@ -12,22 +12,24 @@ Visit the Livelink: https://chologhuri.onrender.com/ *(Render blueprint ready �
 
 ## 🎯 Overview
 
-**CholoGhuri** is a full-stack **Django + Django REST Framework + HTML5/CSS3 + Vanilla JavaScript** smart tourism platform designed exclusively for exploring **Bangladesh**. Built with a crisp **Cyan & Off-White** visual system, it brings together **30 iconic destinations**, **20 verified hotels & resorts with online reservation**, **42 curated traditional Bangladeshi foods across 5 sections**, **live weather forecasts**, **natural-language discovery**, **Google Maps-powered interactive routing**, **real-time Bengali translation with voice audio**, and **national 999 travel safety tools**.
+**Bangladesh** is a land of remarkable contrasts woven together by winding rivers, emerald plains, and timeless heritage. Within a single journey across its **eight divisions**, travelers can watch dawn break over the unbroken golden sands of **Cox's Bazar** and coral reefs of **Saint Martin's Island**, climb into drifting monsoon clouds above **Sajek Valley** and **Bandarban**, wander misty tea gardens in **Sreemangal**, glide across the mirrored wetlands of **Tanguar Haor** and the **Sundarbans** mangrove forest, and trace centuries of terracotta temples, Mughal forts, and Old Dhaka's vibrant culinary streets.
+
+**CholoGhuri** is built to turn that richness into an effortless, confident travel experience. Crafted as a full-stack **Django + Django REST Framework + HTML5/CSS3 + Vanilla JavaScript** platform with a crisp **Cyan & Off-White** interface, it brings together **30 verified destinations** with authentic photography, **natural-language trip discovery**, **Open-Meteo live weather & rainy-day backups**, **Google Maps & Leaflet routing** with intercity fare estimates, **20 verified hotels with online booking**, **42 iconic Bangladeshi dishes across 5 regional sections**, **real-time Bengali translation with voice audio**, and **national `999` emergency safety support**—helping every visitor explore Bangladesh smarter.
 
 ---
 
 ## ✨ Key Features
 
-- **🖼️ Clean Fullscreen Bangladesh Showcase:** 3-second smooth auto-sliding hero photography featuring iconic Bangladesh landmarks in pure imagery without text clutter.
-- **🔎 Smart Natural-Language Discovery:** Understands everyday queries such as `"I have only 6 hours in Dhaka"`, `"rainy day budget hill trip"`, or division-based filters.
-- **🌦️ Live Open-Meteo Weather & Rain Backups:** Displays live destination temperature, conditions, 5-day outlooks, and indoor/rain-safe alternatives when monsoon weather hits.
-- **🗺️ Google Maps & Leaflet Interactive Routing:** Explore verified tourist spots, hotels, restaurants, hospitals, and Tourist Police pins with intercity distance, travel time, and fare estimates (Bus, Train, Air, Launch, CNG).
-- **🏨 Verified Stays & Online Hotel Booking:** Compare hotels side-by-side, inspect real hotel photography, book rooms online (`/hotels/<slug>/`), or jump directly to the official hotel website / booking page.
-- **🍛 Famous Bangladeshi Foods Guide (`/foods/`):** 5 organized culinary sections (**Main Dishes**, **Street Foods**, **Sweets & Desserts**, **Traditional Pitha**, and **Drinks**) paired with local photography, origin divisions, and tourist tasting notes.
-- **🗣️ Multilingual Live Translator & Bengali TTS:** Real-time translation into clean Bengali and global languages with audio voice playback and a fullscreen **"Show Local"** card for drivers and vendors.
-- **🧭 Smart Multi-Day Trip Planner & AI Assistant:** Build half-day to 7-day Bangladesh itineraries with itemized budget estimates, shareable public links (`/trips/shared/<code>/`), and conversational travel help.
-- **🚨 Travel Safety Bar & Helpline (`999`):** Persistent safety header and district directory for Bangladesh Tourist Police, emergency hospitals, fire services, and solo/monsoon safety checklists.
-- **📊 Staff-Restricted Admin & Analytics Portal (`/admin-portal/`):** Search analytics, popular destination demand, AI query tracking, hotel booking records, and feedback moderation accessible strictly to authorized staff.
+- **Clean Fullscreen Bangladesh Showcase:** 3-second smooth auto-sliding hero photography featuring iconic Bangladesh landmarks in pure imagery without text clutter.
+- **Smart Natural-Language Discovery:** Understands everyday queries such as `"I have only 6 hours in Dhaka"`, `"rainy day budget hill trip"`, or division-based filters.
+- **Live Open-Meteo Weather & Rain Backups:** Displays live destination temperature, conditions, 5-day outlooks, and indoor/rain-safe alternatives when monsoon weather hits.
+- **Google Maps & Leaflet Interactive Routing:** Explore verified tourist spots, hotels, restaurants, hospitals, and Tourist Police pins with intercity distance, travel time, and fare estimates (Bus, Train, Air, Launch, CNG).
+- **Verified Stays & Online Hotel Booking:** Compare hotels side-by-side, inspect real hotel photography, book rooms online (`/hotels/<slug>/`), or jump directly to the official hotel website / booking page.
+- **Famous Bangladeshi Foods Guide (`/foods/`):** 5 organized culinary sections (**Main Dishes**, **Street Foods**, **Sweets & Desserts**, **Traditional Pitha**, and **Drinks**) paired with local photography, origin divisions, and tourist tasting notes.
+- **Multilingual Live Translator & Bengali TTS:** Real-time translation into clean Bengali and global languages with audio voice playback and a fullscreen **"Show Local"** card for drivers and vendors.
+- **Smart Multi-Day Trip Planner & AI Assistant:** Build half-day to 7-day Bangladesh itineraries with itemized budget estimates, shareable public links (`/trips/shared/<code>/`), and conversational travel help.
+- **Travel Safety Bar & Helpline (`999`):** Persistent safety header and district directory for Bangladesh Tourist Police, emergency hospitals, fire services, and solo/monsoon safety checklists.
+- **Staff-Restricted Admin & Analytics Portal (`/admin-portal/`):** Search analytics, popular destination demand, AI query tracking, hotel booking records, and feedback moderation accessible strictly to authorized staff.
 
 ---
 
@@ -68,24 +70,21 @@ Visit the Livelink: https://chologhuri.onrender.com/ *(Render blueprint ready �
 
 ```text
 chologhuri/
-├── Procfile                  # Gunicorn web command with migrate & collectstatic
-├── render.yaml               # One-click Render Blueprint deployment config
-├── runtime.txt               # Python 3.12.7 runtime pin
+├── Procfile                  # Gunicorn startup with migrate & collectstatic
+├── render.yaml               # Render Blueprint deployment configuration
+├── runtime.txt               # Python 3.12.7 runtime specification
 ├── README.md                 # Project overview and documentation
-├── start_windows.bat         # Quick Windows local server launcher
-├── scripts/                  # Real photo fetchers, manifests & live verification runner
+├── start_windows.bat         # One-click Windows local server launcher
+├── scripts/                  # Image fetchers, manifests & live verification suite
 └── backend/
     ├── manage.py
     ├── requirements.txt
     ├── db.sqlite3            # Pre-seeded Bangladesh tourism database
-    ├── chologhuri_project/   # Core Django settings, URLs, WSGI
-    ├── accounts/             # Custom traveler & staff user authentication API
+    ├── chologhuri_project/   # Django settings, root URLs & WSGI
+    ├── accounts/             # Custom user & authentication API
     ├── tourism/              # Models, famous_foods catalog, DRF APIs, web views & services
-    │   ├── management/commands/seed_chologhuri.py
-    │   ├── services/         # AI assistant, itinerary, NLP search, route, translator & weather
-    │   └── migrations/
-    ├── static/               # CSS3 stylesheet, Vanilla JS & vendored Leaflet 1.9.4
-    ├── templates/            # Django HTML5 responsive templates
+    ├── static/               # Pure CSS3, Vanilla JS & vendored Leaflet 1.9.4
+    ├── templates/            # Responsive HTML5 Django templates
     └── media/                # Verified local photos (places/, foods/, hotels/)
 ```
 
@@ -104,7 +103,7 @@ pip install -r requirements.txt
 ```
 
 ### 3. Migrate & Verify Seeded Database
-*(The SQLite database is pre-seeded with 30 places, 20 hotels, 12 restaurants, and 14 safety facilities; `seed_chologhuri` is idempotent and safe to re-run anytime.)*
+*(The SQLite database already ships pre-seeded; `seed_chologhuri` is idempotent and safe to re-run anytime.)*
 ```bash
 python manage.py migrate
 python manage.py seed_chologhuri
@@ -122,12 +121,17 @@ Open **`http://127.0.0.1:8000`** in your browser *(or double-click `start_window
 ## 🚀 Deployment (Render Blueprint)
 
 1. Push this repository to GitHub (`main` branch).
-2. In **Render Dashboard**, choose **New + → Blueprint** and select your repository.
-3. Render automatically reads [`render.yaml`](render.yaml), installs `backend/requirements.txt`, executes migrations and `collectstatic`, and boots Gunicorn with production `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS`.
-4. *(Optional)* Add `GEMINI_API_KEY` or `OPENAI_API_KEY` in environment variables for live LLM responses (works cleanly with built-in smart fallback even without external keys).
+2. In **Render Dashboard**, choose **New + -> Blueprint** and select your GitHub repository.
+3. Render reads [`render.yaml`](render.yaml), installs `backend/requirements.txt`, applies migrations and `collectstatic`, and launches Gunicorn with production `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS`.
+4. *(Optional)* Set `GEMINI_API_KEY` or `OPENAI_API_KEY` in environment variables for live LLM replies (works cleanly offline with the built-in travel assistant even without API keys).
 
 ---
 
 ## 👩‍💻 Author
 
 Developed by **Fatema**
+
+---
+
+> *"To travel through Bangladesh is to read a living poem of winding rivers, green hills, timeless heritage, and golden hospitality — every road leads to a story waiting to be discovered."*
+> **— CholoGhuri | Explore Bangladesh Smarter**
