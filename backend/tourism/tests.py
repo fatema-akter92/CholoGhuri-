@@ -13,6 +13,8 @@ class CholoGhuriSmokeTests(TestCase):
         for url in [
             "/",
             "/foods/",
+            "/festivals/",
+            "/festivals/?season=winter-upcoming",
             "/foods/?section=main-dishes",
             "/foods/?section=street-foods",
             "/foods/?section=sweets-desserts",
@@ -40,12 +42,49 @@ class CholoGhuriSmokeTests(TestCase):
         ]:
             resp = client.get(url)
             self.assertEqual(resp.status_code, 200, f"Failed on {url}")
+            self.assertNotIn("Module ", resp.content.decode("utf-8"), f"Found residual Module label on {url}")
 
         auth_html = client.get("/auth/").content.decode("utf-8")
         self.assertNotIn("Demo Admin", auth_html)
         self.assertNotIn("AdminCholo2026", auth_html)
+        self.assertIn("chologhuribd@gmail.com", auth_html)
+        home_html = client.get("/").content.decode("utf-8")
+        self.assertIn("Seasonal &amp; Upcoming Festivals of Bangladesh", home_html)
+        fest_html = client.get("/festivals/").content.decode("utf-8")
+        for expected in (
+            "Eid-ul-Fitr",
+            "Eid-ul-Adha",
+            "Dhaka International Trade Fair",
+            "Jabbarer Boli Khela",
+            "Nouka Baich",
+            "Manipuri Rash Utsab",
+            "Hason Raja Utsab",
+            "Buddha Purnima",
+            "Christmas in Bangladesh",
+        ):
+            self.assertIn(expected, fest_html)
         bn_html = client.get("/translator/?lang=bn").content.decode("utf-8")
         self.assertNotIn("<strong>HI:</strong>", bn_html)
+
+        # Verify EN -> BN custom translation returns pure Bengali Unicode (no Hindi, no Banglish warning)
+        from tourism.services.translator_service import translate_text
+        for phrase in ("Good morning", "How are you?", "Where is the hotel?", "This food is delicious", "I want to go to Cox's Bazar"):
+            out = translate_text(phrase, "en", "bn")["translated_text"]
+            self.assertTrue(any("\u0980" <= c <= "\u09ff" for c in out), f"Missing Bengali script for {phrase}: {out}")
+            self.assertFalse(any("\u0900" <= c <= "\u097f" for c in out), f"Hindi script leaked for {phrase}: {out}")
+            self.assertNotIn("Offline phonetic guide", out)
+            self.assertNotIn("ব্যাগোবো", out)
+
+    def test_trip_planner_budget_ordering(self):
+        from tourism.services.itinerary_engine import build_smart_itinerary
+
+        for days in (0.5, 1.0, 3.0, 5.0, 7.0):
+            for target_bdt in (10000, 30000, 90000):
+                low = build_smart_itinerary("Dhaka", days, f"{days}d", target_bdt, "low")["estimated_breakdown"]["total_bdt"]
+                mid = build_smart_itinerary("Dhaka", days, f"{days}d", target_bdt, "mid")["estimated_breakdown"]["total_bdt"]
+                lux = build_smart_itinerary("Dhaka", days, f"{days}d", target_bdt, "luxury")["estimated_breakdown"]["total_bdt"]
+                self.assertLess(low, mid, f"Expected low < mid for days={days}, target={target_bdt}")
+                self.assertLess(mid, lux, f"Expected mid < luxury for days={days}, target={target_bdt}")
 
     def test_api_endpoints(self):
         client = Client()
