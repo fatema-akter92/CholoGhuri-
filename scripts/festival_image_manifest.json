@@ -1,0 +1,98 @@
+{
+  "rash-mela": {
+    "local_url": "/media/festivals/rash-mela.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Life_with_blue_%26_green_at_Dublar_Char%2C_Sundarban.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "size": [
+      1078,
+      1430
+    ]
+  },
+  "nabanna-utsab": {
+    "local_url": "/media/festivals/nabanna-utsab.jpg",
+    "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Bengali_dialects.png/3840px-Bengali_dialects.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "size": [
+      1100,
+      927
+    ]
+  },
+  "lalon-smaran-utsab": {
+    "local_url": "/media/festivals/lalon-smaran-utsab.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/19/Fakir_Lalon_Shah.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "size": [
+      558,
+      558
+    ]
+  },
+  "poush-mela": {
+    "local_url": "/media/festivals/poush-mela.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Pitha_for_Wedding-_Pakan%2C_Patishapta%2C_Bharandash.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "size": [
+      1000,
+      561
+    ]
+  },
+  "shakrain-festival": {
+    "local_url": "/media/festivals/shakrain-festival.jpg",
+    "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Shakrain_Festival_%E0%A6%AA%E0%A7%8C%E0%A6%B7_%E0%A6%B8%E0%A6%82%E0%A6%95%E0%A7%8D%E0%A6%B0%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%A4%E0%A6%BF.jpg/3840px-Shakrain_Festival_%E0%A6%AA%E0%A7%8C%E0%A6%B7_%E0%A6%B8%E0%A6%82%E0%A6%95%E0%A7%8D%E0%A6%B0%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%A4%E0%A6%BF.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "size": [
+      1100,
+      728
+    ]
+  },
+  "ekushey-boi-mela": {
+    "local_url": "/media/festivals/ekushey-boi-mela.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Bannar_of_amar_ekusay.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "size": [
+      1100,
+      1466
+    ]
+  },
+  "basanta-utsab": {
+    "local_url": "/media/festivals/basanta-utsab.jpg",
+    "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Celebrating_pahela_falgun_in_Bangladesh_33.jpg/3840px-Celebrating_pahela_falgun_in_Bangladesh_33.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "size": [
+      1100,
+      708
+    ]
+  },
+  "pahela-baishakh": {
+    "local_url": "/media/festivals/pahela-baishakh.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Mangal_Shobhajatra_in_Dhaka.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "size": [
+      1100,
+      728
+    ]
+  },
+  "boishabi-utsab": {
+    "local_url": "/media/festivals/boishabi-utsab.jpg",
+    "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/09/Ful_Biju_festival_-_Rangamati_-_Bangladesh%2C.jpg/3840px-Ful_Biju_festival_-_Rangamati_-_Bangladesh%2C.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "size": [
+      1100,
+      732
+    ]
+  },
+  "nouka-baich": {
+    "local_url": "/media/festivals/nouka-baich.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Rowing_on_Canal.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "size": [
+      1100,
+      733
+    ]
+  },
+  "durga-puja": {
+    "local_url": "/media/festivals/durga-puja.jpg",
+    "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Main_Temple_of_Dhakeswari.jpg/3840px-Main_Temple_of_Dhakeswari.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "size": [
+      1100,
+      825
+    ]
+  },
+  "eid-sholakia": {
+    "local_url": "/media/festivals/eid-sholakia.jpg",
+    "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6d/Sholakia_Eidgah_Maidan_05.jpg/3840px-Sholakia_Eidgah_Maidan_05.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "size": [
+      1100,
+      732
+    ]
+  }
+}
