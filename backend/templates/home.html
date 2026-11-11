@@ -76,12 +76,12 @@
     </div>
   </section>
 
-  <!-- Module A1: Category-Based Discovery -->
+  <!-- Category-Based Discovery -->
   <section class="section">
     <div class="container">
       <div class="section-header">
         <div>
-          <span class="section-eyebrow">Module A &bull; Discover Bangladesh</span>
+          <span class="section-eyebrow">Discover Bangladesh</span>
           <h2 class="section-title">Explore Across 8 Curated Categories</h2>
           <p class="section-sub">From Cox's Bazar coral shores to UNESCO heritage cities and regional food trails.</p>
         </div>
@@ -203,6 +203,55 @@
               <p class="place-desc" style="margin-bottom:8px;">{{ f.why_try }}</p>
               <div style="font-size:12px; color:var(--text-soft); border-top:1px solid #eef6f8; padding-top:8px;">
                 <a href="/destinations/{{ f.place_slug }}/" style="color:var(--cyan-700); font-weight:700;">&#128205; Best near: {{ f.famous_place }} &rarr;</a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Seasonal & Upcoming Festivals of Bangladesh Section -->
+  <section class="section" style="background:var(--bg-white); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="section-eyebrow">Culture &amp; Heritage Calendar &bull; {{ total_festivals_count }} Celebrations</span>
+          <h2 class="section-title">Seasonal &amp; Upcoming Festivals of Bangladesh</h2>
+          <p class="section-sub">Discover vibrant upcoming Bangladeshi festivals—harvest melas, Old Dhaka kite skies, Baul music gatherings, and New Year processions with exact festival locations.</p>
+        </div>
+        <a href="/festivals/" class="btn btn-cyan btn-sm">Explore All {{ total_festivals_count }} Festivals &rarr;</a>
+      </div>
+
+      <div class="chip-row" style="margin-top:0; margin-bottom:24px;">
+        {% for sec in festival_sections %}
+          <a href="/festivals/?season={{ sec.key }}" class="chip">{{ sec.label }}</a>
+        {% endfor %}
+      </div>
+
+      <div class="grid-4">
+        {% for fest in upcoming_festivals %}
+          <article class="card">
+            <div class="place-thumb-wrap" style="height:190px;">
+              <a href="/festivals/?season={{ fest.season_key }}">
+                <img src="{{ fest.image_url }}" alt="{{ fest.name }}" loading="lazy" />
+              </a>
+              <span class="place-cat-tag" style="background:var(--cyan-700); color:#fff;">
+                {% if fest.is_upcoming %}&#10024; Upcoming{% else %}&#127881; Signature{% endif %}
+              </span>
+            </div>
+            <div class="card-body" style="padding:15px;">
+              <div class="place-meta-row" style="margin-bottom:6px;">
+                <span class="badge badge-emerald" style="font-size:10.5px;">{{ fest.month_window }}</span>
+              </div>
+              <h3 class="place-title" style="font-size:15.5px;">{{ fest.name }}</h3>
+              <div style="background:var(--bg-cream); border-radius:8px; padding:7px 9px; margin-bottom:8px; font-size:12px;">
+                <strong style="color:var(--cyan-800);">&#128205; Location:</strong> {{ fest.location_venue }}
+                <div style="color:var(--text-soft); margin-top:2px;">{{ fest.district }} &bull; {{ fest.division }}</div>
+              </div>
+              <p class="place-desc" style="margin-bottom:8px;">{{ fest.culture_summary|truncatechars:115 }}</p>
+              <div style="font-size:12px; color:var(--text-soft); border-top:1px solid #eef6f8; padding-top:8px;">
+                <a href="/destinations/{{ fest.place_slug }}/" style="color:var(--cyan-700); font-weight:700;">Explore {{ fest.place_label }} &rarr;</a>
               </div>
             </div>
           </article>
