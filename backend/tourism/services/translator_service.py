@@ -260,18 +260,170 @@ PHONETIC_WORD_MAP = {
     "delicious": "Khub moja / Shushadu",
 }
 
+COMMON_EN_TO_BN = {
+    "hello": "হ্যালো / আসসালামু আলাইকুম",
+    "hi": "হ্যালো / কেমন আছেন?",
+    "good morning": "সুপ্রভাত",
+    "good afternoon": "শুভ অপরাহ্ন",
+    "good evening": "শুভ সন্ধ্যা",
+    "good night": "শুভ রাত্রি",
+    "how are you": "আপনি কেমন আছেন?",
+    "i am fine": "আমি ভালো আছি",
+    "i am good": "আমি ভালো আছি",
+    "what is your name": "আপনার নাম কী?",
+    "nice to meet you": "আপনার সাথে দেখা হয়ে ভালো লাগলো",
+    "i love bangladesh": "আমি বাংলাদেশকে ভালোবাসি",
+    "welcome to bangladesh": "বাংলাদেশে স্বাগতম",
+    "welcome": "স্বাগতম",
+    "thank you": "ধন্যবাদ",
+    "thanks": "ধন্যবাদ",
+    "thank you very much": "অসংখ্য ধন্যবাদ",
+    "you are welcome": "আপনাকে স্বাগতম",
+    "please": "দয়া করে",
+    "sorry": "দুঃখিত",
+    "excuse me": "মাফ করবেন",
+    "yes": "জি / হ্যাঁ",
+    "no": "না",
+    "goodbye": "বিদায়, আবার দেখা হবে",
+    "bye": "আবার দেখা হবে",
+    "see you again": "আবার দেখা হবে",
+    "where is the hotel": "হোটেলটি কোথায়?",
+    "take me to the hotel": "আমাকে হোটেলে নিয়ে চলুন",
+    "where is cox's bazar": "কক্সবাজার কোথায়?",
+    "where is coxs bazar": "কক্সবাজার কোথায়?",
+    "how much does it cost": "এটির দাম কত?",
+    "how much": "কত টাকা?",
+    "this food is delicious": "এই খাবারটি খুবই সুস্বাদু",
+    "i am hungry": "আমার ক্ষুধা লেগেছে",
+    "i am thirsty": "আমার তৃষ্ণা পেয়েছে",
+    "water please": "দয়া করে একটু পানি দিন",
+    "i want water": "আমি পানি চাই",
+    "help me": "আমাকে সাহায্য করুন",
+    "i need help": "আমার সাহায্য প্রয়োজন",
+    "can you help me": "আপনি কি আমাকে সাহায্য করতে পারেন?",
+    "can you help me please": "দয়া করে আমাকে সাহায্য করতে পারবেন?",
+    "where is the hospital": "হাসপাতাল কোথায়?",
+    "where is the nearest hospital": "নিকটতম হাসপাতাল কোথায়?",
+    "where is the police station": "থানা কোথায়?",
+    "where is the washroom": "ওয়াশরুম বা টয়লেট কোথায়?",
+    "where is the bathroom": "বাথরুম বা টয়লেট কোথায়?",
+    "where is the airport": "বিমানবন্দর কোথায়?",
+    "where is the train station": "রেল স্টেশন কোথায়?",
+    "where is the bus stand": "বাস স্ট্যান্ড কোথায়?",
+    "stop here": "এখানে থামুন",
+    "turn left": "বামে ঘুরুন",
+    "turn right": "ডানে ঘুরুন",
+    "go straight": "সোজা যান",
+    "very good": "খুব ভালো",
+    "how much is the rickshaw fare": "রিকশা ভাড়া কত?",
+    "how much is the bus ticket": "বাসের টিকিটের দাম কত?",
+}
+
+EN_TO_BN_WORDS = {
+    "i": "আমি", "me": "আমাকে", "my": "আমার", "we": "আমরা", "our": "আমাদের",
+    "you": "আপনি", "your": "আপনার", "he": "তিনি", "she": "তিনি", "they": "তারা",
+    "this": "এটি", "that": "ওটি", "these": "এগুলো", "it": "এটি",
+    "hello": "হ্যালো", "hi": "হ্যালো", "welcome": "স্বাগতম", "please": "দয়া করে",
+    "thank": "ধন্যবাদ", "thanks": "ধন্যবাদ", "sorry": "দুঃখিত", "yes": "জি", "no": "না",
+    "not": "না", "good": "ভালো", "great": "দারুণ", "nice": "সুন্দর", "beautiful": "সুন্দর",
+    "very": "খুব", "fine": "ভালো", "morning": "সকাল", "afternoon": "বিকেল",
+    "evening": "সন্ধ্যা", "night": "রাত", "today": "আজ", "tomorrow": "আগামীকাল",
+    "yesterday": "গতকাল", "now": "এখন", "later": "পরে", "here": "এখানে", "there": "ওখানে",
+    "where": "কোথায়", "what": "কী", "who": "কে", "when": "কখন", "why": "কেন",
+    "how": "কীভাবে", "much": "কত", "many": "অনেক", "need": "প্রয়োজন", "want": "চাই",
+    "like": "পছন্দ করি", "love": "ভালোবাসি", "go": "যেতে", "going": "যাচ্ছি",
+    "come": "আসুন", "take": "নিয়ে চলুন", "stop": "থামুন", "help": "সাহায্য",
+    "call": "কল করুন", "find": "খুঁজুন", "show": "দেখান", "speak": "বলি",
+    "understand": "বুঝি", "know": "জানি", "eat": "খেতে", "drink": "পান করতে",
+    "hungry": "ক্ষুধার্ত", "thirsty": "তৃষ্ণার্ত", "water": "পানি", "food": "খাবার",
+    "rice": "ভাত", "biryani": "বিরিয়ানি", "tea": "চা", "coffee": "কফি",
+    "fish": "মাছ", "chicken": "মুরগি", "beef": "গরুর মাংস", "spicy": "ঝাল",
+    "sweet": "মিষ্টি", "delicious": "সুস্বাদু", "hot": "গরম", "cold": "ঠান্ডা",
+    "clean": "পরিষ্কার", "safe": "নিরাপদ", "money": "টাকা", "price": "দাম",
+    "fare": "ভাড়া", "cost": "খরচ", "ticket": "টিকিট", "bill": "বিল",
+    "hotel": "হোটেল", "room": "রুম", "bed": "বিছানা", "hospital": "হাসপাতাল",
+    "doctor": "ডাক্তার", "medicine": "ওষুধ", "pharmacy": "ফার্মেসি", "police": "পুলিশ",
+    "toilet": "টয়লেট", "washroom": "ওয়াশরুম", "bathroom": "বাথরুম",
+    "airport": "বিমানবন্দর", "station": "স্টেশন", "bus": "বাস", "train": "ট্রেন",
+    "car": "গাড়ি", "rickshaw": "রিকশা", "boat": "নৌকা", "road": "রাস্তা",
+    "street": "সড়ক", "market": "বাজার", "shop": "দোকান", "mosque": "মসজিদ",
+    "temple": "মন্দির", "church": "গির্জা", "museum": "জাদুঘর", "beach": "সমুদ্র সৈকত",
+    "sea": "সমুদ্র", "river": "নদী", "hill": "পাহাড়", "forest": "বন",
+    "city": "শহর", "village": "গ্রাম", "bangladesh": "বাংলাদেশ", "dhaka": "ঢাকা",
+    "sylhet": "সিলেট", "chattogram": "চট্টগ্রাম", "chittagong": "চট্টগ্রাম",
+    "coxs": "কক্স", "cox's": "কক্স", "bazar": "বাজার", "rajshahi": "রাজশাহী",
+    "khulna": "খুলনা", "barishal": "বরিশাল", "rangpur": "রংপুর", "sundarbans": "সুন্দরবন",
+    "sajek": "সাজেক", "bandarban": "বান্দরবান", "rangamati": "রাঙামাটি",
+    "left": "বামে", "right": "ডানে", "straight": "সোজা", "near": "কাছে", "far": "দূরে",
+    "friend": "বন্ধু", "family": "পরিবার", "name": "নাম", "time": "সময়",
+    "traditional": "ঐতিহ্যবাহী", "bengali": "বাঙালি", "local": "স্থানীয়", "halal": "হালাল",
+}
+
+_STOPWORDS_EN = {"is", "are", "am", "the", "a", "an", "of", "in", "on", "at", "to", "for", "from", "do", "does"}
+_POISONED_OUTPUTS = ("ব্যাগোবো", "MYMEMORY WARNING", "INVALID", "PLEASE SELECT TWO DISTINCT", "QUERY LENGTH LIMIT")
+
+
+def _normalize_phrase(text: str) -> str:
+    return " ".join((text or "").lower().strip().rstrip("?.!,").split())
+
+
+def _has_bengali(text: str) -> bool:
+    return any("\u0980" <= ch <= "\u09FF" for ch in (text or ""))
+
+
+def _has_devanagari(text: str) -> bool:
+    return any("\u0900" <= ch <= "\u097F" for ch in (text or ""))
+
+
+def _is_valid_translation(candidate: str, source_text: str, source_lang: str, target_lang: str) -> bool:
+    clean = (candidate or "").strip()
+    if not clean:
+        return False
+    upper = clean.upper()
+    if any(p in upper or p in clean for p in _POISONED_OUTPUTS):
+        return False
+    if target_lang == "bn":
+        # Must actually contain Bengali Unicode script and zero Devanagari/Hindi characters
+        return _has_bengali(clean) and not _has_devanagari(clean)
+    if source_lang != target_lang and clean.lower() == source_text.strip().lower():
+        if target_lang in {"bn", "hi", "ar", "ja"}:
+            return False
+    return True
+
+
+def _offline_bengali_fallback(clean: str) -> str:
+    norm = _normalize_phrase(clean)
+    if norm in COMMON_EN_TO_BN:
+        return COMMON_EN_TO_BN[norm]
+    words = clean.split()
+    bn_parts = []
+    for raw_w in words:
+        w = raw_w.lower().strip("?!.,\"'")
+        if w in EN_TO_BN_WORDS:
+            bn_parts.append(EN_TO_BN_WORDS[w])
+        elif w in _STOPWORDS_EN:
+            continue
+        elif _has_bengali(raw_w):
+            bn_parts.append(raw_w)
+    if bn_parts:
+        joined = " ".join(bn_parts)
+        if "?" in clean and not joined.endswith("?"):
+            joined += "?"
+        return joined
+    return "অনুগ্রহ করে স্পষ্ট ইংরেজি ভ্রমণ বাক্য লিখুন অথবা নিচের বাংলা বাক্যগুলো ব্যবহার করুন।"
+
 
 def translate_text(text: str, source_lang: str = "en", target_lang: str = "bn"):
     clean = (text or "").strip()
     if not clean:
         return {"source_text": "", "translated_text": "", "phonetic": "", "provider": "phrasebook"}
 
-    lower = clean.lower()
+    norm = _normalize_phrase(clean)
 
-    # 1. Exact phrase match in curated phrasebook (avoid noisy substring matches)
+    # 1. Exact phrase match in curated phrasebook & verified EN->BN dictionary (punctuation-insensitive)
     for p in TRAVEL_PHRASES:
-        src_val = p.get(source_lang, p["en"]).lower().strip()
-        if lower == src_val:
+        src_val = _normalize_phrase(p.get(source_lang, p["en"]))
+        if norm == src_val:
             return {
                 "source_text": clean,
                 "source_lang": source_lang,
@@ -280,6 +432,16 @@ def translate_text(text: str, source_lang: str = "en", target_lang: str = "bn"):
                 "phonetic": p["phonetic_bn"] if target_lang == "bn" else "",
                 "provider": "CholoGhuri Verified Travel Phrasebook",
             }
+
+    if source_lang == "en" and target_lang == "bn" and norm in COMMON_EN_TO_BN:
+        return {
+            "source_text": clean,
+            "source_lang": source_lang,
+            "target_lang": target_lang,
+            "translated_text": COMMON_EN_TO_BN[norm],
+            "phonetic": "",
+            "provider": "CholoGhuri Verified Bengali Dictionary",
+        }
 
     # 2. Try Google Translate GTX API (produces pure standard Bangladeshi Bengali & 7 languages)
     translated = None
@@ -295,49 +457,48 @@ def translate_text(text: str, source_lang: str = "en", target_lang: str = "bn"):
             if r.status_code == 200:
                 segments = r.json()[0] or []
                 candidate = "".join(seg[0] for seg in segments if seg and seg[0]).strip()
-                if candidate:
+                if _is_valid_translation(candidate, clean, source_lang, target_lang):
                     translated = candidate
                     provider = "Google Translate Live Engine"
         except Exception:
             translated = None
 
-    # 3. Backup: MyMemory Translation API
+    # 3. Backup: MyMemory Translation API (with strict Bengali script & quality checks)
     if not translated and source_lang != target_lang:
         try:
             r = requests.get(
                 "https://api.mymemory.translated.net/get",
-                params={"q": clean, "langpair": f"{source_lang}|{target_lang}"},
-                timeout=4,
+                params={"q": clean, "langpair": f"{source_lang}|{target_lang}", "de": "chologhuribd@gmail.com"},
+                timeout=5,
             )
             if r.status_code == 200:
                 resp_data = r.json().get("responseData", {})
                 candidate = (resp_data.get("translatedText") or "").strip()
-                if candidate and "MYMEMORY WARNING" not in candidate.upper():
+                try:
+                    match_score = float(resp_data.get("match") or 0)
+                except (TypeError, ValueError):
+                    match_score = 0.0
+                if match_score >= 0.45 and _is_valid_translation(candidate, clean, source_lang, target_lang):
                     translated = candidate
                     provider = "MyMemory Live Translation API"
         except Exception:
             translated = None
 
-    # 4. Offline dictionary fallback
+    # 4. Pure Bengali Script Offline Fallback (never returns Banglish inside translated_text)
     if not translated:
         if source_lang == target_lang:
             translated = clean
+        elif target_lang == "bn":
+            translated = _offline_bengali_fallback(clean)
         else:
-            words = clean.split()
-            hints = [PHONETIC_WORD_MAP.get(w.lower().strip("?!.,"), w) for w in words]
-            translated = (
-                f"{' '.join(hints)} (Offline phonetic guide)"
-                if target_lang == "bn"
-                else clean
-            )
+            translated = clean
 
-    # Generate approximate Bengali phonetic guide if target is Bengali
     phonetic = ""
     if target_lang == "bn":
         matched_hints = [
-            f"{k} -> {v}" for k, v in PHONETIC_WORD_MAP.items() if k in lower
+            f"{k} -> {v}" for k, v in PHONETIC_WORD_MAP.items() if k in norm
         ]
-        phonetic = " | ".join(matched_hints[:4]) if matched_hints else "Tap speaker button to play native Bengali audio."
+        phonetic = " | ".join(matched_hints[:4]) if matched_hints else "Tap speaker button to play Bengali voice audio."
 
     return {
         "source_text": clean,
