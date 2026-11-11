@@ -64,15 +64,22 @@ def verify_live_server():
 
         assert home.status_code == 200 and home.text.count("class=\"hero-slide") >= 6
         assert "Auto 5s" not in home.text and "Slide 1 /" not in home.text and "hero-peek" not in home.text and "hero-official-ribbon" not in home.text and "Developed by Fatema" in home.text
+        assert "chologhuribd@gmail.com" in home.text and "Seasonal &amp; Upcoming Festivals of Bangladesh" in home.text
+        festivals_page = requests.get("http://127.0.0.1:8099/festivals/", timeout=5)
+        assert festivals_page.status_code == 200 and "Rash Mela" in festivals_page.text
         assert foods.status_code == 200 and "1. Traditional Bangladeshi Main Dishes" in foods.text and "5. Traditional Bangladeshi Drinks" in foods.text
         assert food_img.status_code == 200 and len(food_img.content) > 10000
-        # Verify every single food photo in FAMOUS_FOODS exists on disk
+        # Verify every single food and festival photo exists on disk
         sys.path.insert(0, str(BACKEND_DIR))
         from tourism.famous_foods import FAMOUS_FOODS
+        from tourism.festivals import BANGLADESH_FESTIVALS
         for item in FAMOUS_FOODS:
             fpath = BACKEND_DIR / item["image_url"].lstrip("/")
             assert fpath.exists() and fpath.stat().st_size > 5000, f"Missing food image: {fpath}"
-        print("VERIFIED ALL", len(FAMOUS_FOODS), "FOOD IMAGES ON DISK!")
+        for fest in BANGLADESH_FESTIVALS:
+            fpath = BACKEND_DIR / fest["image_url"].lstrip("/")
+            assert fpath.exists() and fpath.stat().st_size > 5000, f"Missing festival image: {fpath}"
+        print("VERIFIED ALL", len(FAMOUS_FOODS), "FOOD IMAGES AND", len(BANGLADESH_FESTIVALS), "FESTIVAL IMAGES ON DISK!")
         assert css.status_code == 200 and len(css.text) > 5000
         assert js.status_code == 200 and "3000" in js.text and "mt{s}.google.com" in js.text
         assert img.status_code == 200 and len(img.content) > 10000
