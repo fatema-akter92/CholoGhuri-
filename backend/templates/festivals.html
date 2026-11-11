@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Seasonal &amp; Upcoming Festivals of Bangladesh | CholoGhuri{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:32px;">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:20px;">
+      <div>
+        <span class="section-eyebrow">Bangladesh Culture &amp; Heritage Calendar &bull; {{ total_count }} Festivals</span>
+        <h1 class="section-title">Seasonal &amp; Upcoming Festivals of Bangladesh</h1>
+        <p class="section-sub">Experience the living cultural rhythm of Bangladesh—harvest carnivals, Old Dhaka kite skies, Baul folk nights, Bengali New Year processions, and Hill Tracts water celebrations with exact festival locations.</p>
+      </div>
+      <a href="/foods/" class="btn btn-cyan btn-sm">Pair With Traditional Foods &rarr;</a>
+    </div>
+
+    <!-- Season + Location Filter Bar -->
+    <div class="card card-static" style="background:var(--bg-cream); margin-bottom:28px;">
+      <div class="card-body">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+          {% for sec in sections %}
+            <a href="/festivals/?season={{ sec.key }}{% if selected_division %}&division={{ selected_division|urlencode }}{% endif %}" class="chip {% if selected_season == sec.key %}active{% endif %}">
+              {{ sec.label }}
+            </a>
+          {% endfor %}
+        </div>
+
+        <form method="get" action="/festivals/" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+          <input type="hidden" name="season" value="{{ selected_season }}" />
+          <label style="font-size:13px; font-weight:700; color:var(--cyan-900);">Filter by Festival Region / Division:</label>
+          <select class="select" name="division" style="max-width:280px;" onchange="this.form.submit()">
+            <option value="">All Regions across Bangladesh</option>
+            {% for div in division_options %}
+              <option value="{{ div }}" {% if selected_division == div %}selected{% endif %}>{{ div }}</option>
+            {% endfor %}
+          </select>
+          {% if selected_division or selected_season != 'all' %}
+            <a href="/festivals/" class="btn btn-offwhite btn-sm">Reset Filters</a>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+
+    <!-- Festivals Grid -->
+    <div class="grid-3">
+      {% for fest in festivals %}
+        <article class="card">
+          <div class="place-thumb-wrap" style="height:220px;">
+            <img src="{{ fest.image_url }}" alt="{{ fest.name }}" loading="lazy" />
+            {% if fest.is_upcoming %}
+              <span class="place-cat-tag" style="background:var(--cyan-700); color:#fff;">&#10024; Upcoming Highlight</span>
+            {% else %}
+              <span class="place-cat-tag">{{ fest.month_window }}</span>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:6px; margin-bottom:8px;">
+              <span class="badge {% if fest.is_upcoming %}badge-emerald{% else %}badge-cyan{% endif %}">{{ fest.season_label }}</span>
+              <span style="font-size:12px; font-weight:700; color:var(--text-soft);">{{ fest.month_window }}</span>
+            </div>
+
+            <h2 class="place-title" style="font-size:17.5px; margin-bottom:8px;">{{ fest.name }}</h2>
+
+            <!-- Prominent Festival Place / Location Indicator -->
+            <div style="background:var(--bg-cream); border:1px solid var(--cyan-200); border-radius:10px; padding:9px 11px; margin-bottom:10px;">
+              <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--cyan-800); margin-bottom:2px;">
+                &#128205; Festival Location
+              </div>
+              <div style="font-size:13px; font-weight:700; color:var(--cyan-900);">{{ fest.location_venue }}</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">{{ fest.district }} &bull; {{ fest.division }}</div>
+            </div>
+
+            <p style="font-size:13.5px; color:var(--text-main); line-height:1.55; margin:0 0 10px;">{{ fest.culture_summary }}</p>
+
+            <div style="background:var(--cyan-50); border-left:3px solid var(--cyan-600); padding:8px 10px; border-radius:6px; margin-bottom:12px;">
+              <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--cyan-800); margin-bottom:2px;">Traveler &amp; Cultural Tip</div>
+              <p style="font-size:12.5px; color:var(--text-main); margin:0;">{{ fest.tourist_tips }}</p>
+            </div>
+
+            <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; border-top:1px solid var(--border); padding-top:10px; font-size:12.5px;">
+              <a href="/destinations/{{ fest.place_slug }}/" style="color:var(--cyan-700); font-weight:800;">Explore {{ fest.place_label }} &rarr;</a>
+              <a href="/map/" class="badge badge-cyan">View on Map</a>
+            </div>
+          </div>
+        </article>
+      {% empty %}
+        <div class="card card-static" style="grid-column:1/-1; padding:36px; text-align:center;">
+          <h3>No festivals matched this season or division filter</h3>
+          <a href="/festivals/" class="btn btn-cyan">Show All {{ total_count }} Festivals</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
