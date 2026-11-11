@@ -6,7 +6,7 @@
   <div class="container">
     <div class="section-header" style="margin-bottom:18px;">
       <div>
-        <span class="section-eyebrow">Module 05 &bull; Multilingual Translator &amp; Show-Local Mode</span>
+        <span class="section-eyebrow">Multilingual Translator &amp; Show-Local Mode</span>
         <h1 class="section-title">Communicate Effortlessly Across Bangladesh</h1>
         <p class="section-sub">Translate travel sentences across Bengali, English, Hindi, Arabic, Japanese, French &amp; Spanish — with native audio pronunciation and giant "Show Local" screen cards.</p>
       </div>
@@ -29,6 +29,7 @@
     <div class="card card-static" style="background:var(--bg-cream); margin-bottom:28px;">
       <div class="card-body">
         <form id="translateForm" class="grid-3" style="gap:16px; align-items:end;">
+          {% csrf_token %}
           <div>
             <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">From Language</label>
             <select id="srcLang" class="select">
@@ -45,13 +46,20 @@
               {% endfor %}
             </select>
           </div>
-          <button type="submit" class="btn btn-cyan">Translate Text</button>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="submit" class="btn btn-cyan" style="flex:1;">Translate Now</button>
+            <button type="button" id="swapLangBtn" class="btn btn-offwhite" title="Swap languages">&#8646;</button>
+            <button type="button" id="micVoiceBtn" class="btn btn-offwhite" title="Speak sentence with microphone" style="display:none;">&#127908; Speak</button>
+          </div>
 
           <div style="grid-column:span 3; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-            <textarea id="srcText" class="textarea" rows="3" placeholder="Type any travel message e.g. 'How much is the fare to Lalbagh Fort?' or 'No peanuts please'..."></textarea>
+            <textarea id="srcText" class="textarea" rows="3" placeholder="Type or click a sample sentence e.g. 'Good morning' or 'Where is the hotel?'..."></textarea>
             <div style="background:#ffffff; border:1px solid var(--cyan-200); border-radius:10px; padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
               <div>
-                <div id="transOutText" style="font-size:19px; font-weight:800; color:var(--cyan-900); min-height:44px;">Translation appears here...</div>
+                <div id="transTargetLabel" style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--cyan-700); margin-bottom:4px;">
+                  {% if selected_lang == "bn" %}বাংলা অনুবাদ (Pure Bengali Output){% else %}{{ active_lang.name }} Output{% endif %}
+                </div>
+                <div id="transOutText" lang="{{ selected_lang }}" style="font-size:18px; font-weight:800; color:var(--cyan-900); min-height:40px; line-height:1.45;">Translation appears here...</div>
                 <div id="transPhonetic" style="font-size:12.5px; font-weight:700; color:var(--cyan-700); margin-top:4px;"></div>
               </div>
               <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
@@ -59,6 +67,16 @@
                 <button type="button" id="showLocalTransBtn" class="btn btn-cyan btn-sm">&#128241; Show Local Screen</button>
               </div>
             </div>
+          </div>
+
+          <div style="grid-column:span 3; display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+            <span style="font-size:12px; font-weight:700; color:var(--text-soft);">Try quick English &rarr; বাংলা:</span>
+            <button type="button" class="chip" data-sample-phrase="Good morning">Good morning</button>
+            <button type="button" class="chip" data-sample-phrase="How are you?">How are you?</button>
+            <button type="button" class="chip" data-sample-phrase="Where is the hotel?">Where is the hotel?</button>
+            <button type="button" class="chip" data-sample-phrase="How much is the rickshaw fare?">Rickshaw fare?</button>
+            <button type="button" class="chip" data-sample-phrase="This food is delicious">Food is delicious</button>
+            <button type="button" class="chip" data-sample-phrase="I love Bangladesh">I love Bangladesh</button>
           </div>
         </form>
       </div>
@@ -108,46 +126,126 @@
 let lastTranslated = "";
 let lastPhonetic = "";
 
-document.getElementById("tgtLang")?.addEventListener("change", (e) => {
-  const newLang = e.target.value;
-  const textNow = document.getElementById("srcText").value.trim();
-  if (textNow) {
-    document.getElementById("translateForm").dispatchEvent(new Event("submit"));
-  } else {
-    window.location.href = `/translator/?lang=${encodeURIComponent(newLang)}&category={{ selected_cat|urlencode }}`;
-  }
-});
-
-document.getElementById("translateForm")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
+async function runTranslation() {
   const text = document.getElementById("srcText").value.trim();
   const source_lang = document.getElementById("srcLang").value;
   const target_lang = document.getElementById("tgtLang").value;
-  if (!text) return;
+  const outEl = document.getElementById("transOutText");
+  const phoEl = document.getElementById("transPhonetic");
+  const lblEl = document.getElementById("transTargetLabel");
+  if (!text) return false;
 
-  document.getElementById("transOutText").textContent = "Translating...";
+  if (lblEl) {
+    lblEl.textContent = target_lang === "bn" ? "বাংলা অনুবাদ (Pure Bengali Output)" : `${target_lang.toUpperCase()} Output`;
+  }
+  outEl.setAttribute("lang", target_lang);
+  outEl.textContent = "Translating...";
+  phoEl.textContent = "";
+
   try {
     const res = await apiFetch("/api/translator/translate/", {
       method: "POST",
       body: JSON.stringify({ text, source_lang, target_lang }),
     });
-    lastTranslated = res.translated_text;
+    lastTranslated = res.translated_text || "";
     lastPhonetic = res.phonetic || "";
-    document.getElementById("transOutText").textContent = lastTranslated;
-    document.getElementById("transPhonetic").textContent = lastPhonetic ? `Phonetic / Guide: ${lastPhonetic}` : `Via ${res.provider}`;
+    outEl.textContent = lastTranslated || "অনুবাদ পাওয়া যায়নি";
+    phoEl.textContent = lastPhonetic ? `Phonetic / Guide: ${lastPhonetic}` : `Via ${res.provider}`;
+    return true;
   } catch (err) {
-    document.getElementById("transOutText").textContent = `Translation error: ${err.message}`;
+    outEl.textContent = `Translation error: ${err.message}`;
+    return false;
+  }
+}
+
+document.getElementById("tgtLang")?.addEventListener("change", (e) => {
+  const newLang = e.target.value;
+  const textNow = document.getElementById("srcText").value.trim();
+  if (textNow) {
+    runTranslation();
+  } else {
+    window.location.href = `/translator/?lang=${encodeURIComponent(newLang)}&category={{ selected_cat|urlencode }}`;
   }
 });
 
-document.getElementById("speakTransBtn")?.addEventListener("click", () => {
+document.getElementById("srcLang")?.addEventListener("change", () => {
+  if (document.getElementById("srcText").value.trim()) {
+    runTranslation();
+  }
+});
+
+document.getElementById("translateForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await runTranslation();
+});
+
+document.getElementById("swapLangBtn")?.addEventListener("click", () => {
+  const srcSel = document.getElementById("srcLang");
+  const tgtSel = document.getElementById("tgtLang");
+  const tmp = srcSel.value;
+  srcSel.value = tgtSel.value;
+  tgtSel.value = tmp;
+  if (lastTranslated) {
+    document.getElementById("srcText").value = lastTranslated;
+  }
+  if (document.getElementById("srcText").value.trim()) {
+    runTranslation();
+  }
+});
+
+document.querySelectorAll("[data-sample-phrase]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.getElementById("srcLang").value = "en";
+    document.getElementById("tgtLang").value = "bn";
+    document.getElementById("srcText").value = btn.getAttribute("data-sample-phrase");
+    runTranslation();
+  });
+});
+
+// Optional Microphone Voice Input -> Instant Pure Bengali Translation
+(() => {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const micBtn = document.getElementById("micVoiceBtn");
+  if (!SpeechRec || !micBtn) return;
+  micBtn.style.display = "inline-flex";
+  micBtn.addEventListener("click", () => {
+    const rec = new SpeechRec();
+    const srcCodeMap = { en: "en-US", bn: "bn-BD", hi: "hi-IN", ar: "ar-SA", ja: "ja-JP", fr: "fr-FR", es: "es-ES" };
+    rec.lang = srcCodeMap[document.getElementById("srcLang").value] || "en-US";
+    rec.interimResults = false;
+    micBtn.textContent = "Listening...";
+    rec.onresult = (ev) => {
+      const spoken = ev.results?.[0]?.[0]?.transcript || "";
+      if (spoken) {
+        document.getElementById("srcText").value = spoken;
+        runTranslation();
+      }
+    };
+    rec.onend = () => {
+      micBtn.innerHTML = "&#127908; Speak";
+    };
+    rec.onerror = () => {
+      micBtn.innerHTML = "&#127908; Speak";
+    };
+    rec.start();
+  });
+})();
+
+document.getElementById("speakTransBtn")?.addEventListener("click", async () => {
+  const srcNow = document.getElementById("srcText").value.trim();
+  if (!lastTranslated && srcNow) {
+    await runTranslation();
+  }
   const codeMap = { bn: "bn-BD", en: "en-US", hi: "hi-IN", ar: "ar-SA", ja: "ja-JP", fr: "fr-FR", es: "es-ES" };
   const tgt = document.getElementById("tgtLang").value;
   if (lastTranslated) speakPhrase(lastTranslated, codeMap[tgt] || "bn-BD");
 });
 
-document.getElementById("showLocalTransBtn")?.addEventListener("click", () => {
+document.getElementById("showLocalTransBtn")?.addEventListener("click", async () => {
   const src = document.getElementById("srcText").value.trim();
+  if (!lastTranslated && src) {
+    await runTranslation();
+  }
   if (lastTranslated) openShowLocalModal(lastTranslated, lastPhonetic, src);
 });
 </script>
