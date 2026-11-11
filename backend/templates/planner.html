@@ -6,7 +6,7 @@
   <div class="container">
     <div class="section-header" style="margin-bottom:22px;">
       <div>
-        <span class="section-eyebrow">Module 06 &bull; Smart Trip, Weather &amp; Budget Planner</span>
+        <span class="section-eyebrow">Smart Trip, Weather &amp; Budget Planner</span>
         <h1 class="section-title">Build Your Personalized Bangladesh Itinerary</h1>
         <p class="section-sub">Choose duration (Half-day to 7 days), target BDT budget, traveler group &amp; interests — with transport, hotel, food cost estimates &amp; actual expense tracking.</p>
       </div>
@@ -104,6 +104,11 @@
               <div style="text-align:right;">
                 <div style="font-size:12px; color:var(--text-soft); font-weight:700;">ESTIMATED TOTAL</div>
                 <div style="font-size:26px; font-weight:800; color:var(--cyan-700);">৳{{ generated_plan.estimated_breakdown.total_bdt }}</div>
+                {% if generated_plan.estimated_breakdown.within_budget %}
+                  <span class="badge badge-emerald" style="margin-top:4px;">&#10003; Within ৳{{ generated_plan.budget_bdt }} Target</span>
+                {% else %}
+                  <span class="badge badge-amber" style="margin-top:4px;">Exceeds ৳{{ generated_plan.budget_bdt }} Target for {{ generated_plan.budget_tier|title }}</span>
+                {% endif %}
               </div>
             </div>
 
