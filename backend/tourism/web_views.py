@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.db.models import Avg, Count, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.text import slugify
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from accounts.models import TravelerProfile
 from .models import (
@@ -30,6 +31,7 @@ from .services.nlp_search import search_places_nlp
 from .services.route_service import STARTING_HUBS, haversine_km
 from .services.translator_service import SUPPORTED_LANGUAGES, TRAVEL_PHRASES
 from .famous_foods import FAMOUS_FOODS, FOOD_SECTIONS
+from .festivals import BANGLADESH_FESTIVALS, FESTIVAL_SECTIONS
 
 
 def home_view(request):
@@ -53,6 +55,10 @@ def home_view(request):
         sec_items = [f for f in FAMOUS_FOODS if f["section"] == sec["key"]]
         home_food_picks.extend(sec_items[:2])
 
+    upcoming_festivals = [f for f in BANGLADESH_FESTIVALS if f.get("home_highlight")][:12]
+    if len(upcoming_festivals) < 4:
+        upcoming_festivals = BANGLADESH_FESTIVALS[:12]
+
     return render(
         request,
         "home.html",
@@ -64,7 +70,40 @@ def home_view(request):
             "famous_foods": home_food_picks,
             "food_sections": FOOD_SECTIONS,
             "total_foods_count": len(FAMOUS_FOODS),
+            "upcoming_festivals": upcoming_festivals,
+            "festival_sections": FESTIVAL_SECTIONS,
+            "total_festivals_count": len(BANGLADESH_FESTIVALS),
             "all_places_light": all_places_light,
+        },
+    )
+
+
+def festivals_view(request):
+    selected_season = request.GET.get("season", "all")
+    selected_division = request.GET.get("division", "").strip()
+
+    division_options = sorted(list({f["division"] for f in BANGLADESH_FESTIVALS}))
+    items = list(BANGLADESH_FESTIVALS)
+    if selected_season != "all":
+        items = [f for f in items if f["season_key"] == selected_season]
+    if selected_division:
+        items = [
+            f
+            for f in items
+            if selected_division.lower() in f["division"].lower()
+            or selected_division.lower() in f["district"].lower()
+        ]
+
+    return render(
+        request,
+        "festivals.html",
+        {
+            "sections": FESTIVAL_SECTIONS,
+            "festivals": items,
+            "selected_season": selected_season,
+            "selected_division": selected_division,
+            "division_options": division_options,
+            "total_count": len(BANGLADESH_FESTIVALS),
         },
     )
 
@@ -462,6 +501,7 @@ def assistant_view(request):
     return render(request, "assistant.html", {"initial_q": initial_q})
 
 
+@ensure_csrf_cookie
 def translator_view(request):
     selected_lang = (request.GET.get("lang") or "bn").strip().lower()
     lang_map = {l["code"]: l for l in SUPPORTED_LANGUAGES}
