@@ -75,7 +75,8 @@
 
       <nav class="nav-links">
         <a href="/destinations/" class="{% if request.path == '/destinations/' %}active{% endif %}">Destinations</a>
-        <a href="/foods/" class="{% if request.path == '/foods/' %}active{% endif %}">Famous Foods</a>
+        <a href="/foods/" class="{% if request.path == '/foods/' %}active{% endif %}">Foods</a>
+        <a href="/festivals/" class="{% if request.path == '/festivals/' %}active{% endif %}">Festivals</a>
         <a href="/hotels-food/" class="{% if request.path == '/hotels-food/' %}active{% endif %}">Hotels &amp; Dining</a>
         <a href="/planner/" class="{% if request.path == '/planner/' %}active{% endif %}">Plan Trip</a>
         <a href="/map/" class="{% if request.path == '/map/' %}active{% endif %}">Map</a>
@@ -106,6 +107,7 @@
       <div class="grid-2" style="gap:8px;">
         <a href="/destinations/" class="btn btn-offwhite btn-sm">Destinations</a>
         <a href="/foods/" class="btn btn-offwhite btn-sm">Famous Foods</a>
+        <a href="/festivals/" class="btn btn-offwhite btn-sm">Festivals</a>
         <a href="/hotels-food/" class="btn btn-offwhite btn-sm">Hotels &amp; Dining</a>
         <a href="/planner/" class="btn btn-offwhite btn-sm">Plan Trip</a>
         <a href="/map/" class="btn btn-offwhite btn-sm">Interactive Map</a>
@@ -193,10 +195,10 @@
         <div>
           <h4>Explore Bangladesh</h4>
           <a href="/destinations/">All 30+ Destinations</a>
+          <a href="/foods/">42 Famous Bangladeshi Foods</a>
+          <a href="/festivals/">Seasonal &amp; Upcoming Festivals</a>
           <a href="/destinations/?category=sea-beaches">Sea Beaches</a>
           <a href="/destinations/?category=hills-nature">Hills &amp; Nature</a>
-          <a href="/destinations/?category=historical-places">Historical Places</a>
-          <a href="/destinations/?category=hidden-gems">Hidden Gems &amp; Haors</a>
         </div>
         <div>
           <h4>Smart Travel Tools</h4>
@@ -207,10 +209,11 @@
           <a href="/assistant/">AI Travel Assistant</a>
         </div>
         <div>
-          <h4>Trust &amp; Emergency</h4>
+          <h4>Trust &amp; Contact</h4>
           <a href="/safety/">Emergency 999 &amp; Tourist Police</a>
           <a href="/safety/#guides">Verified Local Guides</a>
           <a href="/dashboard/?tab=feedback">Submit Correction Request</a>
+          <a href="mailto:chologhuribd@gmail.com">&#9993; chologhuribd@gmail.com</a>
           {% if request.user.is_staff %}
             <a href="/admin-portal/">Admin &amp; Analytics Portal</a>
           {% endif %}
