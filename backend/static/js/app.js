@@ -8,9 +8,10 @@ function getCookie(name) {
 }
 
 async function apiFetch(url, options = {}) {
+  const csrfToken = getCookie("csrftoken") || document.querySelector("[name=csrfmiddlewaretoken]")?.value || "";
   const headers = {
     "Content-Type": "application/json",
-    "X-CSRFToken": getCookie("csrftoken"),
+    "X-CSRFToken": csrfToken,
     ...(options.headers || {}),
   };
   const resp = await fetch(url, { ...options, headers });
