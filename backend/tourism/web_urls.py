@@ -4,6 +4,7 @@ from . import web_views
 urlpatterns = [
     path("", web_views.home_view, name="home"),
     path("foods/", web_views.foods_view, name="foods"),
+    path("festivals/", web_views.festivals_view, name="festivals"),
     path("destinations/", web_views.destinations_view, name="destinations"),
     path("destinations/<slug:slug>/", web_views.place_detail_view, name="place-detail-web"),
     path("map/", web_views.map_view, name="map"),
